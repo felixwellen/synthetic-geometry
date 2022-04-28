@@ -1,4 +1,4 @@
-# synthetic-geometry
+# Synthetic Geometry
 Probably mostly algebraic geometry.
 
 # How to check/work on the code in this repo
