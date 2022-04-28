@@ -1,0 +1,4 @@
+name: synthetic-geometry
+depend: cubical-0.4
+include: ./
+flags: --cubical
