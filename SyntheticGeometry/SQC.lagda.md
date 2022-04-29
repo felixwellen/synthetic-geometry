@@ -1,7 +1,7 @@
 Synthetic quasicoherence as defined in Ingo Blechschmidts thesis (Definition 18.18).
 For now, we only consider the synthetic quasicoherence of the base ring k itself.
 
-```
+```agda
 module SyntheticGeometry.SQC where
 
 open import Cubical.Foundations.Prelude
