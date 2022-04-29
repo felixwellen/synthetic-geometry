@@ -29,3 +29,49 @@ sqc-over-itself {ℓ} k = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv 
     canonical-map A a φ = φ $a a
 
 ```
+
+Here are some properties of k that follow from its synthetic quasicoherence,
+as in Subsection 18.4.
+
+```
+module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
+  open CommRingStr (snd k)
+
+  field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
+  field-property x x≢0 = {!k-sqc A ∣ finite-presentation-of-A ∣!}
+    where
+      open FreeCommAlgebra.Construction using (const)
+      A : CommAlgebra k ℓ
+      A = FPAlgebra 0 (replicateFinVec 1 (const x))
+      -- Would it be better to use "k / (x)" instead of this FPAlgebra?
+      finite-presentation-of-A : FinitePresentation A
+      FinitePresentation.n finite-presentation-of-A = _
+      FinitePresentation.m finite-presentation-of-A = _
+      FinitePresentation.relations finite-presentation-of-A = _
+      FinitePresentation.equiv finite-presentation-of-A = idCAlgEquiv A
+      module A = CommAlgebraStr (snd A)
+      module kₐ = CommAlgebraStr (snd (initialCAlg k))
+      x≡0-in-A : x A.⋆ A.1a ≡ A.0a
+      x≡0-in-A = {!!}
+      Spec-A-empty : Spec k A → ⊥
+      Spec-A-empty h = x≢0 x≡0
+        where
+          x≡0 : x ≡ 0r
+          x≡0 = sym(
+            0r
+              ≡⟨ sym (IsAlgebraHom.pres0 (snd h)) ⟩
+            (h $a A.0a)
+              ≡⟨ cong (λ zero₁ → h $a zero₁) (sym x≡0-in-A) ⟩
+            (h $a (x A.⋆ A.1a))
+              ≡⟨ IsAlgebraHom.pres⋆ (snd h) x A.1a ⟩
+            (x kₐ.⋆ (h $a A.1a))
+              ≡⟨ cong (λ one → x kₐ.⋆ one) (IsAlgebraHom.pres1 (snd h)) ⟩
+            (x kₐ.⋆ kₐ.1a)
+              ≡⟨ refl ⟩
+            (x · 1r)
+              ≡⟨ step x ⟩
+            x ∎)
+            where
+              step : (x : ⟨ k ⟩) → x · 1r ≡ x
+              step = solve k
+```
