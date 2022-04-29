@@ -23,7 +23,8 @@ private
 
 ```
 
-The synthetic spectrum of an k-algebra A, Spec A, is a notion that makes sense internally in the Zariski Topos. We assume a ring object k in the following, which we think of as (the functor of points of) the affine line 𝔸¹.
+The synthetic spectrum of an k-algebra A, Spec A, is a notion that makes sense internally in the Zariski Topos.
+We assume a ring object k in the following, which we think of as (the functor of points of) the affine line 𝔸¹.
 
 ```
 module _ (k : CommRing ℓ) where
@@ -36,7 +37,7 @@ module _ (k : CommRing ℓ) where
 ```
 
 The basic opens of the Zariski Topology are classically sets of primeideals D(f), such that p ∈ D(f) iff p ∌ f.
-Synthetically, D(f) is the set of all α ∈ Spec A, such that f(α):≡α(f)≠0:
+Synthetically, D(f) is the set of all α ∈ Spec A, such that f(α):≡α(f) is invertible:
 
 
 ```
@@ -44,6 +45,6 @@ Synthetically, D(f) is the set of all α ∈ Spec A, such that f(α):≡α(f)≠
     open CommAlgebraStr (snd k-as-algebra)
 
     D : (f : ⟨ A ⟩) → (Spec A → Type _)
-    D f α = (fst α) f ≡ 0a → ⊥
+    D f α = (fst α) f ∈ k ˣ
 
 ```
