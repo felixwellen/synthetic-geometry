@@ -12,7 +12,7 @@ open import Cubical.Foundations.Powerset
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.Algebra
-open import Cubical.Algebra.RingSolver.Reflection
+open import Cubical.Algebra.CommRingSolver.Reflection
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
