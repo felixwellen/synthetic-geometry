@@ -16,7 +16,7 @@ open import Cubical.Algebra.RingSolver.Reflection
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
-open import Cubical.Algebra.CommAlgebra.QuotientAlgebra
+open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to quotientInducedHom)
 open import Cubical.Algebra.CommAlgebra.Ideal
 open import Cubical.Algebra.CommAlgebra.FGIdeal
 import Cubical.Algebra.CommAlgebra.FreeCommAlgebra as FreeCommAlgebra
@@ -57,33 +57,43 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
       A : CommAlgebra k ℓ
       A = kₐ / ideal
 
-      finite-presentation-of-A : FinitePresentation A
-      finite-presentation-of-A = {!!}
-
-      equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
-      equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣
-
       q : CommAlgebraHom kₐ A
       q = quotientMap kₐ ideal
 
       module A = CommAlgebraStr (snd A)
---      module kₐ = CommAlgebraStr (snd (initialCAlg k))
+      module kₐ = CommAlgebraStr (snd kₐ)
 
       qx≡0 : q $a x ≡ A.0a
       qx≡0 = isZeroFromIdeal {A = kₐ} {I = ideal} x
                (incInIdeal kₐ (replicateFinVec 1 x) zero)
 
-{-
-      x≡0-in-A : x A.⋆ A.1a ≡ A.0a
-      x≡0-in-A =
-        x A.⋆ A.1a           ≡⟨ cong (λ one → x A.⋆ one) pres1 ⟩
-        x A.⋆ (q $a kₐ.1a)   ≡⟨ pres⋆ x _ ⟩
-        q $a (x kₐ.⋆ kₐ.1a)  ≡⟨ cong (λ x' → q $a x') (kₐ.·Rid _) ⟩
-        q $a x               ≡⟨ qx≡0 ⟩
-        A.0a                 ∎
+      finite-presentation-of-A : FinitePresentation A
+      FinitePresentation.n finite-presentation-of-A = 0
+      FinitePresentation.m finite-presentation-of-A = 1
+      FinitePresentation.relations finite-presentation-of-A = replicateFinVec 1 (const x)
+      FinitePresentation.equiv finite-presentation-of-A = {!!}
         where
-          open IsAlgebraHom (snd q)
--}
+          B = FPAlgebra 0 (replicateFinVec 1 (const x))
+
+          toA : CommAlgebraHom B A
+          toA = inducedHom 0 relation A (λ ()) relation-holds
+            where
+              vals : FinVec ⟨ A ⟩ 0
+              vals ()
+              vals' : FinVec ⟨ kₐ ⟩ 0
+              vals' ()
+              relation = replicateFinVec 1 (const x)
+              relation-holds = λ zero →
+                evPoly A (relation zero) (λ ())    ≡⟨ sym (evPolyHomomorphic kₐ A q (const x) vals') ⟩
+                q $a (evPoly kₐ (const x) vals')   ≡⟨ cong (λ x' → q $a x') (·Rid x) ⟩
+                q $a x                             ≡⟨ qx≡0 ⟩
+                A.0a                               ∎
+
+          fromA : CommAlgebraHom A B
+          fromA = quotientInducedHom kₐ ideal B (initialMap k B) {!inclOfFGIdeal!}
+
+      equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
+      equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣
 
       Spec-A-empty : Spec k A → ⊥
       Spec-A-empty h = x≢0 x≡0
@@ -96,15 +106,6 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
             h $a (q $a x)  ≡⟨ cong (λ y → h $a y) qx≡0 ⟩
             h $a A.0a      ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
             0r             ∎
-{-
-          sym (
-            0r                    ≡⟨ sym pres0 ⟩
-            (h $a A.0a)           ≡⟨ cong (λ z → h $a z) (sym {! x≡0-in-A !}) ⟩
-            (h $a (x A.⋆ A.1a))   ≡⟨ pres⋆ x A.1a ⟩
-            (x kₐ.⋆ (h $a A.1a))  ≡⟨ cong (λ one → x kₐ.⋆ one) pres1 ⟩
-            (x kₐ.⋆ kₐ.1a)        ≡⟨ kₐ.·Rid _ ⟩
-            x                     ∎ )
--}
 
       functions-on-Spec-A-trivial : {f g : Spec k A → ⟨ k ⟩} → f ≡ g
       functions-on-Spec-A-trivial = funExt (λ p → Cubical.Data.Empty.rec (Spec-A-empty p))
