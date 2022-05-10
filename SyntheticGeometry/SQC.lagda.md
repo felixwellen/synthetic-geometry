@@ -90,7 +90,7 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
                 A.0a                               ∎
 
           fromA : CommAlgebraHom A B
-          fromA = quotientInducedHom kₐ ideal B (initialMap k B) ?
+          fromA = quotientInducedHom kₐ ideal B (initialMap k B) {!!}
 
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
       equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣
@@ -98,9 +98,13 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
       Spec-A-empty : Spec k A → ⊥
       Spec-A-empty h = x≢0 x≡0
         where
-          open CommAlgebraHoms
-          id≡h∘q : idCAlgHom kₐ ≡ (h ∘ca q)
-          id≡h∘q = initialMapProp k kₐ (idCAlgHom kₐ) (compCommAlgebraHom kₐ A kₐ q h)
+          open AlgebraHoms using (compAlgebraHom)
+          -- We use _∘a_ (compAlgebraHom) for composition because the implicit arguments
+          -- of CommAlgebraHoms._∘ca_ can not be inferred. (And even using
+          -- CommAlgebraHoms.compCommAlgebraHom with explicit arguments makes type checking
+          -- hang indefinitely.)
+          id≡h∘q : idCAlgHom kₐ ≡ h ∘a q
+          id≡h∘q = initialMapProp k kₐ (idCAlgHom kₐ) (h ∘a q)
           x≡0 : x ≡ 0r
           x≡0 =
             x              ≡⟨ cong (_$a x) id≡h∘q ⟩
