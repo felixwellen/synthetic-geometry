@@ -85,12 +85,12 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
               relation = replicateFinVec 1 (const x)
               relation-holds = λ zero →
                 evPoly A (relation zero) (λ ())    ≡⟨ sym (evPolyHomomorphic kₐ A q (const x) vals') ⟩
-                q $a (evPoly kₐ (const x) vals')   ≡⟨ cong (λ x' → q $a x') (·Rid x) ⟩
+                q $a (evPoly kₐ (const x) vals')   ≡⟨ cong (q $a_) (·Rid x) ⟩
                 q $a x                             ≡⟨ qx≡0 ⟩
                 A.0a                               ∎
 
           fromA : CommAlgebraHom A B
-          fromA = quotientInducedHom kₐ ideal B (initialMap k B) {!inclOfFGIdeal!}
+          fromA = quotientInducedHom kₐ ideal B (initialMap k B) ?
 
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
       equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣
@@ -99,11 +99,12 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
       Spec-A-empty h = x≢0 x≡0
         where
           open CommAlgebraHoms
-          id≡q∘h = initialMapProp k kₐ (idCAlgHom kₐ) (compCommAlgebraHom kₐ A kₐ q h)
+          id≡h∘q : idCAlgHom kₐ ≡ (h ∘ca q)
+          id≡h∘q = initialMapProp k kₐ (idCAlgHom kₐ) (compCommAlgebraHom kₐ A kₐ q h)
           x≡0 : x ≡ 0r
           x≡0 =
-            x              ≡⟨ cong (λ f → f $a x) id≡q∘h ⟩
-            h $a (q $a x)  ≡⟨ cong (λ y → h $a y) qx≡0 ⟩
+            x              ≡⟨ cong (_$a x) id≡h∘q ⟩
+            h $a (q $a x)  ≡⟨ cong (h $a_) qx≡0 ⟩
             h $a A.0a      ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
             0r             ∎
 
