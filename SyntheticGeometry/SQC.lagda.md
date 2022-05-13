@@ -93,7 +93,7 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
           fromA = quotientInducedHom kₐ ideal B (initialMap k B) {!!}
 
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
-      equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣
+      equiv = _ , k-sqc A ∥_∥₁.∣ finite-presentation-of-A ∣₁
 
       Spec-A-empty : Spec k A → ⊥
       Spec-A-empty h = x≢0 x≡0
