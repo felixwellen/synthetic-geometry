@@ -58,7 +58,7 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
       A = kₐ / ideal
 
       q : CommAlgebraHom kₐ A
-      q = quotientMap kₐ ideal
+      q = quotientHom kₐ ideal
 
       module A = CommAlgebraStr (snd A)
       module kₐ = CommAlgebraStr (snd kₐ)
