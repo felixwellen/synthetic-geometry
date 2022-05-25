@@ -1,7 +1,7 @@
 Synthetic quasicoherence as defined in Ingo Blechschmidts thesis (Definition 18.18).
 For now, we only consider the synthetic quasicoherence of the base ring k itself.
 
-```
+```agda
 module SyntheticGeometry.SQC where
 
 open import Cubical.Foundations.Prelude
@@ -40,7 +40,7 @@ sqc-over-itself {ℓ} k = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv 
 Here are some properties of k that follow from its synthetic quasicoherence,
 as in Subsection 18.4.
 
-```
+```agda
 module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
   open CommRingStr (snd k)
 
