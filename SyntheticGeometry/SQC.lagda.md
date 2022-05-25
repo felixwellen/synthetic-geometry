@@ -48,7 +48,7 @@ as in Subsection 18.4.
 module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
   open CommRingStr (snd k)
 
-  kₐ = k-as-algebra k
+  kₐ = initialCAlg k
 
   field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
   field-property x x≢0 =
@@ -76,6 +76,7 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
       π : CommAlgebraHom kₐ A
       π = quotientHom kₐ ⟨x⟩
 
+
       module A = CommAlgebraStr (snd A)
       module kₐ = CommAlgebraStr (snd kₐ)
 
@@ -84,32 +85,10 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
                (incInIdeal kₐ (replicateFinVec 1 x) zero)
 
       finite-presentation-of-A : FinitePresentation A
-      FinitePresentation.n finite-presentation-of-A = 0
-      FinitePresentation.m finite-presentation-of-A = 1
-      FinitePresentation.relations finite-presentation-of-A = replicateFinVec 1 (const x)
-      FinitePresentation.equiv finite-presentation-of-A = {!!}
-        where
-          B = FPAlgebra 0 (replicateFinVec 1 (const x))
-
-          toA : CommAlgebraHom B A
-          toA = inducedHom 0 relation A (λ ()) relation-holds
-            where
-              vals : FinVec ⟨ A ⟩ 0
-              vals ()
-              vals' : FinVec ⟨ kₐ ⟩ 0
-              vals' ()
-              relation = replicateFinVec 1 (const x)
-              relation-holds = λ zero →
-                evPoly A (relation zero) (λ ())    ≡⟨ sym (evPolyHomomorphic kₐ A π (const x) vals') ⟩
-                π $a (evPoly kₐ (const x) vals')   ≡⟨ cong (π $a_) (·Rid x) ⟩
-                π $a x                             ≡⟨ πx≡0 ⟩
-                A.0a                               ∎
-
-          fromA : CommAlgebraHom A B
-          fromA = quotientInducedHom kₐ ⟨x⟩ B (initialMap k B) {!!}
+      finite-presentation-of-A = Instances.R/⟨x⟩FP k x
 
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
-      equiv = _ , k-sqc A ∥_∥₁.∣ finite-presentation-of-A ∣₁
+      equiv = _ , k-sqc _ ∥_∥₁.∣ finite-presentation-of-A ∣₁
 
       Spec-A-empty : Spec k A → ⊥
       Spec-A-empty h = x≢0 x≡0
