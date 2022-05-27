@@ -124,3 +124,8 @@ The ring k is a field in the sense that every non-zero element is invertible.
       1∈⟨x⟩ : kₐ.1a ∈ fst ⟨x⟩
       1∈⟨x⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨x⟩) 1∈kernel-π
 ```
+
+```agda
+  Δ : ℙ ⟨ k ⟩
+  Δ = λ x → (x · x ≡ 0r) , (is-set _ _)
+```
