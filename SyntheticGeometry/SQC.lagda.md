@@ -12,6 +12,8 @@ open import Cubical.Foundations.Powerset
 open import Cubical.Foundations.Function
 
 open import Cubical.Algebra.CommRing
+import Cubical.Algebra.CommRing.Ideal as CommRing
+import Cubical.Algebra.CommRing.QuotientRing as CommRing
 open import Cubical.Algebra.Algebra
 open import Cubical.Algebra.CommRingSolver.Reflection
 open import Cubical.Algebra.CommAlgebra
@@ -133,29 +135,56 @@ The ring k is a field in the sense that every non-zero element is invertible.
 module _ {ℓ : Level} (R : CommRing ℓ) (A : CommAlgebra R ℓ) (I : IdealsIn A)
   where private
 
-    I' = I
+  I' = I
 
-    -- fast
-    _ : A / I ≡ A / I
-    _ = refl
+  -- fast
+  _ : A / I ≡ A / I
+  _ = refl
 
 {-
-    -- slow
-    _ : A / idfun _ I ≡ A / I
-    _ = refl
+  -- slow
+  _ : A / idfun _ I ≡ A / I
+  _ = refl
 -}
 
 {-
-    -- slow (but not as slow as the one with idfun)
-    _ : A / I' ≡ A / I
-    _ = refl
+  -- slow (but not as slow as the one with idfun)
+  _ : A / I' ≡ A / I
+  _ = refl
 -}
 
 {-
-    -- slow
-    _ : (idfun _ A) / I ≡ A / I
-    _ = refl
+  -- slow
+  _ : (idfun _ A) / I ≡ A / I
+  _ = refl
 -}
+
+
+module _ {ℓ : Level} (R : CommRing ℓ) (I : CommRing.IdealsIn R)
+  where private
+
+  -- fast
+  _ : R CommRing./ I ≡ R CommRing./ I
+  _ = refl
+
+{-
+  -- slow-ish
+  _ : R CommRing./ idfun _ I ≡ R CommRing./ I
+  _ = refl
+-}
+
+
+module _
+  {ℓ : Level}
+  (R : CommRing ℓ)
+  (I : CommRing.IdealsIn R)
+  (_//_ : (S : CommRing ℓ) → CommRing.IdealsIn S → CommRing ℓ)
+  where private
+
+  -- fast
+  _ : R // idfun _ I ≡ R // I
+  _ = refl
+
 
 
 
