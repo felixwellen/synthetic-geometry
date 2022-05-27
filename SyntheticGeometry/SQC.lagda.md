@@ -9,6 +9,7 @@ open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset
+open import Cubical.Foundations.Function
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.Algebra
@@ -57,6 +58,8 @@ The ring k is a field in the sense that every non-zero element is invertible.
 ```agda
   field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
   field-property x x≢0 =
+    {!!}
+{-
     Prop.rec
       (snd ((k ˣ) x))
       (λ {(α , isLC)
@@ -66,6 +69,7 @@ The ring k is a field in the sense that every non-zero element is invertible.
            1r ∎)
        })
       1∈⟨x⟩
+-}
     where
       useSolver : (x α : ⟨ k ⟩) → x · α ≡ α · x + 0r
       useSolver = solve k
@@ -78,6 +82,7 @@ The ring k is a field in the sense that every non-zero element is invertible.
       A : CommAlgebra k ℓ
       A = kₐ / ⟨x⟩
 
+{-
       π : CommAlgebraHom kₐ A
       π = quotientHom kₐ ⟨x⟩
 
@@ -88,10 +93,39 @@ The ring k is a field in the sense that every non-zero element is invertible.
       πx≡0 : π $a x ≡ A.0a
       πx≡0 = isZeroFromIdeal {A = kₐ} {I = ⟨x⟩} x
                (incInIdeal kₐ (replicateFinVec 1 x) zero)
+-}
 
+{-
+      -- slow
       finite-presentation-of-A : FinitePresentation A
       finite-presentation-of-A = Instances.R/⟨x⟩FP k x
+-}
 
+      -- fast
+      finite-presentation-of-A' : FinitePresentation (Instances.R/⟨x⟩ k x)
+      finite-presentation-of-A' = Instances.R/⟨x⟩FP k x
+
+{-
+      -- slow
+      A'≡A : Instances.R/⟨x⟩ k x ≡ A
+      A'≡A = refl
+-}
+{-
+      -- slow
+      A'≡A : kₐ / (generatedIdeal kₐ (replicateFinVec 1 x)) ≡ A
+      A'≡A = refl
+-}
+
+      -- fast
+      A'≡A : kₐ / ⟨x⟩ ≡ A
+      A'≡A = refl
+
+      -- fast
+      ⟨x⟩'≡⟨x⟩ : generatedIdeal kₐ (replicateFinVec 1 x) ≡ ⟨x⟩
+      ⟨x⟩'≡⟨x⟩ = refl
+
+
+{-
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
       equiv = _ , k-sqc _ ∥_∥₁.∣ finite-presentation-of-A ∣₁
 
@@ -123,4 +157,5 @@ The ring k is a field in the sense that every non-zero element is invertible.
 
       1∈⟨x⟩ : kₐ.1a ∈ fst ⟨x⟩
       1∈⟨x⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨x⟩) 1∈kernel-π
+-}
 ```
