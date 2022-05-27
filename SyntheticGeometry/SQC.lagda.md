@@ -50,6 +50,11 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
 
   kₐ = initialCAlg k
 
+```
+
+The ring k is a field in the sense that every non-zero element is invertible.
+
+```agda
   field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
   field-property x x≢0 =
     Prop.rec
