@@ -124,6 +124,40 @@ The ring k is a field in the sense that every non-zero element is invertible.
       ⟨x⟩'≡⟨x⟩ : generatedIdeal kₐ (replicateFinVec 1 x) ≡ ⟨x⟩
       ⟨x⟩'≡⟨x⟩ = refl
 
+{-
+      -- slow!
+      _ : kₐ / idfun _ ⟨x⟩ ≡ kₐ / ⟨x⟩
+      _ = refl
+-}
+
+module _ {ℓ : Level} (R : CommRing ℓ) (A : CommAlgebra R ℓ) (I : IdealsIn A)
+  where private
+
+    I' = I
+
+    -- fast
+    _ : A / I ≡ A / I
+    _ = refl
+
+{-
+    -- slow
+    _ : A / idfun _ I ≡ A / I
+    _ = refl
+-}
+
+{-
+    -- slow (but not as slow as the one with idfun)
+    _ : A / I' ≡ A / I
+    _ = refl
+-}
+
+{-
+    -- slow
+    _ : (idfun _ A) / I ≡ A / I
+    _ = refl
+-}
+
+
 
 {-
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
