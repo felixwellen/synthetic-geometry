@@ -69,8 +69,9 @@ module _ (k : CommRing ℓ) where
   is-prop-qc-open-subset P = isPropΠ λ _ → isPropPropTrunc
 
   qc-opens-in : (X : Type ℓ) → Type _
-  qc-opens-in X = Σ[ U ∈ Powerset X ] is-qc-open-subset U
+  qc-opens-in X = X → qc-open-prop
 
-  is-set-qc-opens : (X : Type ℓ) → isSet (qc-opens-in X)
-  is-set-qc-opens X = isSetΣSndProp isSetPowerset (λ U → is-prop-qc-open-subset U)
+  qc-open-as-type : {X : Type ℓ} → qc-opens-in X → Type _
+  qc-open-as-type {X = X} U = Σ[ x ∈ X ] fst (fst (U x))
+
 ```
