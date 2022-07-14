@@ -86,7 +86,6 @@ But even more, an invertible elements exists in every nonzero vector.
       π : CommAlgebraHom kₐ A
       π = quotientHom kₐ ⟨xs⟩
 
-
       module A = CommAlgebraStr (snd A)
       module kₐ = CommAlgebraStr (snd kₐ)
 
@@ -96,13 +95,12 @@ But even more, an invertible elements exists in every nonzero vector.
 
       finite-presentation-of-A : FinitePresentation A
       finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
-{-
 
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
       equiv = _ , k-sqc _ ∥_∥₁.∣ finite-presentation-of-A ∣₁
 
       Spec-A-empty : Spec k A → ⊥
-      Spec-A-empty h = xs≢0 xs≡0 -- TODO
+      Spec-A-empty h = xs≢0 (funExt xs≡0)
         where
           open AlgebraHoms using (compAlgebraHom)
           -- We use _∘a_ (compAlgebraHom) for composition because the implicit arguments
@@ -114,7 +112,7 @@ But even more, an invertible elements exists in every nonzero vector.
           xs≡0 : (i : _) → xs i ≡ 0r
           xs≡0 i =
             xs i              ≡⟨ cong (_$a xs i) id≡h∘π ⟩
-            h $a (π $a xs i)  ≡⟨ cong (h $a_) πx≡0 ⟩
+            h $a (π $a xs i)  ≡⟨ cong (h $a_) (πx≡0 i) ⟩
             h $a A.0a         ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
             0r                ∎
 
@@ -124,10 +122,17 @@ But even more, an invertible elements exists in every nonzero vector.
       A-is-trivial : {a a' : ⟨ A ⟩} → a ≡ a'
       A-is-trivial = isoFunInjective (equivToIso equiv) _ _ functions-on-Spec-A-trivial
 
-      1∈kernel-π : kₐ.1a ∈ fst (kernel kₐ A π)
-      1∈kernel-π = A-is-trivial
-
       1∈⟨xs⟩ : kₐ.1a ∈ fst ⟨xs⟩
-      1∈⟨xs⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨xs⟩) 1∈kernel-π
--}
+      1∈⟨xs⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨xs⟩) A-is-trivial
+
+  field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
+  field-property x x≢0 =
+    Prop.rec
+      (snd ((k ˣ) x))
+      (λ{ (zero , x∈kˣ) → x∈kˣ})
+      (generalized-field-property (replicateFinVec 1 x) xs≢0)
+    where
+      xs≢0 : ¬ (replicateFinVec 1 x ≡ const 0r)
+      xs≢0 xs≡0 = x≢0 (cong (λ f → f zero) xs≡0)
+
 ```
