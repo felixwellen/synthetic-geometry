@@ -56,7 +56,7 @@ module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
 ```
 
 The ring k is a field in the sense that every non-zero element is invertible.
-But even more, an invertible elements exists in every nonzero vector.
+But even more, every nonzero vector contains an invertible element.
 
 ```agda
   generalized-field-property : {n : _} → (xs : FinVec ⟨ k ⟩ n) → ¬(xs ≡ const 0r) → ∃[ i ∈ _ ] xs i ∈ k ˣ
