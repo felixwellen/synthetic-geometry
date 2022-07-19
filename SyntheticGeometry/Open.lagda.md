@@ -43,16 +43,7 @@ module _ (k : CommRing ℓ) where
   create-qc-open-prop v = (std-qc-open-prop v) , ∣ _ , ∣ v , refl ∣₁ ∣₁
 
   simple-qc-open-prop : ⟨ k ⟩ → qc-open-prop
-  simple-qc-open-prop x =
-    ((x ∈ k ˣ) , snd ((k ˣ) x)) ,
-    ∣ _ , ∣ replicateFinVec 1 x , step1 ∣₁ ∣₁
-    where
-      step1 : (x ∈ (k ˣ) , snd ((k ˣ) x)) ≡ std-qc-open-prop (replicateFinVec 1 x)
-      step1 = ⇒∶ (λ x∈kˣ → ∣ Fin.zero , x∈kˣ ∣₁)
-              ⇐∶ PT.elim (λ _ → snd ((k ˣ) x))
-                           λ {(Fin.zero , x∈kˣ) → x∈kˣ;
-                              ((Fin.suc x) , _)  → ⊥-rec (¬Fin0 x)
-                             }
+  simple-qc-open-prop x = create-qc-open-prop (replicateFinVec 1 x)
 
   is-set-qc-open-prop : isSet (qc-open-prop)
   is-set-qc-open-prop = isSetΣSndProp isSetHProp (λ _ → isPropPropTrunc)
