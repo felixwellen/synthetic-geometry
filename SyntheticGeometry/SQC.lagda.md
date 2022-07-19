@@ -12,8 +12,8 @@ open import Cubical.Foundations.Powerset
 open import Cubical.Foundations.Function
 
 open import Cubical.Algebra.CommRing
+open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Algebra
-open import Cubical.Algebra.CommRingSolver.Reflection
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
@@ -21,7 +21,6 @@ open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to 
 open import Cubical.Algebra.CommAlgebra.Ideal
 open import Cubical.Algebra.CommAlgebra.Kernel
 open import Cubical.Algebra.CommAlgebra.FGIdeal
-open import Cubical.Algebra.CommRingSolver.Reflection
 import Cubical.Algebra.CommAlgebra.FreeCommAlgebra as FreeCommAlgebra
 
 open import Cubical.Data.Sigma
@@ -31,6 +30,8 @@ open import Cubical.Data.FinData
 open import Cubical.HITs.PropositionalTruncation as Prop
 
 open import Cubical.Relation.Nullary
+
+open import Cubical.Tactics.CommRingSolver.Reflection
 
 
 open import SyntheticGeometry.Spec
@@ -44,11 +45,11 @@ sqc-over-itself {ℓ} k = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv 
 
 ```
 
-Here are some properties of k that follow from its synthetic quasicoherence,
-as in Subsection 18.4.
+Here are some properties of k that follow from its synthetic quasicoherence
+together with its locality, as in Subsection 18.4.
 
 ```agda
-module _ {ℓ : Level} (k : CommRing ℓ) (k-sqc : sqc-over-itself k) where
+module _ {ℓ : Level} (k : CommRing ℓ) (k-local : isLocal k) (k-sqc : sqc-over-itself k) where
   open CommRingStr (snd k)
 
   kₐ = initialCAlg k
@@ -61,16 +62,7 @@ But even more, every nonzero vector contains an invertible element.
 ```agda
   generalized-field-property : {n : _} → (xs : FinVec ⟨ k ⟩ n) → ¬(xs ≡ const 0r) → ∃[ i ∈ _ ] xs i ∈ k ˣ
   generalized-field-property xs xs≢0 =
-    {!
-    Prop.rec
-      (snd ((k ˣ) x))
-      (λ {(α , isLC)
-        → α Fin.zero ,
-          (x · α zero          ≡⟨ useSolver x (α zero) ⟩
-           (α zero · x + 0r)   ≡⟨ sym isLC ⟩
-           1r ∎)
-       })
-      1∈⟨x⟩ !}
+    Consequences.onFGIdeals k k-local xs 1∈⟨xs⟩
     where
       useSolver : (x α : ⟨ k ⟩) → x · α ≡ α · x + 0r
       useSolver = solve k
