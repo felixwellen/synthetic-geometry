@@ -18,11 +18,13 @@ open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
 
 open import Cubical.Algebra.CommRing
+open import Cubical.Algebra.CommRing.LocalRing
 
 open import Cubical.Relation.Nullary.Base using (¬_)
 
 open import SyntheticGeometry.Spec
 open import SyntheticGeometry.Open
+open import SyntheticGeometry.SQC
 
 private variable ℓ : Level
 
@@ -78,4 +80,10 @@ Construct an open covering by affine schemes.
               _ = v∈kˣ
         step2 : (x y : _) → linear-equivalent x y → fst x i ∈ k ˣ → fst y i ∈ k ˣ
         step2 x y (c , c∈kˣ , cx≡y) xi∈kˣ = step1 c (fst x i) (fst y i) c∈kˣ xi∈kˣ (cx≡y i)
+
+  covering : isLocal k → sqc-over-itself k → (p : ℙ) → ∃[ i ∈ Fin (n + 1) ] ⟨ fst (U i p) ⟩
+  covering k-local k-sqc =
+    SQ.elimProp
+      (λ _ → isPropPropTrunc)
+      λ x → generalized-field-property k k-local k-sqc (fst x) (snd x)
 ```
