@@ -64,11 +64,6 @@ But even more, every nonzero vector contains an invertible element.
   generalized-field-property xs xs≢0 =
     Consequences.onFGIdeals k k-local xs 1∈⟨xs⟩
     where
-      useSolver : (x α : ⟨ k ⟩) → x · α ≡ α · x + 0r
-      useSolver = solve k
-
-      open FreeCommAlgebra.Construction using (const)
-
       ⟨xs⟩ : IdealsIn kₐ
       ⟨xs⟩ = generatedIdeal kₐ xs
 
@@ -82,14 +77,13 @@ But even more, every nonzero vector contains an invertible element.
       module kₐ = CommAlgebraStr (snd kₐ)
 
       πx≡0 : (i : _) → π $a xs i ≡ A.0a
-      πx≡0 i = isZeroFromIdeal {A = kₐ} {I = ⟨xs⟩} (xs i)
-               (incInIdeal kₐ xs i)
+      πx≡0 i = isZeroFromIdeal (xs i) (incInIdeal kₐ xs i)
 
       finite-presentation-of-A : FinitePresentation A
       finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
 
       equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
-      equiv = _ , k-sqc _ ∥_∥₁.∣ finite-presentation-of-A ∣₁
+      equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣₁
 
       Spec-A-empty : Spec k A → ⊥
       Spec-A-empty h = xs≢0 (funExt xs≡0)
