@@ -50,7 +50,7 @@ module _ (k : CommRing ℓ) where
     mapping-space-eq : Spec k[D] ≡ (D → ⟨ k ⟩)
     mapping-space-eq = homMapPath k-as-algebra
 
-  std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec (fst k-as-algebra) n
+  std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
   std-affine-space-as-product n = mapping-space-eq (Fin n)
 
 ```
