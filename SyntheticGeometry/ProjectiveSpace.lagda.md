@@ -25,6 +25,7 @@ open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
 
 open import Cubical.Relation.Nullary.Base using (¬_)
+open import Cubical.Relation.Binary
 
 open import SyntheticGeometry.Spec
 open import SyntheticGeometry.Open
@@ -51,20 +52,40 @@ module _ (k : CommRing ℓ) (n : ℕ) where
     where
     open 𝔸ⁿ⁺¹ using (_⋆_)
 
-  linear-equivalence-sym : (x y : 𝔸ⁿ⁺¹) → linear-equivalent x y → linear-equivalent y x
-  linear-equivalence-sym x y (c , c∈kˣ , cx≡y) =
-    c⁻¹ ,
-    Units.RˣInvClosed k c ,
-    ( c⁻¹ ⋆ y          ≡⟨ sym (cong (c⁻¹ ⋆_) cx≡y) ⟩
-      c⁻¹ ⋆ (c ⋆ x)    ≡⟨ sym (⋆Assoc _ c _) ⟩
-      (c⁻¹ k.· c) ⋆ x  ≡⟨ cong (_⋆ x) ((Units.·-linv k c)) ⟩
-      k.1r ⋆ x         ≡⟨ ⋆IdL _  ⟩
-      x                ∎ )
-    where
-      open k
-      open 𝔸ⁿ⁺¹
-      instance _ = c∈kˣ
-      c⁻¹ = fst c∈kˣ
+  module _ where
+    open BinaryRelation
+    open isEquivRel
+    open k
+    open 𝔸ⁿ⁺¹
+    open Units k
+
+    isEquivRel-lin-eq : isEquivRel linear-equivalent
+
+    reflexive isEquivRel-lin-eq x = 1r , RˣContainsOne , (⋆IdL _)
+
+    symmetric isEquivRel-lin-eq x y (c , c∈kˣ , cx≡y) =
+      c⁻¹ ,
+      Units.RˣInvClosed k c ,
+      ( c⁻¹ ⋆ y          ≡⟨ sym (cong (c⁻¹ ⋆_) cx≡y) ⟩
+        c⁻¹ ⋆ (c ⋆ x)    ≡⟨ sym (⋆Assoc _ _ _) ⟩
+        (c⁻¹ k.· c) ⋆ x  ≡⟨ cong (_⋆ x) (·-linv c) ⟩
+        k.1r ⋆ x         ≡⟨ ⋆IdL _  ⟩
+        x                ∎ )
+      where
+        instance _ = c∈kˣ
+        c⁻¹ = c ⁻¹
+
+    transitive isEquivRel-lin-eq x y z (c , c∈kˣ , cx≡y) (d , d∈kˣ , dy≡z) =
+      d k.· c ,
+      RˣMultClosed d c ,
+      ( ((d k.· c) ⋆ x)  ≡⟨ ⋆Assoc _ _ _ ⟩
+        (d ⋆ (c ⋆ x))    ≡⟨ cong (_ ⋆_) cx≡y ⟩
+        (d ⋆ y)          ≡⟨ dy≡z ⟩
+        z                ∎ )
+      where
+        instance
+          _ = c∈kˣ
+          _ = d∈kˣ
 
   ℙ : Type _
   ℙ = 𝔸ⁿ⁺¹-0 / (λ x y → linear-equivalent (fst x) (fst y))
@@ -82,8 +103,8 @@ Construct an open covering by affine schemes.
             λ x y x~y
               → qc-open-≡
                   k _ _
-                  (⇒∶ (step2 (fst x) (fst y) x~y)
-                   ⇐∶ step2 (fst y) (fst x) (linear-equivalence-sym _ _ x~y))
+                  (⇒∶ step2 (fst x) (fst y) x~y
+                   ⇐∶ step2 (fst y) (fst x) (symmetric _ _ x~y))
         where
           step1 : (u v w : ⟨ k ⟩) → (u ∈ k ˣ) → (v ∈ k ˣ) → u k.· v ≡ w → w ∈ k ˣ
           step1 u v w u∈kˣ v∈kˣ p = subst (_∈ k ˣ) p (Units.RˣMultClosed k u v)
@@ -93,6 +114,7 @@ Construct an open covering by affine schemes.
                 _ = v∈kˣ
           step2 : (x y : _) → linear-equivalent x y → x i ∈ k ˣ → y i ∈ k ˣ
           step2 x y (c , c∈kˣ , cx≡y) xi∈kˣ = step1 c (x i) (y i) c∈kˣ xi∈kˣ (funExt⁻ cx≡y i)
+          open BinaryRelation.isEquivRel isEquivRel-lin-eq
 
     embedded-𝔸ⁿ : Type ℓ
     embedded-𝔸ⁿ = Σ[ x ∈ 𝔸ⁿ⁺¹ ] x i ≡ k.1r
