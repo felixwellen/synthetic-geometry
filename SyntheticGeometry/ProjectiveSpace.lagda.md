@@ -87,8 +87,11 @@ module _ (k : CommRing ℓ) (n : ℕ) where
           _ = c∈kˣ
           _ = d∈kˣ
 
+    -- Note: linear-equivalent is not prop-valued as a relation on 𝔸ⁿ⁺¹
+    -- but it is if we restrict to 𝔸ⁿ⁺¹-0 and assume k to be local and SQC.
+
   ℙ : Type _
-  ℙ = 𝔸ⁿ⁺¹-0 / (λ x y → linear-equivalent (fst x) (fst y))
+  ℙ = 𝔸ⁿ⁺¹-0 / (on fst linear-equivalent)
 ```
 Construct an open covering by affine schemes.
 ```agda
@@ -132,8 +135,9 @@ Construct an open covering by affine schemes.
       ι-injective (x , xi≡1) (y , yi≡1) ιx≡ιy =
         Σ≡Prop
           (λ _ → k.is-set _ _)
-          (lineq→≡ (effective (λ _ _ → {!!}) {!!} _ _ ιx≡ιy))
+          (PT.rec (𝔸ⁿ⁺¹.is-set _ _) lineq→≡ (Iso.fun (isEquivRel→TruncIso eqRel _ _) ιx≡ιy))
         where
+        eqRel = isEquivRelOn fst linear-equivalent isEquivRel-lin-eq
         lineq→≡ : linear-equivalent x y → x ≡ y
         lineq→≡ (c , _ , cx≡y) =
           x        ≡⟨ sym (⋆IdL _) ⟩
