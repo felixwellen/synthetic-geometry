@@ -21,6 +21,8 @@ open import Cubical.Data.Sigma
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
+open import Cubical.Algebra.Module
+open import Cubical.Algebra.Module.Instances.FinVec
 
 open import Cubical.Relation.Nullary.Base using (¬_)
 
@@ -34,6 +36,7 @@ private variable ℓ : Level
 
 module _ (k : CommRing ℓ) (n : ℕ) where
   module k = CommRingStr (snd k)
+  module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = n + 1}))
 
   𝔸ⁿ⁺¹ = FinVec ⟨ k ⟩ (n + 1)
 
@@ -44,19 +47,22 @@ module _ (k : CommRing ℓ) (n : ℕ) where
 
   linear-equivalent : (x y : 𝔸ⁿ⁺¹) → Type _
   linear-equivalent x y =
-    Σ[ c ∈ ⟨ k ⟩ ] (c ∈ (k ˣ)) × ((i : Fin (n + 1)) → c k.· (x i) ≡ y i)
+    Σ[ c ∈ ⟨ k ⟩ ] (c ∈ (k ˣ)) × (c ⋆ x ≡ y)
+    where
+    open 𝔸ⁿ⁺¹ using (_⋆_)
 
   linear-equivalence-sym : (x y : 𝔸ⁿ⁺¹) → linear-equivalent x y → linear-equivalent y x
   linear-equivalence-sym x y (c , c∈kˣ , cx≡y) =
     c⁻¹ ,
     Units.RˣInvClosed k c ,
-    λ i → c⁻¹ k.· y i          ≡⟨ sym (cong (c⁻¹ k.·_) (cx≡y i)) ⟩
-          c⁻¹ k.· (c k.· x i)  ≡⟨ ·Assoc _ c _ ⟩
-          (c⁻¹ k.· c) k.· x i  ≡⟨ cong (k._· x i) (Units.·-linv k c) ⟩
-          k.1r k.· x i         ≡⟨ ·IdL _  ⟩
-          x i                  ∎
+    ( c⁻¹ ⋆ y          ≡⟨ sym (cong (c⁻¹ ⋆_) cx≡y) ⟩
+      c⁻¹ ⋆ (c ⋆ x)    ≡⟨ sym (⋆Assoc _ c _) ⟩
+      (c⁻¹ k.· c) ⋆ x  ≡⟨ cong (_⋆ x) ((Units.·-linv k c)) ⟩
+      k.1r ⋆ x         ≡⟨ ⋆IdL _  ⟩
+      x                ∎ )
     where
       open k
+      open 𝔸ⁿ⁺¹
       instance _ = c∈kˣ
       c⁻¹ = fst c∈kˣ
 
@@ -86,12 +92,15 @@ Construct an open covering by affine schemes.
                 _ = u∈kˣ
                 _ = v∈kˣ
           step2 : (x y : _) → linear-equivalent x y → x i ∈ k ˣ → y i ∈ k ˣ
-          step2 x y (c , c∈kˣ , cx≡y) xi∈kˣ = step1 c (x i) (y i) c∈kˣ xi∈kˣ (cx≡y i)
+          step2 x y (c , c∈kˣ , cx≡y) xi∈kˣ = step1 c (x i) (y i) c∈kˣ xi∈kˣ (funExt⁻ cx≡y i)
 
     embedded-𝔸ⁿ : Type ℓ
     embedded-𝔸ⁿ = Σ[ x ∈ 𝔸ⁿ⁺¹ ] x i ≡ k.1r
 
-    module _ (k-local : isLocal k) where
+    module _
+      (k-local : isLocal k)
+      where
+
       ι : embedded-𝔸ⁿ → ℙ
       ι (x , xi≡1) = [ x , (λ x≡0 → 1≢0 (sym xi≡1 ∙ cong (λ x → x i) x≡0)) ]
         where
@@ -101,21 +110,22 @@ Construct an open covering by affine schemes.
       ι-injective (x , xi≡1) (y , yi≡1) ιx≡ιy =
         Σ≡Prop
           (λ _ → k.is-set _ _)
-          (funExt (λ j → lineq→≡ (effective (λ _ _ → {!!}) {!!} _ _ ιx≡ιy) j))
+          (lineq→≡ (effective (λ _ _ → {!!}) {!!} _ _ ιx≡ιy))
         where
-        lineq→≡ : linear-equivalent x y → (j : _) → x j ≡ y j
-        lineq→≡ (c , _ , cx≡y) j =
-          x j           ≡⟨ sym (·IdL _) ⟩
-          1r k.· x j    ≡⟨ cong (k._· _) (sym c≡1) ⟩
-          c k.· x j     ≡⟨ cx≡y j ⟩
-          y j           ∎
+        lineq→≡ : linear-equivalent x y → x ≡ y
+        lineq→≡ (c , _ , cx≡y) =
+          x        ≡⟨ sym (⋆IdL _) ⟩
+          1r ⋆ x   ≡⟨ cong (_⋆ _) (sym c≡1) ⟩
+          c ⋆ x    ≡⟨ cx≡y ⟩
+          y        ∎
           where
+          open 𝔸ⁿ⁺¹
           open k
           c≡1 : c ≡ k.1r
           c≡1 =
             c           ≡⟨ sym (·IdR _) ⟩
             c k.· 1r    ≡⟨ cong (_ k.·_) (sym xi≡1) ⟩
-            c k.· x i   ≡⟨ cx≡y i ⟩
+            c k.· x i   ≡⟨ funExt⁻ cx≡y i ⟩
             y i         ≡⟨ yi≡1 ⟩
             1r          ∎
 
