@@ -10,15 +10,21 @@ open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset using (_∈_) renaming (ℙ to Powerset)
 open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.HLevels
+open import Cubical.Foundations.Pointed using (_→∙_)
+open import Cubical.Foundations.Pointed.Homogeneous using (isHomogeneousDiscrete)
+open import Cubical.Foundations.Univalence using (pathToEquiv)
+
+open import Cubical.Structures.Pointed using (pointed-sip)
 
 open import Cubical.Functions.Logic using (⇒∶_⇐∶_)
 open import Cubical.Functions.Embedding
 
 open import Cubical.HITs.SetQuotients as SQ
 open import Cubical.HITs.PropositionalTruncation as PT
-open import Cubical.Data.Nat using (ℕ; _+_)
+open import Cubical.Data.Nat using (ℕ; _+_; +-comm)
 open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
+open import Cubical.Data.Maybe
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
@@ -171,6 +177,20 @@ Construct an open covering by affine schemes.
                   1r ⋆ x           ≡⟨ ⋆IdL _ ⟩
                   x                ∎ ) )}
 
+    embedded-𝔸ⁿ-is-𝔸ⁿ : embedded-𝔸ⁿ ≡ 𝔸 k n
+    embedded-𝔸ⁿ-is-𝔸ⁿ =
+      embedded-𝔸ⁿ                               ≡⟨⟩
+      ((Fin (n + 1) , i) →∙ (⟨ k ⟩ , 1r))       ≡⟨ cong (_→∙ _) transformDomain ⟩
+      (Maybe∙ (Fin n) →∙ (⟨ k ⟩ , 1r))          ≡⟨ isoToPath (freelyPointedIso _ _) ⟩
+      FinVec ⟨ k ⟩ n                            ≡⟨ sym (std-affine-space-as-product k n) ⟩
+      𝔸 k n                                     ∎
+      where
+      transformDomain : (Fin (n + 1) , i) ≡ Maybe∙ (Fin n)
+      transformDomain =
+        (Fin (n + 1) , i)        ≡⟨ (pointed-sip _ _ (pathToEquiv (cong Fin (+-comm n 1)) , refl)) ⟩
+        (Fin (ℕ.suc n) , _)      ≡⟨ (isHomogeneousDiscrete discreteFin zero) ⟩
+        (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
+        Maybe∙ (Fin n)           ∎
 
   covering : isLocal k → sqc-over-itself k → (p : ℙ) → ∃[ i ∈ Fin (n + 1) ] ⟨ fst (U i p) ⟩
   covering k-local k-sqc =
