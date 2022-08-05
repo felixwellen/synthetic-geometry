@@ -97,7 +97,7 @@ module _ (k : CommRing ℓ) (n : ℕ) where
     -- It doesn't seem like we need this for now.
 
   ℙ : Type _
-  ℙ = 𝔸ⁿ⁺¹-0 / (on fst linear-equivalent)
+  ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
 ```
 Construct an open covering by affine schemes.
 ```agda
@@ -143,7 +143,7 @@ Construct an open covering by affine schemes.
           (λ _ → k.is-set _ _)
           (PT.rec (𝔸ⁿ⁺¹.is-set _ _) lineq→≡ (Iso.fun (isEquivRel→TruncIso eqRel _ _) ιx≡ιy))
         where
-        eqRel = isEquivRelOn fst linear-equivalent isEquivRel-lin-eq
+        eqRel = isEquivRelPulledbackRel fst linear-equivalent isEquivRel-lin-eq
         lineq→≡ : linear-equivalent x y → x ≡ y
         lineq→≡ (c , _ , cx≡y) =
           x        ≡⟨ sym (⋆IdL _) ⟩
