@@ -39,6 +39,14 @@ open import Cubical.Tactics.CommRingSolver.Reflection
 
 open import SyntheticGeometry.Spec
 
+```
+
+The following defines synthetic quasicoherence for finitely presented algebras
+over a given ring k. There are more general versions of synthetic quasicoherence
+in Blechschmidt's thesis.
+
+```agda
+
 
 sqc-over-itself : {ℓ : Level} → CommRing ℓ → Set (ℓ-suc ℓ)
 sqc-over-itself {ℓ} k = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (canonical-map A)
