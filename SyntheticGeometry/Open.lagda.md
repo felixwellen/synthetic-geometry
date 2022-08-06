@@ -74,13 +74,17 @@ module _ (k : CommRing ℓ) where
   qc-opens-in : (X : Type ℓ) → Type _
   qc-opens-in X = X → qc-open-prop
 
+  infixl 3 _∈ᵤ_
+  _∈ᵤ_ : {X : Type ℓ} → (x : X) → qc-opens-in X → Type _
+  x ∈ᵤ U = fst (fst (U x))
+
   qc-open-as-type : {X : Type ℓ} → qc-opens-in X → Type _
-  qc-open-as-type {X = X} U = Σ[ x ∈ X ] fst (fst (U x))
+  qc-open-as-type {X = X} U = Σ[ x ∈ X ] x ∈ᵤ U
 
 
   is-finite-qc-open-cover : {n : ℕ}
     → (X : Type ℓ) → (U : Fin n → qc-opens-in X)
     → Type _
-  is-finite-qc-open-cover {n = n} X U = (x : X) → ∃[ i ∈ Fin n ] fst (fst (U i x))
+  is-finite-qc-open-cover {n = n} X U = (x : X) → ∃[ i ∈ Fin n ] x ∈ᵤ (U i)
 
 ```
