@@ -84,7 +84,9 @@ module _ (k : CommRing ℓ) where
 
   is-finite-qc-open-cover : {n : ℕ}
     → (X : Type ℓ) → (U : Fin n → qc-opens-in X)
-    → Type _
-  is-finite-qc-open-cover {n = n} X U = (x : X) → ∃[ i ∈ Fin n ] x ∈ᵤ (U i)
+    → hProp _
+  is-finite-qc-open-cover {n = n} X U =
+    ((x : X) → ∃[ i ∈ Fin n ] x ∈ᵤ (U i)) ,
+    isPropΠ (λ _ → isPropPropTrunc)
 
 ```
