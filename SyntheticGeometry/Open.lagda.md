@@ -28,7 +28,7 @@ open import Cubical.Relation.Nullary.Base using (¬_)
 
 open import SyntheticGeometry.Spec
 
-private variable ℓ : Level
+private variable ℓ ℓ' : Level
 
 module _ (k : CommRing ℓ) where
   contains-invertible : {n : ℕ} → FinVec ⟨ k ⟩ n → Type _
@@ -72,26 +72,26 @@ module _ (k : CommRing ℓ) where
     is-prop : isProp _
     is-prop = isPropΠ {B = λ x → is-qc-open (U x)} λ _ → isPropPropTrunc
 
-  qc-opens-in : (X : Type ℓ) → Type _
+  qc-opens-in : (X : Type ℓ') → Type _
   qc-opens-in X = X → qc-open-prop
 
   infixl 3 _∈ᵤ_
-  _∈ᵤ_ : {X : Type ℓ} → (x : X) → qc-opens-in X → Type _
+  _∈ᵤ_ : {X : Type ℓ'} → (x : X) → qc-opens-in X → Type _
   x ∈ᵤ U = fst (fst (U x))
 
-  qc-open-as-type : {X : Type ℓ} → qc-opens-in X → Type _
+  qc-open-as-type : {X : Type ℓ'} → qc-opens-in X → Type _
   qc-open-as-type {X = X} U = Σ[ x ∈ X ] x ∈ᵤ U
 
 
   is-finite-qc-open-cover : {n : ℕ}
-    → (X : Type ℓ) → (U : Fin n → qc-opens-in X)
+    → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
     → hProp _
   is-finite-qc-open-cover {n = n} X U =
     ((x : X) → ∃[ i ∈ Fin n ] x ∈ᵤ (U i)) ,
     isPropΠ (λ _ → isPropPropTrunc)
 
   is-affine-finite-qc-open-cover : {ℓ' : Level} {n : ℕ}
-    → (X : Type ℓ) → (U : Fin n → qc-opens-in X)
+    → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
     → hProp _
   is-affine-finite-qc-open-cover {ℓ' = ℓ'} {n = n} X U =
     fst (is-finite-qc-open-cover X U) × ((i : Fin n) → fst (is-affine k {ℓ' = ℓ'} (qc-open-as-type (U i)))) ,
