@@ -65,11 +65,11 @@ module _ (k : CommRing ℓ) where
     → U ≡ V
   qc-open-≡ U V = Σ≡Prop λ _ → isPropPropTrunc
 
-  is-qc-open-subset : {X : Type ℓ} → Powerset X → Type _
-  is-qc-open-subset {X = X} U = (x : X) → is-qc-open (U x)
-
-  is-prop-qc-open-subset : {X : Type ℓ} → (P : Powerset X) → isProp (is-qc-open-subset P)
-  is-prop-qc-open-subset P = isPropΠ λ _ → isPropPropTrunc
+  is-qc-open-subset : {X : Type ℓ} → Powerset X → hProp (ℓ-suc ℓ)
+  is-qc-open-subset {X = X} U = ((x : X) → is-qc-open (U x)) , is-prop
+    where
+    is-prop : isProp _
+    is-prop = isPropΠ {B = λ x → is-qc-open (U x)} λ _ → isPropPropTrunc
 
   qc-opens-in : (X : Type ℓ) → Type _
   qc-opens-in X = X → qc-open-prop
@@ -82,4 +82,5 @@ module _ (k : CommRing ℓ) where
     → (X : Type ℓ) → (U : Fin n → qc-opens-in X)
     → Type _
   is-finite-qc-open-cover {n = n} X U = (x : X) → ∃[ i ∈ Fin n ] fst (fst (U i x))
+
 ```
