@@ -10,11 +10,13 @@ module SyntheticGeometry.Spec where
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
+open import Cubical.Foundations.HLevels
 
 open import Cubical.Data.Nat
 open import Cubical.Data.FinData
 open import Cubical.Data.Fin hiding (Fin)
 open import Cubical.Data.Sigma
+open import Cubical.HITs.PropositionalTruncation
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommAlgebra
@@ -55,7 +57,9 @@ module _ (k : CommRing ℓ) where
   std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
   std-affine-space-as-product n = mapping-space-eq (Fin n)
 
-  is-affine : {ℓ' : Level} → Type ℓ'' → Type _
-  is-affine {ℓ'} X = ∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A
+  is-affine : {ℓ' : Level} → Type ℓ'' → hProp _
+  is-affine {ℓ'} X =
+    (∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A) ,
+    isPropPropTrunc
 
 ```
