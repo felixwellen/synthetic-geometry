@@ -57,8 +57,8 @@ module _ (k : CommRing ℓ) where
   std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
   std-affine-space-as-product n = mapping-space-eq (Fin n)
 
-  is-affine : {ℓ' : Level} → Type ℓ'' → hProp _
-  is-affine {ℓ'} X =
+  is-affine : Type ℓ' → hProp _
+  is-affine {ℓ' = ℓ'} X =
     (∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A) ,
     isPropPropTrunc
 

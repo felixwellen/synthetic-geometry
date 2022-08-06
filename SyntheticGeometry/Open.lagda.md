@@ -90,11 +90,11 @@ module _ (k : CommRing ℓ) where
     ((x : X) → ∃[ i ∈ Fin n ] x ∈ᵤ (U i)) ,
     isPropΠ (λ _ → isPropPropTrunc)
 
-  is-affine-finite-qc-open-cover : {ℓ' : Level} {n : ℕ}
+  is-affine-finite-qc-open-cover : {n : ℕ}
     → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
     → hProp _
-  is-affine-finite-qc-open-cover {ℓ' = ℓ'} {n = n} X U =
-    fst (is-finite-qc-open-cover X U) × ((i : Fin n) → fst (is-affine k {ℓ' = ℓ'} (qc-open-as-type (U i)))) ,
-    isPropΣ (snd (is-finite-qc-open-cover X U)) λ _ → isPropΠ λ i → snd (is-affine k {ℓ' = ℓ'} (qc-open-as-type (U i)))
+  is-affine-finite-qc-open-cover {n = n} X U =
+    fst (is-finite-qc-open-cover X U) × ((i : Fin n) → fst (is-affine k (qc-open-as-type (U i)))) ,
+    isPropΣ (snd (is-finite-qc-open-cover X U)) λ _ → isPropΠ λ i → snd (is-affine k (qc-open-as-type (U i)))
 
 ```

@@ -1,6 +1,7 @@
 Projective Space
 ================
 Construct projective space as a quotient of 𝔸ⁿ⁺¹-{0}.
+
 ```agda
 module SyntheticGeometry.ProjectiveSpace where
 
@@ -98,6 +99,7 @@ module _ (k : CommRing ℓ) (n : ℕ) where
 
   ℙ : Type _
   ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
+
 ```
 Construct an open covering by affine schemes.
 ```agda
