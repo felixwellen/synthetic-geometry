@@ -105,7 +105,17 @@ module _ (k : CommRing ℓ) (n : ℕ) where
   ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
 
 ```
+
 Construct an open covering by affine schemes.
+We will fix an index i and construct U i as an qc-open by the relation
+
+ x ∈ U i ⊆ ℙⁿ ⇔ x i ∈ k ˣ
+
+For the proof that U i is equivalent to 𝔸ⁿ and therefore affine,
+we will use an intermediate type given by
+
+ embedded-𝔸 :≡ Σ[ x ∈ 𝔸ⁿ⁺¹ ] x i ≡ 1r
+
 ```agda
   module _
     (i : Fin (n + 1))
