@@ -17,9 +17,13 @@ open import Cubical.Data.FinData
 open import Cubical.HITs.PropositionalTruncation
 
 open import Cubical.Algebra.CommRing
+open import Cubical.Algebra.CommRing.LocalRing
+
 
 open import SyntheticGeometry.Open
 open import SyntheticGeometry.Spec
+open import SyntheticGeometry.ProjectiveSpace
+open import SyntheticGeometry.SQC
 
 private variable ℓ ℓ' : Level
 
@@ -35,5 +39,17 @@ module _ (k : CommRing ℓ) where
   is-qc-scheme X =
     (∃[ n ∈ ℕ ] ∃[ U ∈ (Fin n → qc-opens-in k X) ] fst (is-affine-finite-qc-open-cover k X U)) ,
     isPropPropTrunc
+
+```
+
+The projective space ℙ k n, defined [here](ProjectiveSpace.lagda.md) is a qc-scheme.
+The affine qc-open cover U k n is defined in [this](ProjectiveSpace.lagda.md) module.
+
+```agda
+
+  ℙ-is-qc-scheme : isLocal k → sqc-over-itself k
+    → (n : ℕ) → fst (is-qc-scheme (ℙ k n))
+  ℙ-is-qc-scheme k-local k-sqc n =
+    ∣ (n + 1) , ∣ (U k n) , (covering k n k-local k-sqc) , (λ i → U-is-affine k n i k-local) ∣₁ ∣₁
 
 ```
