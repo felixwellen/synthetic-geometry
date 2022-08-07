@@ -8,17 +8,20 @@ module SyntheticGeometry.ProjectiveSpace where
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
-open import Cubical.Foundations.Powerset using (_∈_) renaming (ℙ to Powerset)
+open import Cubical.Foundations.Powerset using (_∈_; _⊆_) renaming (ℙ to Powerset)
 open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Pointed using (_→∙_)
 open import Cubical.Foundations.Pointed.Homogeneous using (isHomogeneousDiscrete)
 open import Cubical.Foundations.Univalence using (pathToEquiv)
+open import Cubical.Foundations.Powerset using (⊆-extensionality)
+open import Cubical.Foundations.Function
 
 open import Cubical.Structures.Pointed using (pointed-sip)
 
 open import Cubical.Functions.Logic using (⇒∶_⇐∶_)
 open import Cubical.Functions.Embedding
+open import Cubical.Functions.Surjection
 
 open import Cubical.HITs.SetQuotients as SQ
 open import Cubical.HITs.PropositionalTruncation as PT
@@ -31,6 +34,7 @@ open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
+open import Cubical.Algebra.CommAlgebra.FPAlgebra
 
 open import Cubical.Relation.Nullary.Base using (¬_)
 open import Cubical.Relation.Binary
@@ -139,6 +143,15 @@ Construct an open covering by affine schemes.
         where
         open Consequences k k-local
 
+      im-ι-subset : ℙ → hProp ℓ
+      im-ι-subset y = (∃[ x ∈ embedded-𝔸ⁿ ] ι x ≡ y) , isPropPropTrunc
+
+      im-ι : Type ℓ
+      im-ι = Σ[ y ∈ ℙ ] y ∈ im-ι-subset
+
+      embedded-𝔸ⁿ→im-ι : embedded-𝔸ⁿ → im-ι
+      embedded-𝔸ⁿ→im-ι x = (ι x) , ∣ x , refl ∣₁
+
       ι-injective : (x y : embedded-𝔸ⁿ) → ι x ≡ ι y → x ≡ y
       ι-injective (x , xi≡1) (y , yi≡1) ιx≡ιy =
         Σ≡Prop
@@ -164,20 +177,56 @@ Construct an open covering by affine schemes.
       ι-embedding : isEmbedding ι
       ι-embedding = injEmbedding squash/ (ι-injective _ _)
 
-      imι⊆U : (x : embedded-𝔸ⁿ) → fst (fst (U (ι x)))
-      imι⊆U (x , xi≡1) = subst (_∈ (k ˣ)) (sym xi≡1) RˣContainsOne
+      ι-embedding-im : isEmbedding embedded-𝔸ⁿ→im-ι
+      ι-embedding-im =
+        injEmbedding
+          (isSetΣ squash/ (λ x → isProp→isSet isPropPropTrunc))
+          λ p → ι-injective _ _ (cong fst p)
 
-      U⊆imι : (p : ℙ) → fst (fst (U p)) → fiber ι p
-      U⊆imι =
-        elimProp
-          (λ p → isProp→ (injective→hasPropFibers squash/ (ι-injective _ _) p))
-          λ{ (x , _) xi∈kˣ@(c , xic≡1) →
-              (c ⋆ x , ·Comm c (x i) ∙ xic≡1) ,
-              eq/ _ _ ( x i , xi∈kˣ ,
-                ( x i ⋆ (c ⋆ x)    ≡⟨ sym (⋆Assoc _ _ _) ⟩
-                  (x i · c) ⋆ x    ≡⟨ cong (_⋆ _) xic≡1 ⟩
-                  1r ⋆ x           ≡⟨ ⋆IdL _ ⟩
-                  x                ∎ ) )}
+      embedded-𝔸ⁿ≃im-ι : embedded-𝔸ⁿ ≃ im-ι
+      embedded-𝔸ⁿ≃im-ι =
+        embedded-𝔸ⁿ→im-ι ,
+        isEmbedding×isSurjection→isEquiv
+          (ι-embedding-im ,
+           λ y → PT.rec isPropPropTrunc
+             (λ (x , ιx≡fst-y) →
+               ∣ x , (embedded-𝔸ⁿ→im-ι x ≡⟨ Σ≡Prop (λ _ → isPropPropTrunc) ιx≡fst-y ⟩
+                       y ∎) ∣₁)
+             (snd y))
+
+      imι⊆U : im-ι-subset ⊆ (fst ∘ U)
+      imι⊆U x x∈im-ι =
+        PT.rec (snd (fst (U x))) (λ (y , ιy≡x) → subst (fst ∘ fst ∘ U) ιy≡x (imι⊆U' y)) x∈im-ι
+        where
+        imι⊆U' : (x : embedded-𝔸ⁿ) → fst (fst (U (ι x)))
+        imι⊆U' (x , xi≡1) = subst (_∈ (k ˣ)) (sym xi≡1) RˣContainsOne
+
+      U⊆imι : (fst ∘ U) ⊆ im-ι-subset
+      U⊆imι x x∈U = U⊆imι' x x∈U
+        where
+        U⊆imι' : (p : ℙ) → fst (fst (U p)) → fst (im-ι-subset p)
+        U⊆imι' =
+          elimProp
+            (λ p → isProp→ (snd (im-ι-subset p)))
+            λ{ (x , _) xi∈kˣ@(c , xic≡1) →
+                ∣ ((c ⋆ x , ·Comm c (x i) ∙ xic≡1) ,
+                   eq/ _ _ ( x i , xi∈kˣ ,
+                    ( x i ⋆ (c ⋆ x)    ≡⟨ sym (⋆Assoc _ _ _) ⟩
+                      (x i · c) ⋆ x    ≡⟨ cong (_⋆ _) xic≡1 ⟩
+                      1r ⋆ x           ≡⟨ ⋆IdL _ ⟩
+                      x                ∎ ))) ∣₁}
+
+
+      U≡im-ι : qc-open-as-type k U ≡ im-ι
+      U≡im-ι =
+        cong (Σ ℙ) (cong (fst ∘_) U≡imι)
+        where
+          U≡imι : (fst ∘ U) ≡ im-ι-subset
+          U≡imι =
+            ⊆-extensionality
+              (fst ∘ U)
+              im-ι-subset
+              (U⊆imι , imι⊆U)
 
     embedded-𝔸ⁿ-is-𝔸ⁿ : embedded-𝔸ⁿ ≡ 𝔸 k n
     embedded-𝔸ⁿ-is-𝔸ⁿ =
@@ -193,6 +242,13 @@ Construct an open covering by affine schemes.
         (Fin (ℕ.suc n) , _)      ≡⟨ (isHomogeneousDiscrete discreteFin zero) ⟩
         (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
         Maybe∙ (Fin n)           ∎
+
+    U-is-affine : (k-local : isLocal k) → fst (is-affine k (qc-open-as-type k U))
+    U-is-affine k-local = ∣ Polynomials n ,
+      (qc-open-as-type k U ≃⟨ pathToEquiv (U≡im-ι k-local) ⟩
+       im-ι k-local        ≃⟨ invEquiv (embedded-𝔸ⁿ≃im-ι k-local) ⟩
+       embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩
+       𝔸 k n ■ ) ∣₁
 
   covering : isLocal k → sqc-over-itself k → (p : ℙ) → ∃[ i ∈ Fin (n + 1) ] ⟨ fst (U i p) ⟩
   covering k-local k-sqc =
