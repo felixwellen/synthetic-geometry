@@ -11,6 +11,7 @@ open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Structure
+open import Cubical.Functions.Logic
 
 open import Cubical.Data.Nat
 open import Cubical.Data.Sigma
@@ -37,8 +38,7 @@ defined in [Open](Open.lagda.md).
 module _ (k : CommRing ℓ) where
   is-qc-scheme : (X : Type ℓ') → hProp _
   is-qc-scheme X =
-    (∃[ n ∈ ℕ ] ∃[ U ∈ (Fin n → qc-opens-in k X) ] fst (is-affine-finite-qc-open-cover k X U)) ,
-    isPropPropTrunc
+    (∃[ n ∶ ℕ ] ∃[ U ∶ (Fin n → qc-opens-in k X) ] is-affine-finite-qc-open-cover k X U)
 
 ```
 

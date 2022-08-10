@@ -35,7 +35,7 @@ module _ (k : CommRing ℓ) where
   contains-invertible v = Σ[ i ∈ Fin _ ] (v i) ∈ k ˣ
 
   std-qc-open-prop : {n : ℕ} → FinVec ⟨ k ⟩ n → hProp _
-  std-qc-open-prop v = ∥ contains-invertible v ∥₁ , isPropPropTrunc
+  std-qc-open-prop v = ∥ contains-invertible v ∥ₚ
 
   is-qc-open : hProp _ → Type _
   is-qc-open P = ∃[ n ∈ ℕ ] ∃[ v ∈ FinVec ⟨ k ⟩ n ] P ≡ (std-qc-open-prop v)
@@ -67,10 +67,7 @@ module _ (k : CommRing ℓ) where
   qc-open-≡ U V = Σ≡Prop λ _ → isPropPropTrunc
 
   is-qc-open-subset : {X : Type ℓ} → Powerset X → hProp (ℓ-suc ℓ)
-  is-qc-open-subset {X = X} U = ((x : X) → is-qc-open (U x)) , is-prop
-    where
-    is-prop : isProp _
-    is-prop = isPropΠ {B = λ x → is-qc-open (U x)} λ _ → isPropPropTrunc
+  is-qc-open-subset U = ∀[ x ] is-qc-open (U x) , isPropPropTrunc
 
   qc-opens-in : (X : Type ℓ') → Type _
   qc-opens-in X = X → qc-open-prop
@@ -87,14 +84,13 @@ module _ (k : CommRing ℓ) where
     → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
     → hProp _
   is-finite-qc-open-cover {n = n} X U =
-    ((x : X) → ∃[ i ∈ Fin n ] x ∈ᵤ (U i)) ,
-    isPropΠ (λ _ → isPropPropTrunc)
+    ∀[ x ∶ X ] ∃[ i ∶ Fin n ] fst (U i x)
 
   is-affine-finite-qc-open-cover : {n : ℕ}
     → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
     → hProp _
   is-affine-finite-qc-open-cover {n = n} X U =
-    fst (is-finite-qc-open-cover X U) × ((i : Fin n) → fst (is-affine k (qc-open-as-type (U i)))) ,
-    isProp× (snd (is-finite-qc-open-cover X U)) (isPropΠ λ i → snd (is-affine k (qc-open-as-type (U i))))
+    is-finite-qc-open-cover X U
+    ⊓ (∀[ i ∶ Fin n ] is-affine k (qc-open-as-type (U i)))
 
 ```
