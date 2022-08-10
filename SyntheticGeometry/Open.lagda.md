@@ -95,6 +95,6 @@ module _ (k : CommRing ℓ) where
     → hProp _
   is-affine-finite-qc-open-cover {n = n} X U =
     fst (is-finite-qc-open-cover X U) × ((i : Fin n) → fst (is-affine k (qc-open-as-type (U i)))) ,
-    isPropΣ (snd (is-finite-qc-open-cover X U)) λ _ → isPropΠ λ i → snd (is-affine k (qc-open-as-type (U i)))
+    isProp× (snd (is-finite-qc-open-cover X U)) (isPropΠ λ i → snd (is-affine k (qc-open-as-type (U i))))
 
 ```
