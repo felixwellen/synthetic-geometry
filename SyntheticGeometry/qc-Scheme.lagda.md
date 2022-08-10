@@ -47,7 +47,7 @@ The affine qc-open cover U k n is defined in [this](ProjectiveSpace.lagda.md) mo
 ```agda
 
   ℙ-is-qc-scheme : isLocal k → sqc-over-itself k
-    → (n : ℕ) → fst (is-qc-scheme (ℙ k n))
+    → (n : ℕ) → ⟨ is-qc-scheme (ℙ k n) ⟩
   ℙ-is-qc-scheme k-local k-sqc n =
     ∣ (n + 1) , ∣ (U k n) , (covering k n k-local k-sqc) , (λ i → U-is-affine k n i k-local) ∣₁ ∣₁
 
