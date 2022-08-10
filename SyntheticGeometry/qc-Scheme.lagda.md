@@ -21,7 +21,6 @@ open import Cubical.Algebra.CommRing.LocalRing
 
 
 open import SyntheticGeometry.Open
-open import SyntheticGeometry.Spec
 open import SyntheticGeometry.ProjectiveSpace
 open import SyntheticGeometry.SQC
 
