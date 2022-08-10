@@ -2,7 +2,7 @@
 =================
 
 A proposition is quasicompact (qc) open iff it is logically equivalent to
-to one of f₁,...,fₙ being invertible in the base ring.
+one of f₁,...,fₙ being invertible in the base ring.
 
 ```agda
 module SyntheticGeometry.Open where
