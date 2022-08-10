@@ -10,10 +10,13 @@ module SyntheticGeometry.Spec where
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
+open import Cubical.Foundations.HLevels
 
 open import Cubical.Data.Nat
 open import Cubical.Data.FinData
 open import Cubical.Data.Fin hiding (Fin)
+open import Cubical.Data.Sigma
+open import Cubical.HITs.PropositionalTruncation
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommAlgebra
@@ -23,11 +26,12 @@ open import Cubical.Algebra.CommAlgebra.FPAlgebra
 
 private
   variable
-    ℓ ℓ' : Level
+    ℓ ℓ' ℓ'' : Level
 
 ```
 
-The synthetic spectrum of an k-algebra A, Spec A, is a notion that makes sense internally in the Zariski Topos. We assume a ring object k in the following, which we think of as (the functor of points of) the affine line 𝔸¹.
+The synthetic spectrum of an k-algebra A, Spec A, is a notion that makes sense internally in the Zariski Topos.
+We assume a ring object k in the following, which we think of as (the functor of points of) the affine line 𝔸¹.
 
 ```agda
 
@@ -52,5 +56,10 @@ module _ (k : CommRing ℓ) where
 
   std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
   std-affine-space-as-product n = mapping-space-eq (Fin n)
+
+  is-affine : Type ℓ' → hProp _
+  is-affine {ℓ' = ℓ'} X =
+    (∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A) ,
+    isPropPropTrunc
 
 ```

@@ -1,5 +1,9 @@
-A proposition is quasicompact open iff it is logically equivalent to
-to one of f₁,...,fₙ being invertible in the base ring.
+(qc-)Open subsets
+=================
+
+A proposition is quasicompact (qc) open iff it is logically equivalent to
+one of f₁,...,fₙ being invertible in the base ring.
+
 ```agda
 module SyntheticGeometry.Open where
 
@@ -24,14 +28,14 @@ open import Cubical.Relation.Nullary.Base using (¬_)
 
 open import SyntheticGeometry.Spec
 
-private variable ℓ : Level
+private variable ℓ ℓ' : Level
 
 module _ (k : CommRing ℓ) where
   contains-invertible : {n : ℕ} → FinVec ⟨ k ⟩ n → Type _
   contains-invertible v = Σ[ i ∈ Fin _ ] (v i) ∈ k ˣ
 
   std-qc-open-prop : {n : ℕ} → FinVec ⟨ k ⟩ n → hProp _
-  std-qc-open-prop v = ∥ contains-invertible v ∥₁ , isPropPropTrunc
+  std-qc-open-prop v = ∥ contains-invertible v ∥ₚ
 
   is-qc-open : hProp _ → Type _
   is-qc-open P = ∃[ n ∈ ℕ ] ∃[ v ∈ FinVec ⟨ k ⟩ n ] P ≡ (std-qc-open-prop v)
@@ -62,16 +66,31 @@ module _ (k : CommRing ℓ) where
     → U ≡ V
   qc-open-≡ U V = Σ≡Prop λ _ → isPropPropTrunc
 
-  is-qc-open-subset : {X : Type ℓ} → Powerset X → Type _
-  is-qc-open-subset {X = X} U = (x : X) → is-qc-open (U x)
+  is-qc-open-subset : {X : Type ℓ} → Powerset X → hProp (ℓ-suc ℓ)
+  is-qc-open-subset U = ∀[ x ] is-qc-open (U x) , isPropPropTrunc
 
-  is-prop-qc-open-subset : {X : Type ℓ} → (P : Powerset X) → isProp (is-qc-open-subset P)
-  is-prop-qc-open-subset P = isPropΠ λ _ → isPropPropTrunc
-
-  qc-opens-in : (X : Type ℓ) → Type _
+  qc-opens-in : (X : Type ℓ') → Type _
   qc-opens-in X = X → qc-open-prop
 
-  qc-open-as-type : {X : Type ℓ} → qc-opens-in X → Type _
-  qc-open-as-type {X = X} U = Σ[ x ∈ X ] fst (fst (U x))
+  infixl 3 _∈ᵤ_
+  _∈ᵤ_ : {X : Type ℓ'} → (x : X) → qc-opens-in X → Type _
+  x ∈ᵤ U = fst (fst (U x))
+
+  qc-open-as-type : {X : Type ℓ'} → qc-opens-in X → Type _
+  qc-open-as-type {X = X} U = Σ[ x ∈ X ] x ∈ᵤ U
+
+
+  is-finite-qc-open-cover : {n : ℕ}
+    → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
+    → hProp _
+  is-finite-qc-open-cover {n = n} X U =
+    ∀[ x ∶ X ] ∃[ i ∶ Fin n ] fst (U i x)
+
+  is-affine-finite-qc-open-cover : {n : ℕ}
+    → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
+    → hProp _
+  is-affine-finite-qc-open-cover {n = n} X U =
+    is-finite-qc-open-cover X U
+    ⊓ (∀[ i ∶ Fin n ] is-affine k (qc-open-as-type (U i)))
 
 ```
