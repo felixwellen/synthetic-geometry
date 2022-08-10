@@ -212,10 +212,7 @@ we will use an intermediate type given by
         imι⊆U' (x , xi≡1) = subst (_∈ (k ˣ)) (sym xi≡1) RˣContainsOne
 
       U⊆imι : (fst ∘ U) ⊆ im-ι-subset
-      U⊆imι x x∈U = U⊆imι' x x∈U
-        where
-        U⊆imι' : (p : ℙ) → fst (fst (U p)) → fst (im-ι-subset p)
-        U⊆imι' =
+      U⊆imι =
           elimProp
             (λ p → isProp→ (snd (im-ι-subset p)))
             λ{ (x , _) xi∈kˣ@(c , xic≡1) →
@@ -225,7 +222,6 @@ we will use an intermediate type given by
                       (x i · c) ⋆ x    ≡⟨ cong (_⋆ _) xic≡1 ⟩
                       1r ⋆ x           ≡⟨ ⋆IdL _ ⟩
                       x                ∎ ))) ∣₁}
-
 
       U≡im-ι : qc-open-as-type k U ≡ im-ι
       U≡im-ι =
