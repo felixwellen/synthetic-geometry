@@ -19,6 +19,7 @@ open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Algebra
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
+open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
 open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to quotientInducedHom)
 open import Cubical.Algebra.CommAlgebra.Ideal
@@ -47,12 +48,35 @@ in Blechschmidt's thesis.
 
 ```agda
 
-
-sqc-over-itself : {ℓ : Level} → CommRing ℓ → Set (ℓ-suc ℓ)
-sqc-over-itself {ℓ} k = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (canonical-map A)
-  where
+module _ {ℓ : Level} (k : CommRing ℓ) where
+  private
+    kₐ = initialCAlg k
     canonical-map : (A : CommAlgebra k ℓ) → ⟨ A ⟩ → (Spec k A → ⟨ k ⟩)
     canonical-map A a φ = φ $a a
+
+  sqc-over-itself : Type _
+  sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (canonical-map A)
+
+```
+
+The canonical map is actually a homomorphism:
+
+```agda
+  module _ (A : CommAlgebra k ℓ) where
+    open IsAlgebraHom
+    open CommAlgebraStr {{...}}
+    private instance
+      _ = snd (pointwiseAlgebra (Spec k A) kₐ)
+      _ = snd A
+
+    canonical-hom : CommAlgebraHom A (pointwiseAlgebra (Spec k A) kₐ)
+    fst canonical-hom = canonical-map A
+    pres0 (snd canonical-hom) = funExt (λ ϕ → pres0 (snd ϕ))
+    pres1 (snd canonical-hom) = funExt (λ ϕ → pres1 (snd ϕ))
+    pres+ (snd canonical-hom) _ _ = funExt (λ ϕ → pres+ (snd ϕ) _ _)
+    pres· (snd canonical-hom) _ _ = funExt (λ ϕ → pres· (snd ϕ) _ _)
+    pres- (snd canonical-hom) _ = funExt (λ ϕ → pres- (snd ϕ) _)
+    pres⋆ (snd canonical-hom) _ _ = funExt (λ ϕ → pres⋆ (snd ϕ) _ _)
 
 ```
 
