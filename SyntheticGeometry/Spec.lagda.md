@@ -49,11 +49,25 @@ module _ (k : CommRing ℓ) where
 
   𝔸 = std-affine-space
 
+```
+
+Since the type of polynomials we use is defined as a HIT,
+which is a straight forward implementation of a free commutative algebra on a type D,
+we can use the following abstract fact ...
+
+```agda
+
   module _ (D : Type ℓ-zero) where
     k[D] = k [ D ]
 
     mapping-space-eq : Spec k[D] ≡ (D → ⟨ k ⟩)
     mapping-space-eq = homMapPath k-as-algebra
+
+```
+
+... to show that std-affine-space is a product:
+
+```agda
 
   std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
   std-affine-space-as-product n = mapping-space-eq (Fin n)
