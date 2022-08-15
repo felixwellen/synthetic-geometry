@@ -85,15 +85,4 @@ we can use the following abstract fact ...
   std-affine-space-as-product n = mapping-space-eq (Fin n)
 
 
-  is-affine : Type ℓ' → hProp _
-  is-affine X =
-    (∃[ A ∈ (CommAlgebra k ℓ) ] isFPAlgebra A × (X ≃ Spec A)) ,
-    isPropPropTrunc
-
-  to-ev-hom : (X : Type ℓ') → X → Spec (pointwiseAlgebra X k-as-algebra)
-  to-ev-hom X = evaluationHom X k-as-algebra
-
-  is-affine' : Type ℓ' → hProp _
-  is-affine' X = (isEquiv (to-ev-hom X)) , isPropIsEquiv _
-
 ```

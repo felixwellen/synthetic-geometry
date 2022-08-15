@@ -5,6 +5,7 @@ A proposition is quasicompact (qc) open iff it is logically equivalent to
 one of f₁,...,fₙ being invertible in the base ring.
 
 ```agda
+{-# OPTIONS --safe #-}
 module SyntheticGeometry.Open where
 
 open import Cubical.Foundations.Prelude
@@ -86,11 +87,5 @@ module _ (k : CommRing ℓ) where
   is-finite-qc-open-cover {n = n} X U =
     ∀[ x ∶ X ] ∃[ i ∶ Fin n ] fst (U i x)
 
-  is-affine-finite-qc-open-cover : {n : ℕ}
-    → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
-    → hProp _
-  is-affine-finite-qc-open-cover {n = n} X U =
-    is-finite-qc-open-cover X U
-    ⊓ (∀[ i ∶ Fin n ] is-affine k (qc-open-as-type (U i)))
 
 ```

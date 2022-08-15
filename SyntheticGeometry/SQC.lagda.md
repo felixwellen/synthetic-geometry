@@ -5,6 +5,7 @@ Synthetic quasicoherence as defined in Ingo Blechschmidts thesis (Definition 18.
 For now, we only consider the synthetic quasicoherence of the base ring k itself.
 
 ```agda
+{-# OPTIONS --safe #-}
 module SyntheticGeometry.SQC where
 
 open import Cubical.Foundations.Prelude
@@ -87,7 +88,8 @@ together with its locality, as in Subsection 18.4.
 module _ {ℓ : Level} (k : CommRing ℓ) (k-local : isLocal k) (k-sqc : sqc-over-itself k) where
   open CommRingStr (snd k)
 
-  kₐ = initialCAlg k
+  private
+    kₐ = initialCAlg k
 
 ```
 
