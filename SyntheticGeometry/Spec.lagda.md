@@ -90,12 +90,10 @@ we can use the following abstract fact ...
     (∃[ A ∈ (CommAlgebra k ℓ) ] isFPAlgebra A × (X ≃ Spec A)) ,
     isPropPropTrunc
 
-  is-affine' : Type ℓ' → hProp _
-  is-affine' X = (isEquiv canonical-map) , isPropIsEquiv _
-    where
-      X→k : CommAlgebra k _
-      X→k = pointwiseAlgebra X k-as-algebra
+  to-ev-hom : (X : Type ℓ') → X → Spec (pointwiseAlgebra X k-as-algebra)
+  to-ev-hom X = evaluationHom X k-as-algebra
 
-      canonical-map : X → Spec X→k
-      canonical-map = evaluationHom X k-as-algebra
+  is-affine' : Type ℓ' → hProp _
+  is-affine' X = (isEquiv (to-ev-hom X)) , isPropIsEquiv _
+
 ```
