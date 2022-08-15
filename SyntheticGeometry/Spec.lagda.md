@@ -21,6 +21,7 @@ open import Cubical.HITs.PropositionalTruncation
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
+open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FreeCommAlgebra
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
 
@@ -61,5 +62,14 @@ module _ (k : CommRing ℓ) where
   is-affine {ℓ' = ℓ'} X =
     (∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A) ,
     isPropPropTrunc
+
+  is-affine' : Type ℓ' → hProp _
+  is-affine' X = (isEquiv canonical-map) , isPropIsEquiv _
+    where
+      X→k : CommAlgebra k _
+      X→k = pointwiseAlgebra X k-as-algebra
+
+      canonical-map : X → Spec X→k
+      canonical-map = evaluationHom  X k-as-algebra
 
 ```
