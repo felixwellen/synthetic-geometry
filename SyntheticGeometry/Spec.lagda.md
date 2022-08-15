@@ -24,6 +24,8 @@ open import Cubical.Algebra.CommAlgebra.Instances.Initial
 open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FreeCommAlgebra
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
+import Cubical.Algebra.Algebra
+open Cubical.Algebra.Algebra.AlgebraHoms
 
 private
   variable
@@ -43,6 +45,17 @@ module _ (k : CommRing ℓ) where
 
   Spec : CommAlgebra k ℓ' → Type _
   Spec A = CommAlgebraHom A k-as-algebra
+
+  Spec→ : {A B : CommAlgebra k ℓ'} (f : CommAlgebraHom A B)
+          → Spec B → Spec A
+  Spec→ f α = α ∘a f
+
+
+```
+
+Standard n-dimensional affine space:
+
+```agda
 
   std-affine-space : (n : ℕ) → Type _
   std-affine-space n = Spec (Polynomials n)
