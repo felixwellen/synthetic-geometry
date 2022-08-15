@@ -25,6 +25,7 @@ open import Cubical.Algebra.CommRing.LocalRing
 open import SyntheticGeometry.Open
 open import SyntheticGeometry.ProjectiveSpace
 open import SyntheticGeometry.SQC
+open import SyntheticGeometry.Affine
 
 private variable ℓ ℓ' : Level
 
@@ -35,10 +36,10 @@ defined in [Open](Open.lagda.md).
 
 ```agda
 
-module _ (k : CommRing ℓ) where
+module _ (k : CommRing ℓ) (k-local : isLocal k) (k-sqc : sqc-over-itself k) where
   is-qc-scheme : (X : Type ℓ') → hProp _
   is-qc-scheme X =
-    (∃[ n ∶ ℕ ] ∃[ U ∶ (Fin n → qc-opens-in k X) ] is-affine-finite-qc-open-cover k X U)
+    (∃[ n ∶ ℕ ] ∃[ U ∶ (Fin n → qc-opens-in k X) ] is-affine-finite-qc-open-cover k k-local k-sqc X U)
 
 ```
 
@@ -50,6 +51,6 @@ The affine qc-open cover U k n is defined in [this](ProjectiveSpace.lagda.md) mo
   ℙ-is-qc-scheme : isLocal k → sqc-over-itself k
     → (n : ℕ) → ⟨ is-qc-scheme (ℙ k n) ⟩
   ℙ-is-qc-scheme k-local k-sqc n =
-    ∣ (n + 1) , ∣ (U k n) , (covering k n k-local k-sqc) , (λ i → U-is-affine k n i k-local) ∣₁ ∣₁
+    ∣ (n + 1) , ∣ (U k n) , (covering k n k-local k-sqc) , (λ i → U-is-affine k n i k-local k-sqc) ∣₁ ∣₁
 
 ```

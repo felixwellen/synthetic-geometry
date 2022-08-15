@@ -42,6 +42,7 @@ open import Cubical.Relation.Binary
 open import Cubical.Tactics.CommRingSolver.Reflection
 
 open import SyntheticGeometry.Spec
+open import SyntheticGeometry.Affine
 open import SyntheticGeometry.Open
 open import SyntheticGeometry.SQC
 
@@ -249,8 +250,8 @@ we will use an intermediate type given by
         (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
         Maybe∙ (Fin n)           ∎
 
-    U-is-affine : (k-local : isLocal k) → fst (is-affine k (qc-open-as-type k U))
-    U-is-affine k-local = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
+    U-is-affine : (k-local : isLocal k) (k-sqc : sqc-over-itself k) → fst (is-affine k k-local k-sqc (qc-open-as-type k U))
+    U-is-affine k-local k-sqc = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
       (qc-open-as-type k U ≃⟨ pathToEquiv (U≡im-ι k-local) ⟩
        im-ι k-local        ≃⟨ invEquiv (embedded-𝔸ⁿ≃im-ι k-local) ⟩
        embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩

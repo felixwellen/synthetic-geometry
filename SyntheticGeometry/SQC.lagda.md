@@ -97,7 +97,7 @@ The ring k is a field in the sense that every non-zero element is invertible.
 But even more, every nonzero vector contains an invertible element.
 
 ```agda
-  generalized-field-property : {n : _} → (xs : FinVec ⟨ k ⟩ n) → ¬(xs ≡ const 0r) → ∃[ i ∈ _ ] xs i ∈ k ˣ
+  generalized-field-property : {n : _} → (xs : FinVec _ n) → ¬(xs ≡ const 0r) → ∃[ i ∈ _ ] xs i ∈ k ˣ
   generalized-field-property xs xs≢0 =
     Consequences.onFGIdeals k k-local xs 1∈⟨xs⟩
     where
@@ -119,7 +119,7 @@ But even more, every nonzero vector contains an invertible element.
       finite-presentation-of-A : FinitePresentation A
       finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
 
-      equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
+      equiv : _ ≃ (Spec k A → _)
       equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣₁
 
       Spec-A-empty : Spec k A → ⊥
@@ -139,16 +139,16 @@ But even more, every nonzero vector contains an invertible element.
             h $a A.0a         ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
             0r                ∎
 
-      functions-on-Spec-A-trivial : {f g : Spec k A → ⟨ k ⟩} → f ≡ g
+      functions-on-Spec-A-trivial : {f g : Spec k A → _} → f ≡ g
       functions-on-Spec-A-trivial = funExt (λ p → Cubical.Data.Empty.rec (Spec-A-empty p))
 
-      A-is-trivial : {a a' : ⟨ A ⟩} → a ≡ a'
+      A-is-trivial : {a a' : _} → a ≡ a'
       A-is-trivial = isoFunInjective (equivToIso equiv) _ _ functions-on-Spec-A-trivial
 
       1∈⟨xs⟩ : kₐ.1a ∈ fst ⟨xs⟩
       1∈⟨xs⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨xs⟩) A-is-trivial
 
-  field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
+  field-property : (x : _) → ¬(x ≡ 0r) → x ∈ k ˣ
   field-property x x≢0 =
     Prop.rec
       (snd ((k ˣ) x))
