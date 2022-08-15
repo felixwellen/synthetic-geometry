@@ -54,8 +54,11 @@ is-affine X =
 to-ev-hom : (X : Type ℓ') → X → Spec k (pointwiseAlgebra X kₐ)
 to-ev-hom X = evaluationHom X kₐ
 
-is-affine' : Type ℓ' → hProp _
-is-affine' X = (isEquiv (to-ev-hom X)) , isPropIsEquiv _
+```
+
+The following is used to define qc-schemes:
+
+```agda
 
 is-affine-finite-qc-open-cover : {n : ℕ}
   → (X : Type ℓ') → (U : Fin n → qc-opens-in k X)
@@ -63,5 +66,14 @@ is-affine-finite-qc-open-cover : {n : ℕ}
 is-affine-finite-qc-open-cover {n = n} X U =
   is-finite-qc-open-cover k X U
   ⊓ (∀[ i ∶ Fin n ] is-affine (qc-open-as-type k (U i)))
+
+```
+
+This was an attempt at a alternative definition of affine schemes, but it should be weaker.
+
+```agda
+
+is-coupled : Type ℓ' → hProp _
+is-coupled X = (isEquiv (to-ev-hom X)) , isPropIsEquiv _
 
 ```
