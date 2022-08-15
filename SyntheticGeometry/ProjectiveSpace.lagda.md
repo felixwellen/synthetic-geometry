@@ -250,7 +250,7 @@ we will use an intermediate type given by
         Maybe∙ (Fin n)           ∎
 
     U-is-affine : (k-local : isLocal k) → fst (is-affine k (qc-open-as-type k U))
-    U-is-affine k-local = ∣ Polynomials n ,
+    U-is-affine k-local = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
       (qc-open-as-type k U ≃⟨ pathToEquiv (U≡im-ι k-local) ⟩
        im-ι k-local        ≃⟨ invEquiv (embedded-𝔸ⁿ≃im-ι k-local) ⟩
        embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩

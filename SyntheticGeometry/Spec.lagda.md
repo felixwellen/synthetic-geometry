@@ -50,7 +50,6 @@ module _ (k : CommRing ℓ) where
           → Spec B → Spec A
   Spec→ f α = α ∘a f
 
-
 ```
 
 Standard n-dimensional affine space:
@@ -85,9 +84,10 @@ we can use the following abstract fact ...
   std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
   std-affine-space-as-product n = mapping-space-eq (Fin n)
 
+
   is-affine : Type ℓ' → hProp _
-  is-affine {ℓ' = ℓ'} X =
-    (∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A) ,
+  is-affine X =
+    (∃[ A ∈ (CommAlgebra k ℓ) ] isFPAlgebra A × (X ≃ Spec A)) ,
     isPropPropTrunc
 
   is-affine' : Type ℓ' → hProp _
@@ -97,6 +97,5 @@ we can use the following abstract fact ...
       X→k = pointwiseAlgebra X k-as-algebra
 
       canonical-map : X → Spec X→k
-      canonical-map = evaluationHom  X k-as-algebra
-
+      canonical-map = evaluationHom X k-as-algebra
 ```
