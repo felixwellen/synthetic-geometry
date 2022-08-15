@@ -7,6 +7,7 @@ open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.HLevels
+open import Cubical.Foundations.Univalence
 
 open import Cubical.Functions.Logic
 
@@ -51,8 +52,18 @@ is-affine X =
   (∃[ A ∈ (CommAlgebra k ℓ) ] isFPAlgebra A × (X ≃ Spec k A)) ,
   isPropPropTrunc
 
+```
+
+We want to see that: (Spec A ≃ Spec B) = (CommAlgebraIso A B)
+which will need a couple of steps:
+
+```agda
+
 to-ev-hom : (X : Type ℓ') → X → Spec k (pointwiseAlgebra X kₐ)
 to-ev-hom X = evaluationHom X kₐ
+
+to-ev-hom-on-Spec : (A : CommAlgebra k ℓ) → isFPAlgebra A → Spec k A ≡ Spec k (pointwiseAlgebra (Spec k A) kₐ)
+to-ev-hom-on-Spec A fp-A = cong (Spec k) (sqc-path k k-sqc A fp-A)
 
 ```
 
@@ -69,7 +80,7 @@ is-affine-finite-qc-open-cover {n = n} X U =
 
 ```
 
-This was an attempt at a alternative definition of affine schemes, but it should be weaker.
+This was an attempt at an alternative definition of affine schemes, but it should be weaker.
 
 ```agda
 
