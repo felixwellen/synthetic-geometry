@@ -52,11 +52,11 @@ in Blechschmidt's thesis.
 module _ {ℓ : Level} (k : CommRing ℓ) where
   private
     kₐ = initialCAlg k
-    canonical-map : (A : CommAlgebra k ℓ) → ⟨ A ⟩ → (Spec k A → ⟨ k ⟩)
-    canonical-map A a φ = φ $a a
+  to-ev-map : (A : CommAlgebra k ℓ) → ⟨ A ⟩ → (Spec k A → ⟨ k ⟩)
+  to-ev-map A a φ = φ $a a
 
   sqc-over-itself : Type _
-  sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (canonical-map A)
+  sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (to-ev-map A)
 
 ```
 
@@ -71,13 +71,28 @@ The canonical map is actually a homomorphism:
       _ = snd A
 
     canonical-hom : CommAlgebraHom A (pointwiseAlgebra (Spec k A) kₐ)
-    fst canonical-hom = canonical-map A
+    fst canonical-hom = to-ev-map A
     pres0 (snd canonical-hom) = funExt (λ ϕ → pres0 (snd ϕ))
     pres1 (snd canonical-hom) = funExt (λ ϕ → pres1 (snd ϕ))
     pres+ (snd canonical-hom) _ _ = funExt (λ ϕ → pres+ (snd ϕ) _ _)
     pres· (snd canonical-hom) _ _ = funExt (λ ϕ → pres· (snd ϕ) _ _)
     pres- (snd canonical-hom) _ = funExt (λ ϕ → pres- (snd ϕ) _)
     pres⋆ (snd canonical-hom) _ _ = funExt (λ ϕ → pres⋆ (snd ϕ) _ _)
+
+```
+
+This entails, that the equivalence in sqc is actually an isomorphism of algebra and therefore also
+a path between the algebras:
+
+```agda
+
+  module _ (k-sqc : sqc-over-itself) (A : CommAlgebra k ℓ) (fp-A : isFPAlgebra A) where
+    sqc-alg-equiv : CommAlgebraEquiv A (pointwiseAlgebra (Spec k A) kₐ)
+    fst sqc-alg-equiv = to-ev-map A , k-sqc A fp-A
+    snd sqc-alg-equiv = snd (canonical-hom A)
+
+    sqc-path : A ≡ pointwiseAlgebra (Spec k A) kₐ
+    sqc-path = fst (CommAlgebraPath k A (pointwiseAlgebra (Spec k A) kₐ)) sqc-alg-equiv
 
 ```
 
