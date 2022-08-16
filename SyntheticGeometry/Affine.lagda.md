@@ -8,6 +8,7 @@ open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Univalence
+open import Cubical.Foundations.Function
 
 open import Cubical.Functions.Logic
 
@@ -60,10 +61,24 @@ is-affine X =
 We want to see that: (Spec A ≃ Spec B) = (CommAlgebraIso A B)
 which will need a couple of steps:
 
+First, there is a canonical morphism from any type to a spectrum,
+which has a right, wenn the type is a spectrum.
+
 ```agda
 
 to-ev-hom : (X : Type ℓ') → X → Spec (pointwiseAlgebra X kₐ)
 to-ev-hom X = evaluationHom X kₐ
+
+
+left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → Spec (pointwiseAlgebra (Spec A) kₐ) → Spec A
+left-inv-to-ev-hom A = Spec→ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} (canonical-hom A)
+
+is-left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → (left-inv-to-ev-hom A) ∘ to-ev-hom (Spec A) ≡ idfun (Spec A)
+is-left-inv-to-ev-hom A i α = typed-eq i
+  where typed-eq : Spec→ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} (canonical-hom A) (to-ev-hom (Spec A) α) ≡ α
+        typed-eq = make-Spec-eq {A = A} refl
+```
+```agda
 
 to-ev-hom-on-Spec : (A : CommAlgebra k ℓ) → isFPAlgebra A → Spec A ≡ Spec (pointwiseAlgebra (Spec A) kₐ)
 to-ev-hom-on-Spec A fp-A = cong Spec (sqc-path k-sqc A fp-A)
