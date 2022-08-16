@@ -13,6 +13,7 @@ open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset
 open import Cubical.Foundations.Function
+open import Cubical.Foundations.HLevels
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
@@ -61,8 +62,8 @@ to-ev-map A a φ = φ $a a
 sqc-over-itself : Type _
 sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (to-ev-map A)
 
-is-coupled-algebra : (A : CommAlgebra k ℓ') → Type _
-is-coupled-algebra A = isEquiv (to-ev-map A)
+is-coupled-algebra : (A : CommAlgebra k ℓ') → hProp _
+is-coupled-algebra A = isEquiv (to-ev-map A) , isPropIsEquiv _
 
 ```
 
