@@ -4,6 +4,7 @@ Affine qc-schemes
 ```agda
 {-# OPTIONS --safe #-}
 open import Cubical.Foundations.Prelude
+open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Equiv.Properties
 open import Cubical.Foundations.Structure
@@ -12,11 +13,12 @@ open import Cubical.Foundations.Univalence
 open import Cubical.Foundations.Function
 
 open import Cubical.Functions.Logic
+open import Cubical.Functions.Image
 
 open import Cubical.Data.Nat
 open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
-open import Cubical.HITs.PropositionalTruncation
+open import Cubical.HITs.PropositionalTruncation as PT
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommAlgebra
@@ -99,16 +101,54 @@ Then, as a one-sided inverse of an equivalence, to-ev-hom will also be an equiva
 
 ```agda
 
-is-equiv-to-ev-hom : (A : CommAlgebra k ℓ') → is-coupled-algebra A → isEquiv (to-ev-hom (Spec A))
-is-equiv-to-ev-hom A is-coupled-A = isEquiv→sectionIsEquiv left-inv-equiv (is-left-inv-to-ev-hom A)
+is-equiv-left-inv : (A : CommAlgebra k ℓ') → ⟨ is-coupled-algebra A ⟩ → isEquiv (left-inv-to-ev-hom A)
+is-equiv-left-inv A coupled-A = snd (Spec→≃ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} canonical-equiv)
   where
     canonical-equiv : CommAlgebraEquiv A (pointwiseAlgebra (Spec A) kₐ)
-    canonical-equiv = (_ , is-coupled-A) , snd (canonical-hom A)
+    canonical-equiv = (_ , coupled-A) , snd (canonical-hom A)
 
-    left-inv-equiv : isEquiv (left-inv-to-ev-hom A)
-    left-inv-equiv = snd (Spec→≃ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} canonical-equiv)
+is-equiv-to-ev-hom : (A : CommAlgebra k ℓ') → ⟨ is-coupled-algebra A ⟩ → isEquiv (to-ev-hom (Spec A))
+is-equiv-to-ev-hom A coupled-A = isEquiv→sectionIsEquiv (is-equiv-left-inv A coupled-A) (is-left-inv-to-ev-hom A)
 ```
 
+This will be used when showing, that Spec is an embedding on coupled algebras, which we will prove
+from Spec on coupled algebras being an equivalence onto its image.
+
+```agda
+
+Spec-coupled : Σ[ A ∈ CommAlgebra k ℓ' ] ⟨ is-coupled-algebra A ⟩ → Type _
+Spec-coupled (A , coupled-A) = Spec A
+
+Spec-equiv-onto-image : isEquiv (restrictToImage (Spec-coupled {ℓ' = ℓ}))
+Spec-equiv-onto-image = snd (isoToEquiv SpecIso)
+  where
+    SpecIso : Iso (Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩) (Image Spec-coupled)
+    Iso.fun SpecIso = restrictToImage Spec-coupled
+    Iso.inv SpecIso (X , X∈ImSpec) =
+      pointwiseAlgebra X kₐ ,
+      PT.rec
+        (snd (is-coupled-algebra (pointwiseAlgebra X kₐ)))
+        (λ ((A , coupled-A) , SpecA≡X)
+        → let A≡X→k : A ≡ (pointwiseAlgebra X kₐ)
+              A≡X→k =
+                A ≡⟨ fst (CommAlgebraPath k A (pointwiseAlgebra (Spec A) kₐ)) ((_ , coupled-A) , snd (canonical-hom A))  ⟩
+                pointwiseAlgebra (Spec A) kₐ  ≡⟨ cong (λ u → pointwiseAlgebra u kₐ) SpecA≡X ⟩
+                pointwiseAlgebra X kₐ ∎
+          in subst (λ u → ⟨ is-coupled-algebra u ⟩) A≡X→k coupled-A)
+        X∈ImSpec
+    Iso.rightInv SpecIso (X , X∈ImSpec) =
+      Σ≡Prop (λ _ → isPropPropTrunc)
+             SpecX→k≡X
+      where SpecX→k≡X : Spec (pointwiseAlgebra X kₐ) ≡ X
+            SpecX→k≡X = {!!}
+    Iso.leftInv SpecIso (A , coupled-A) =
+      Σ≡Prop (λ B → snd (is-coupled-algebra B))
+             {!!}
+
+```
+
+Finite affine qc-open covers
+----------------------------
 The following is used to define qc-schemes:
 
 ```agda
