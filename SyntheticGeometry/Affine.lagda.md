@@ -118,7 +118,7 @@ Spec-coupled : Σ[ A ∈ CommAlgebra k ℓ' ] ⟨ is-coupled-algebra A ⟩ → T
 Spec-coupled (A , coupled-A) = Spec A
 
 Spec-equiv-onto-image : isEquiv (restrictToImage (Spec-coupled {ℓ' = ℓ}))
-Spec-equiv-onto-image = snd (isoToEquiv SpecIso)
+Spec-equiv-onto-image = isoToIsEquiv SpecIso
   where
     SpecIso : Iso (Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩) (Image Spec-coupled)
     Iso.fun SpecIso = restrictToImage Spec-coupled
@@ -141,7 +141,7 @@ Spec-equiv-onto-image = snd (isoToEquiv SpecIso)
             SpecX→k≡X = {!!}
     Iso.leftInv SpecIso (A , coupled-A) =
       Σ≡Prop (λ B → snd (is-coupled-algebra B))
-             {!!}
+             (sym (uaCommAlgebra (((to-ev-map A) , coupled-A) , (snd (canonical-hom A)))))
 
 ```
 
