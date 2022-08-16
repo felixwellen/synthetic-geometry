@@ -85,6 +85,7 @@ module _ (A : CommAlgebra k ℓ') where
 ```
 
 TODO: move rest of this file to another file
+TODO: remove TODOs and put them into issues
 
 This entails, that the equivalence in sqc is actually an isomorphism of algebra and therefore also
 a path between the algebras:
