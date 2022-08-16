@@ -25,6 +25,7 @@ open import Cubical.Algebra.CommAlgebra.FreeCommAlgebra
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
 import Cubical.Algebra.Algebra
 open Cubical.Algebra.Algebra.AlgebraHoms
+open Cubical.Algebra.Algebra.AlgebraEquivs
 
 
 module SyntheticGeometry.Spec
@@ -53,13 +54,19 @@ Spec A = CommAlgebraHom A k-as-algebra
 make-Spec-eq : {x y : Spec A} → fst x ≡ fst y → x ≡ y
 make-Spec-eq {A = A} fst-eq = Σ≡Prop (isPropIsCommAlgebraHom {M = A} {N = k-as-algebra}) fst-eq
 
-Spec→ : (f : CommAlgebraHom A B)
-        → Spec B → Spec A
-Spec→ f α = α ∘a f
+module _ {A : CommAlgebra k ℓ'} {B : CommAlgebra k ℓ''} where
+  Spec→ :  (f : CommAlgebraHom A B)
+          → Spec B → Spec A
+  Spec→ f α = compAlgebraHom f α
 
+  Spec→≃ : (f : CommAlgebraEquiv A B)
+          → Spec B ≃ Spec A
+  fst (Spec→≃ f) = Spec→ (fst (fst f) , snd f)
+  snd (Spec→≃ f) = snd (preCompAlgEquiv f)
 ```
 
-Standard n-dimensional affine space:
+Standard n-dimensional affine space
+-----------------------------------
 
 ```agda
 
