@@ -61,6 +61,9 @@ to-ev-map A a φ = φ $a a
 sqc-over-itself : Type _
 sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (to-ev-map A)
 
+is-coupled-algebra : (A : CommAlgebra k ℓ) → Type _
+is-coupled-algebra A = isEquiv (to-ev-map A)
+
 ```
 
 The canonical map is actually a homomorphism:
