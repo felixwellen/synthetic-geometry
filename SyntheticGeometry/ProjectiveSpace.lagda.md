@@ -3,8 +3,6 @@ Projective Space
 Construct projective space as a quotient of 𝔸ⁿ⁺¹-{0}.
 
 ```agda
-module SyntheticGeometry.ProjectiveSpace where
-
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
@@ -41,14 +39,22 @@ open import Cubical.Relation.Binary
 
 open import Cubical.Tactics.CommRingSolver.Reflection
 
-open import SyntheticGeometry.Spec
-open import SyntheticGeometry.Affine
-open import SyntheticGeometry.Open
-open import SyntheticGeometry.SQC
+import SyntheticGeometry.SQC
 
-private variable ℓ : Level
+module SyntheticGeometry.ProjectiveSpace
+  {ℓ : Level}
+  (k : CommRing ℓ)
+  (k-local : isLocal k)
+  (k-sqc : SyntheticGeometry.SQC.sqc-over-itself k)
+  where
 
-module _ (k : CommRing ℓ) (n : ℕ) where
+open import SyntheticGeometry.Spec k
+open import SyntheticGeometry.Open k
+open import SyntheticGeometry.Affine k k-local k-sqc
+open SyntheticGeometry.SQC k
+
+
+module _ (n : ℕ) where
   module k = CommRingStr (snd k)
   module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = n + 1}))
   open k hiding (_+_)
@@ -122,13 +128,13 @@ we will use an intermediate type given by
     (i : Fin (n + 1))
     where
 
-    U : ℙ → (qc-open-prop k)
+    U : ℙ → qc-open-prop
     U = SQ.rec
-            (is-set-qc-open-prop k)
-            (λ x → simple-qc-open-prop k ((fst x) i))
+            is-set-qc-open-prop
+            (λ x → simple-qc-open-prop ((fst x) i))
             λ x y x~y
               → qc-open-≡
-                  k _ _
+                  _ _
                   (⇒∶ step2 (fst x) (fst y) x~y
                    ⇐∶ step2 (fst y) (fst x) (symmetric _ _ x~y))
         where
@@ -146,7 +152,6 @@ we will use an intermediate type given by
     embedded-𝔸ⁿ = Σ[ x ∈ 𝔸ⁿ⁺¹ ] x i ≡ 1r
 
     module _
-      (k-local : isLocal k)
       where
 
       ι : embedded-𝔸ⁿ → ℙ
@@ -224,7 +229,7 @@ we will use an intermediate type given by
                       1r ⋆ x           ≡⟨ ⋆IdL _ ⟩
                       x                ∎ ))) ∣₁}
 
-      U≡im-ι : qc-open-as-type k U ≡ im-ι
+      U≡im-ι : qc-open-as-type U ≡ im-ι
       U≡im-ι =
         cong (Σ ℙ) (cong (fst ∘_) U≡imι)
         where
@@ -235,13 +240,13 @@ we will use an intermediate type given by
               im-ι-subset
               (U⊆imι , imι⊆U)
 
-    embedded-𝔸ⁿ-is-𝔸ⁿ : embedded-𝔸ⁿ ≡ 𝔸 k n
+    embedded-𝔸ⁿ-is-𝔸ⁿ : embedded-𝔸ⁿ ≡ 𝔸 n
     embedded-𝔸ⁿ-is-𝔸ⁿ =
       embedded-𝔸ⁿ                               ≡⟨⟩
       ((Fin (n + 1) , i) →∙ (⟨ k ⟩ , 1r))       ≡⟨ cong (_→∙ _) transformDomain ⟩
       (Maybe∙ (Fin n) →∙ (⟨ k ⟩ , 1r))          ≡⟨ isoToPath (freelyPointedIso _ _) ⟩
-      FinVec ⟨ k ⟩ n                            ≡⟨ sym (std-affine-space-as-product k n) ⟩
-      𝔸 k n                                     ∎
+      FinVec ⟨ k ⟩ n                            ≡⟨ sym (std-affine-space-as-product n) ⟩
+      𝔸 n                                       ∎
       where
       transformDomain : (Fin (n + 1) , i) ≡ Maybe∙ (Fin n)
       transformDomain =
@@ -250,16 +255,16 @@ we will use an intermediate type given by
         (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
         Maybe∙ (Fin n)           ∎
 
-    U-is-affine : (k-local : isLocal k) (k-sqc : sqc-over-itself k) → fst (is-affine k k-local k-sqc (qc-open-as-type k U))
-    U-is-affine k-local k-sqc = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
-      (qc-open-as-type k U ≃⟨ pathToEquiv (U≡im-ι k-local) ⟩
-       im-ι k-local        ≃⟨ invEquiv (embedded-𝔸ⁿ≃im-ι k-local) ⟩
+    U-is-affine : fst (is-affine (qc-open-as-type U))
+    U-is-affine = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
+      (qc-open-as-type U   ≃⟨ pathToEquiv U≡im-ι ⟩
+       im-ι                ≃⟨ invEquiv embedded-𝔸ⁿ≃im-ι ⟩
        embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩
-       𝔸 k n ■ ) ∣₁
+       𝔸 n ■ ) ∣₁
 
-  covering : isLocal k → sqc-over-itself k → (p : ℙ) → ∃[ i ∈ Fin (n + 1) ] ⟨ fst (U i p) ⟩
-  covering k-local k-sqc =
+  covering : (p : ℙ) → ∃[ i ∈ Fin (n + 1) ] ⟨ fst (U i p) ⟩
+  covering =
     SQ.elimProp
       (λ _ → isPropPropTrunc)
-      λ x → generalized-field-property k k-local k-sqc (fst x) (snd x)
+      λ x → generalized-field-property k-local k-sqc (fst x) (snd x)
 ```

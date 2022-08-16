@@ -26,15 +26,18 @@ open import Cubical.Algebra.CommRing.LocalRing
 import Cubical.Algebra.Algebra
 open Cubical.Algebra.Algebra.AlgebraHoms
 
-open import SyntheticGeometry.Spec
-open import SyntheticGeometry.SQC
-open import SyntheticGeometry.Open
+import SyntheticGeometry.SQC
 
-module SyntheticGeometry.Affine {ℓ : Level}
+module SyntheticGeometry.Affine
+  {ℓ : Level}
   (k : CommRing ℓ)
   (k-local : isLocal k)
-  (k-sqc : sqc-over-itself k)
+  (k-sqc : SyntheticGeometry.SQC.sqc-over-itself k)
   where
+
+open import SyntheticGeometry.Spec k
+open import SyntheticGeometry.Open k
+open SyntheticGeometry.SQC k
 
 private variable ℓ' : Level
 
@@ -49,7 +52,7 @@ An affine type is a type, that is equivalent to a fp algebra over the base ring 
 
 is-affine : Type ℓ' → hProp _
 is-affine X =
-  (∃[ A ∈ (CommAlgebra k ℓ) ] isFPAlgebra A × (X ≃ Spec k A)) ,
+  (∃[ A ∈ (CommAlgebra k ℓ) ] isFPAlgebra A × (X ≃ Spec A)) ,
   isPropPropTrunc
 
 ```
@@ -59,11 +62,11 @@ which will need a couple of steps:
 
 ```agda
 
-to-ev-hom : (X : Type ℓ') → X → Spec k (pointwiseAlgebra X kₐ)
+to-ev-hom : (X : Type ℓ') → X → Spec (pointwiseAlgebra X kₐ)
 to-ev-hom X = evaluationHom X kₐ
 
-to-ev-hom-on-Spec : (A : CommAlgebra k ℓ) → isFPAlgebra A → Spec k A ≡ Spec k (pointwiseAlgebra (Spec k A) kₐ)
-to-ev-hom-on-Spec A fp-A = cong (Spec k) (sqc-path k k-sqc A fp-A)
+to-ev-hom-on-Spec : (A : CommAlgebra k ℓ) → isFPAlgebra A → Spec A ≡ Spec (pointwiseAlgebra (Spec A) kₐ)
+to-ev-hom-on-Spec A fp-A = cong Spec (sqc-path k-sqc A fp-A)
 
 ```
 
@@ -72,11 +75,11 @@ The following is used to define qc-schemes:
 ```agda
 
 is-affine-finite-qc-open-cover : {n : ℕ}
-  → (X : Type ℓ') → (U : Fin n → qc-opens-in k X)
+  → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
   → hProp _
 is-affine-finite-qc-open-cover {n = n} X U =
-  is-finite-qc-open-cover k X U
-  ⊓ (∀[ i ∶ Fin n ] is-affine (qc-open-as-type k (U i)))
+  is-finite-qc-open-cover X U
+  ⊓ (∀[ i ∶ Fin n ] is-affine (qc-open-as-type (U i)))
 
 ```
 

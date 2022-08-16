@@ -5,7 +5,6 @@ All the mathematics presented here, is from [Ingo Blechschmidt](https://www.ingo
 
 ```agda
 {-# OPTIONS --safe #-}
-module SyntheticGeometry.Spec where
 
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
@@ -27,9 +26,15 @@ open import Cubical.Algebra.CommAlgebra.FPAlgebra
 import Cubical.Algebra.Algebra
 open Cubical.Algebra.Algebra.AlgebraHoms
 
+
+module SyntheticGeometry.Spec
+  {ℓ : Level}
+  (k : CommRing ℓ)
+  where
+
 private
   variable
-    ℓ ℓ' ℓ'' : Level
+    ℓ' ℓ'' : Level
 
 ```
 
@@ -38,17 +43,15 @@ We assume a ring object k in the following, which we think of as (the functor of
 
 ```agda
 
-module _ (k : CommRing ℓ) where
+k-as-algebra = initialCAlg k
+𝔸¹ = k-as-algebra
 
-  k-as-algebra = initialCAlg k
-  𝔸¹ = k-as-algebra
+Spec : CommAlgebra k ℓ' → Type _
+Spec A = CommAlgebraHom A k-as-algebra
 
-  Spec : CommAlgebra k ℓ' → Type _
-  Spec A = CommAlgebraHom A k-as-algebra
-
-  Spec→ : {A B : CommAlgebra k ℓ'} (f : CommAlgebraHom A B)
-          → Spec B → Spec A
-  Spec→ f α = α ∘a f
+Spec→ : {A B : CommAlgebra k ℓ'} (f : CommAlgebraHom A B)
+        → Spec B → Spec A
+Spec→ f α = α ∘a f
 
 ```
 
@@ -56,10 +59,10 @@ Standard n-dimensional affine space:
 
 ```agda
 
-  std-affine-space : (n : ℕ) → Type _
-  std-affine-space n = Spec (Polynomials n)
+std-affine-space : (n : ℕ) → Type _
+std-affine-space n = Spec (Polynomials n)
 
-  𝔸 = std-affine-space
+𝔸 = std-affine-space
 
 ```
 
@@ -69,11 +72,11 @@ we can use the following abstract fact ...
 
 ```agda
 
-  module _ (D : Type ℓ-zero) where
-    k[D] = k [ D ]
+module _ (D : Type ℓ-zero) where
+  k[D] = k [ D ]
 
-    mapping-space-eq : Spec k[D] ≡ (D → ⟨ k ⟩)
-    mapping-space-eq = homMapPath k-as-algebra
+  mapping-space-eq : Spec k[D] ≡ (D → ⟨ k ⟩)
+  mapping-space-eq = homMapPath k-as-algebra
 
 ```
 
@@ -81,8 +84,7 @@ we can use the following abstract fact ...
 
 ```agda
 
-  std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
-  std-affine-space-as-product n = mapping-space-eq (Fin n)
-
+std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
+std-affine-space-as-product n = mapping-space-eq (Fin n)
 
 ```
