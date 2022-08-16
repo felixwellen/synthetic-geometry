@@ -43,7 +43,7 @@ module SyntheticGeometry.SQC
   where
 
 open import SyntheticGeometry.Spec k
-
+private variable ℓ' : Level
 ```
 
 The following defines synthetic quasicoherence for finitely presented algebras
@@ -55,7 +55,7 @@ in Blechschmidt's thesis.
 private
   kₐ = initialCAlg k
 
-to-ev-map : (A : CommAlgebra k ℓ) → ⟨ A ⟩ → (Spec A → ⟨ k ⟩)
+to-ev-map : (A : CommAlgebra k ℓ') → ⟨ A ⟩ → (Spec A → ⟨ k ⟩)
 to-ev-map A a φ = φ $a a
 
 sqc-over-itself : Type _
@@ -66,7 +66,7 @@ sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (to-ev-m
 The canonical map is actually a homomorphism:
 
 ```agda
-module _ (A : CommAlgebra k ℓ) where
+module _ (A : CommAlgebra k ℓ') where
   open IsAlgebraHom
   open CommAlgebraStr {{...}}
   private instance

@@ -35,6 +35,7 @@ module SyntheticGeometry.Spec
 private
   variable
     ℓ' ℓ'' : Level
+    A B : CommAlgebra k ℓ'
 
 ```
 
@@ -49,7 +50,7 @@ k-as-algebra = initialCAlg k
 Spec : CommAlgebra k ℓ' → Type _
 Spec A = CommAlgebraHom A k-as-algebra
 
-Spec→ : {A B : CommAlgebra k ℓ'} (f : CommAlgebraHom A B)
+Spec→ : (f : CommAlgebraHom A B)
         → Spec B → Spec A
 Spec→ f α = α ∘a f
 
