@@ -45,7 +45,7 @@ kₐ = initialCAlg k
 
 ```
 
-An affine type is a type, that is equivalent to a fp algebra over the base ring k:
+An affine type is a type, that is equivalent to the spectrum of a fp algebra over the base ring k:
 
 ```agda
 
