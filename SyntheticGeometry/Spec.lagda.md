@@ -26,6 +26,7 @@ open import Cubical.Algebra.CommAlgebra.FPAlgebra
 import Cubical.Algebra.Algebra
 open Cubical.Algebra.Algebra.AlgebraHoms
 open Cubical.Algebra.Algebra.AlgebraEquivs
+open Cubical.Algebra.Algebra using (AlgebraHom≡)
 
 
 module SyntheticGeometry.Spec
@@ -52,7 +53,7 @@ Spec : CommAlgebra k ℓ' → Type _
 Spec A = CommAlgebraHom A k-as-algebra
 
 make-Spec-eq : {x y : Spec A} → fst x ≡ fst y → x ≡ y
-make-Spec-eq {A = A} fst-eq = Σ≡Prop (isPropIsCommAlgebraHom {M = A} {N = k-as-algebra}) fst-eq
+make-Spec-eq = AlgebraHom≡
 
 module _ {A : CommAlgebra k ℓ'} {B : CommAlgebra k ℓ''} where
   Spec→ :  (f : CommAlgebraHom A B)
