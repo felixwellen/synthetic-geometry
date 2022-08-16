@@ -90,9 +90,7 @@ left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → Spec (pointwiseAlgebra (Spec A
 left-inv-to-ev-hom A = Spec→ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} (canonical-hom A)
 
 is-left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → (α : Spec A) → (left-inv-to-ev-hom A) (to-ev-hom (Spec A) α) ≡ α
-is-left-inv-to-ev-hom A α = typed-eq
-  where typed-eq : Spec→ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} (canonical-hom A) (to-ev-hom (Spec A) α) ≡ α
-        typed-eq = make-Spec-eq {A = A} refl
+is-left-inv-to-ev-hom A α = make-Spec-eq {A = A} refl
 
 ```
 
