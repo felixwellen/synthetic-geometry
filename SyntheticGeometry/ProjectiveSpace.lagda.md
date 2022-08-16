@@ -20,6 +20,7 @@ open import Cubical.Structures.Pointed using (pointed-sip)
 open import Cubical.Functions.Logic using (⇒∶_⇐∶_)
 open import Cubical.Functions.Embedding
 open import Cubical.Functions.Surjection
+open import Cubical.Functions.Image
 
 open import Cubical.HITs.SetQuotients as SQ
 open import Cubical.HITs.PropositionalTruncation as PT
@@ -160,12 +161,9 @@ we will use an intermediate type given by
         open Consequences k k-local
 
       im-ι-subset : ℙ → hProp ℓ
-      im-ι-subset y = (∃[ x ∈ embedded-𝔸ⁿ ] ι x ≡ y) , isPropPropTrunc
+      im-ι-subset y = isInImage ι y , isPropIsInImage ι y
 
-      im-ι : Type ℓ
-      im-ι = Σ[ y ∈ ℙ ] y ∈ im-ι-subset
-
-      embedded-𝔸ⁿ→im-ι : embedded-𝔸ⁿ → im-ι
+      embedded-𝔸ⁿ→im-ι : embedded-𝔸ⁿ → Image ι
       embedded-𝔸ⁿ→im-ι x = (ι x) , ∣ x , refl ∣₁
 
       ι-injective : (x y : embedded-𝔸ⁿ) → ι x ≡ ι y → x ≡ y
@@ -193,32 +191,19 @@ we will use an intermediate type given by
       ι-embedding : isEmbedding ι
       ι-embedding = injEmbedding squash/ (ι-injective _ _)
 
-      ι-embedding-im : isEmbedding embedded-𝔸ⁿ→im-ι
-      ι-embedding-im =
-        injEmbedding
-          (isSetΣ squash/ (λ x → isProp→isSet isPropPropTrunc))
-          λ p → ι-injective _ _ (cong fst p)
+      embedded-𝔸ⁿ≃Im-ι : embedded-𝔸ⁿ ≃ Image ι
+      embedded-𝔸ⁿ≃Im-ι .fst = restrictToImage ι
+      embedded-𝔸ⁿ≃Im-ι .snd = isEquivEmbeddingOntoImage (ι , ι-embedding)
 
-      embedded-𝔸ⁿ≃im-ι : embedded-𝔸ⁿ ≃ im-ι
-      embedded-𝔸ⁿ≃im-ι =
-        embedded-𝔸ⁿ→im-ι ,
-        isEmbedding×isSurjection→isEquiv
-          (ι-embedding-im ,
-           λ y → PT.rec isPropPropTrunc
-             (λ (x , ιx≡fst-y) →
-               ∣ x , (embedded-𝔸ⁿ→im-ι x ≡⟨ Σ≡Prop (λ _ → isPropPropTrunc) ιx≡fst-y ⟩
-                       y ∎) ∣₁)
-             (snd y))
-
-      imι⊆U : im-ι-subset ⊆ (fst ∘ U)
-      imι⊆U x x∈im-ι =
-        PT.rec (snd (fst (U x))) (λ (y , ιy≡x) → subst (fst ∘ fst ∘ U) ιy≡x (imι⊆U' y)) x∈im-ι
+      Im-ι⊆U : im-ι-subset ⊆ (fst ∘ U)
+      Im-ι⊆U x x∈Im-ι =
+        PT.rec (snd (fst (U x))) (λ (y , ιy≡x) → subst (fst ∘ fst ∘ U) ιy≡x (imι⊆U' y)) x∈Im-ι
         where
         imι⊆U' : (x : embedded-𝔸ⁿ) → fst (fst (U (ι x)))
         imι⊆U' (x , xi≡1) = subst (_∈ (k ˣ)) (sym xi≡1) RˣContainsOne
 
-      U⊆imι : (fst ∘ U) ⊆ im-ι-subset
-      U⊆imι =
+      U⊆Im-ι : (fst ∘ U) ⊆ im-ι-subset
+      U⊆Im-ι =
           elimProp
             (λ p → isProp→ (snd (im-ι-subset p)))
             λ{ (x , _) xi∈kˣ@(c , xic≡1) →
@@ -229,8 +214,8 @@ we will use an intermediate type given by
                       1r ⋆ x           ≡⟨ ⋆IdL _ ⟩
                       x                ∎ ))) ∣₁}
 
-      U≡im-ι : qc-open-as-type U ≡ im-ι
-      U≡im-ι =
+      U≡Im-ι : qc-open-as-type U ≡ Image ι
+      U≡Im-ι =
         cong (Σ ℙ) (cong (fst ∘_) U≡imι)
         where
           U≡imι : (fst ∘ U) ≡ im-ι-subset
@@ -238,7 +223,7 @@ we will use an intermediate type given by
             ⊆-extensionality
               (fst ∘ U)
               im-ι-subset
-              (U⊆imι , imι⊆U)
+              (U⊆Im-ι , Im-ι⊆U)
 
     embedded-𝔸ⁿ-is-𝔸ⁿ : embedded-𝔸ⁿ ≡ 𝔸 n
     embedded-𝔸ⁿ-is-𝔸ⁿ =
@@ -257,8 +242,8 @@ we will use an intermediate type given by
 
     U-is-affine : fst (is-affine (qc-open-as-type U))
     U-is-affine = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
-      (qc-open-as-type U   ≃⟨ pathToEquiv U≡im-ι ⟩
-       im-ι                ≃⟨ invEquiv embedded-𝔸ⁿ≃im-ι ⟩
+      (qc-open-as-type U   ≃⟨ pathToEquiv U≡Im-ι ⟩
+       Image ι             ≃⟨ invEquiv embedded-𝔸ⁿ≃Im-ι ⟩
        embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩
        𝔸 n ■ ) ∣₁
 
