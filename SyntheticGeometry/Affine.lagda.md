@@ -5,6 +5,7 @@ Affine qc-schemes
 {-# OPTIONS --safe #-}
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
+open import Cubical.Foundations.Equiv.Properties
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Univalence
@@ -46,7 +47,8 @@ kₐ = initialCAlg k
 
 ```
 
-An affine type is a type, that is equivalent to the spectrum of a fp algebra over the base ring k:
+An affine type is a type, that is equivalent to the spectrum of a fp algebra over the base ring k.
+We chose this definition over asking for a coupled algebra, because fp is universe independet.
 
 ```agda
 
@@ -85,19 +87,26 @@ which has a left inverse, when the type is a spectrum.
 left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → Spec (pointwiseAlgebra (Spec A) kₐ) → Spec A
 left-inv-to-ev-hom A = Spec→ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} (canonical-hom A)
 
-is-left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → (left-inv-to-ev-hom A) ∘ to-ev-hom (Spec A) ≡ idfun (Spec A)
-is-left-inv-to-ev-hom A i α = typed-eq i
+is-left-inv-to-ev-hom : (A : CommAlgebra k ℓ') → (α : Spec A) → (left-inv-to-ev-hom A) (to-ev-hom (Spec A) α) ≡ α
+is-left-inv-to-ev-hom A α = typed-eq
   where typed-eq : Spec→ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} (canonical-hom A) (to-ev-hom (Spec A) α) ≡ α
         typed-eq = make-Spec-eq {A = A} refl
 
 ```
 
+If the algebra A is coupled, this left inverse will be an equivalence.
+Then, as a one-sided inverse of an equivalence, to-ev-hom will also be an equivalence.
 
 ```agda
 
-to-ev-hom-on-Spec : (A : CommAlgebra k ℓ) → isFPAlgebra A → Spec A ≡ Spec (pointwiseAlgebra (Spec A) kₐ)
-to-ev-hom-on-Spec A fp-A = cong Spec (sqc-path k-sqc A fp-A)
+is-equiv-to-ev-hom : (A : CommAlgebra k ℓ') → is-coupled-algebra A → isEquiv (to-ev-hom (Spec A))
+is-equiv-to-ev-hom A is-coupled-A = isEquiv→sectionIsEquiv left-inv-equiv (is-left-inv-to-ev-hom A)
+  where
+    canonical-equiv : CommAlgebraEquiv A (pointwiseAlgebra (Spec A) kₐ)
+    canonical-equiv = (_ , is-coupled-A) , snd (canonical-hom A)
 
+    left-inv-equiv : isEquiv (left-inv-to-ev-hom A)
+    left-inv-equiv = snd (Spec→≃ {A = A} {B = pointwiseAlgebra (Spec A) kₐ} canonical-equiv)
 ```
 
 The following is used to define qc-schemes:
