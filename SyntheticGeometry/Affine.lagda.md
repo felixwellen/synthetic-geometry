@@ -176,23 +176,18 @@ coupled-affine-is-prop : (X : Type ℓ)
   → isProp (Σ[ (A , coupled-A) ∈ (Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩ ) ] Spec A ≡ X)
 coupled-affine-is-prop X = isEmbedding→hasPropFibers Spec-coupled-embedding X
 
-```
+fp-affine-is-prop : (X : Type ℓ)
+  → isProp (Σ[ (A , fp-A) ∈ (Σ[ A ∈ CommAlgebra k ℓ ] isFPAlgebra A) ] Spec A ≡ X)
+fp-affine-is-prop X ((A , fp-A) , SpecA≡X) ((B , fp-B) , SpecB≡X) i = (replaceFst i) , (cong snd fromCoupled i)
+  where
+    coupled-A = k-sqc A fp-A
+    coupled-B = k-sqc B fp-B
 
-We can show the same for fp-algebras, by first showing Spec is an embedding on them.
+    fromCoupled : ((A , coupled-A) , SpecA≡X) ≡ ((B , coupled-B) , SpecB≡X)
+    fromCoupled = coupled-affine-is-prop X ((A , coupled-A) , SpecA≡X) ((B , coupled-B) , SpecB≡X)
 
-```agda
-
-Spec-fp : Σ[ A ∈ CommAlgebra k ℓ ] isFPAlgebra A → Type _
-Spec-fp (A , _) = Spec A
-
-Spec-fp-embedding : isEmbedding Spec-fp
-Spec-fp-embedding = {!!}
-  where fp→coupled : Σ[ A ∈ CommAlgebra k ℓ ] isFPAlgebra A → Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩
-        fp→coupled (A , fp-A) = A , (k-sqc A fp-A)
-
-        fp→coupled-embedding : isEmbedding fp→coupled
-        fp→coupled-embedding =
-          hasPropFibers→isEmbedding (λ (A , coupled-A) ((B , fp-B) , p) ((C , fp-C) , q) → {!!})
+    replaceFst : (A , fp-A) ≡ (B , fp-B)
+    replaceFst = Σ≡Prop (λ _ → isPropPropTrunc) (cong (fst ∘ fst) fromCoupled)
 
 ```
 
