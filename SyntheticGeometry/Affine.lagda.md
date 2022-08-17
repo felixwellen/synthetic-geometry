@@ -149,8 +149,33 @@ Spec-equiv-onto-image = isoToIsEquiv SpecIso
       Σ≡Prop (λ B → snd (is-coupled-algebra B))
              (sym (uaCommAlgebra (((to-ev-map A) , coupled-A) , (snd (canonical-hom A)))))
 
-Spec-embedding : isEmbedding (Spec-coupled {ℓ' = ℓ})
-Spec-embedding = isEmbeddingFromIsEquivToImage Spec-coupled Spec-equiv-onto-image
+Spec-coupled-embedding : isEmbedding (Spec-coupled {ℓ' = ℓ})
+Spec-coupled-embedding = isEmbeddingFromIsEquivToImage Spec-coupled Spec-equiv-onto-image
+
+```
+
+From this we can conclude a couple of things, most notably,
+that the Σ-type of all coupled algebras with spectrum equal to a given type is a proposition
+- and the same for fp-algebras using sqc.
+
+```agda
+
+Spec-path-equiv : {A B : CommAlgebra k ℓ}
+  → ⟨ is-coupled-algebra A ⟩ → ⟨ is-coupled-algebra B ⟩
+  → (A ≡ B) ≃ (Spec A ≡ Spec B)
+Spec-path-equiv {A = A} {B = B} coupled-A coupled-B =
+  A ≡ B                              ≃⟨ Σ≡PropEquiv (λ A → snd (is-coupled-algebra A)) ⟩
+  (A , coupled-A) ≡ (B , coupled-B)  ≃⟨ _ , Spec-coupled-embedding (A , coupled-A) (B , coupled-B) ⟩
+  Spec A ≡ Spec B ■
+
+Spec-path-equiv-fp : {A B : CommAlgebra k ℓ}
+  → isFPAlgebra A → isFPAlgebra B
+  → (A ≡ B) ≃ (Spec A ≡ Spec B)
+Spec-path-equiv-fp {A = A} {B = B} fp-A fp-B = Spec-path-equiv (k-sqc A fp-A) (k-sqc B fp-B)
+
+coupled-affine-is-prop : (X : Type ℓ)
+  → isProp (Σ[ (A , coupled-A) ∈ (Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩ ) ] Spec A ≡ X)
+coupled-affine-is-prop X = isEmbedding→hasPropFibers Spec-coupled-embedding X
 
 ```
 
