@@ -14,6 +14,7 @@ open import Cubical.Foundations.Function
 
 open import Cubical.Functions.Logic
 open import Cubical.Functions.Image
+open import Cubical.Functions.Embedding
 
 open import Cubical.Data.Nat
 open import Cubical.Data.FinData
@@ -147,6 +148,9 @@ Spec-equiv-onto-image = isoToIsEquiv SpecIso
     Iso.leftInv SpecIso (A , coupled-A) =
       Σ≡Prop (λ B → snd (is-coupled-algebra B))
              (sym (uaCommAlgebra (((to-ev-map A) , coupled-A) , (snd (canonical-hom A)))))
+
+Spec-embedding : isEmbedding (Spec-coupled {ℓ' = ℓ})
+Spec-embedding = isEmbeddingFromIsEquivToImage Spec-coupled Spec-equiv-onto-image
 
 ```
 
