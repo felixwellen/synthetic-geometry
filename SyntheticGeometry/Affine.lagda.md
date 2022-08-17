@@ -129,7 +129,7 @@ Spec-equiv-onto-image = isoToIsEquiv SpecIso
         (λ ((A , coupled-A) , SpecA≡X)
         → let A≡X→k : A ≡ (pointwiseAlgebra X kₐ)
               A≡X→k =
-                A ≡⟨ fst (CommAlgebraPath k A (pointwiseAlgebra (Spec A) kₐ)) ((_ , coupled-A) , snd (canonical-hom A))  ⟩
+                A                            ≡⟨ uaCommAlgebra ((_ , coupled-A) , snd (canonical-hom A)) ⟩
                 pointwiseAlgebra (Spec A) kₐ  ≡⟨ cong (λ u → pointwiseAlgebra u kₐ) SpecA≡X ⟩
                 pointwiseAlgebra X kₐ ∎
           in subst (λ u → ⟨ is-coupled-algebra u ⟩) A≡X→k coupled-A)
