@@ -136,9 +136,14 @@ Spec-equiv-onto-image = isoToIsEquiv SpecIso
         X∈ImSpec
     Iso.rightInv SpecIso (X , X∈ImSpec) =
       Σ≡Prop (λ _ → isPropPropTrunc)
-             SpecX→k≡X
-      where SpecX→k≡X : Spec (pointwiseAlgebra X kₐ) ≡ X
-            SpecX→k≡X = {!!}
+             (sym (ua (to-ev-hom X , X-coupled)))
+      where
+      X-coupled : ⟨ is-coupled X ⟩
+      X-coupled =
+        PT.rec
+          (snd (is-coupled X))
+          (λ{ ((A , coupled-A) , SpecA≡X) → subst (fst ∘ is-coupled) SpecA≡X (is-equiv-to-ev-hom A coupled-A)})
+          X∈ImSpec
     Iso.leftInv SpecIso (A , coupled-A) =
       Σ≡Prop (λ B → snd (is-coupled-algebra B))
              (sym (uaCommAlgebra (((to-ev-map A) , coupled-A) , (snd (canonical-hom A)))))
