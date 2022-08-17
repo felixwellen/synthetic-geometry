@@ -155,8 +155,7 @@ Spec-coupled-embedding = isEmbeddingFromIsEquivToImage Spec-coupled Spec-equiv-o
 ```
 
 From this we can conclude a couple of things, most notably,
-that the Σ-type of all coupled algebras with spectrum equal to a given type is a proposition
-- and the same for fp-algebras using sqc.
+that the Σ-type of all coupled algebras with spectrum equal to a given type is a proposition.
 
 ```agda
 
@@ -176,6 +175,24 @@ Spec-path-equiv-fp {A = A} {B = B} fp-A fp-B = Spec-path-equiv (k-sqc A fp-A) (k
 coupled-affine-is-prop : (X : Type ℓ)
   → isProp (Σ[ (A , coupled-A) ∈ (Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩ ) ] Spec A ≡ X)
 coupled-affine-is-prop X = isEmbedding→hasPropFibers Spec-coupled-embedding X
+
+```
+
+We can show the same for fp-algebras, by first showing Spec is an embedding on them.
+
+```agda
+
+Spec-fp : Σ[ A ∈ CommAlgebra k ℓ ] isFPAlgebra A → Type _
+Spec-fp (A , _) = Spec A
+
+Spec-fp-embedding : isEmbedding Spec-fp
+Spec-fp-embedding = {!!}
+  where fp→coupled : Σ[ A ∈ CommAlgebra k ℓ ] isFPAlgebra A → Σ[ A ∈ CommAlgebra k ℓ ] ⟨ is-coupled-algebra A ⟩
+        fp→coupled (A , fp-A) = A , (k-sqc A fp-A)
+
+        fp→coupled-embedding : isEmbedding fp→coupled
+        fp→coupled-embedding =
+          hasPropFibers→isEmbedding (λ (A , coupled-A) ((B , fp-B) , p) ((C , fp-C) , q) → {!!})
 
 ```
 
