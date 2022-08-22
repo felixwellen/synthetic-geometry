@@ -190,18 +190,3 @@ fp-affine-is-prop X ((A , fp-A) , SpecA≡X) ((B , fp-B) , SpecB≡X) i = (repla
     replaceFst = Σ≡Prop (λ _ → isPropPropTrunc) (cong (fst ∘ fst) fromCoupled)
 
 ```
-
-Finite affine qc-open covers
-----------------------------
-The following is used to define qc-schemes:
-
-```agda
-
-is-affine-finite-qc-open-cover : {n : ℕ}
-  → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
-  → hProp _
-is-affine-finite-qc-open-cover {n = n} X U =
-  is-finite-qc-open-cover X U
-  ⊓ (∀[ i ∶ Fin n ] is-affine (qc-open-as-type (U i)))
-
-```

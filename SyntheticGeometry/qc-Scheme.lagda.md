@@ -38,10 +38,16 @@ private variable ℓ' : Level
 
 ```
 
-To define qc-schemes, we need the definition of open affine covers,
-defined in [Open](Open.lagda.md).
+To define qc-schemes, we need the definition of open affine covers
 
 ```agda
+
+is-affine-finite-qc-open-cover : {n : ℕ}
+  → (X : Type ℓ') → (U : Fin n → qc-opens-in X)
+  → hProp _
+is-affine-finite-qc-open-cover {n = n} X U =
+  is-finite-qc-open-cover X U
+  ⊓ (∀[ i ∶ Fin n ] is-affine (qc-open-as-type (U i)))
 
 is-qc-scheme : (X : Type ℓ') → hProp _
 is-qc-scheme X =
