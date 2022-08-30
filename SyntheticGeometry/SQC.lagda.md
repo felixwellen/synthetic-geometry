@@ -5,7 +5,7 @@ Synthetic quasicoherence as defined in Ingo Blechschmidts thesis (Definition 18.
 For now, we only consider the synthetic quasicoherence of the base ring k itself.
 
 ```agda
-module SyntheticGeometry.SQC where
+{-# OPTIONS --safe #-}
 
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
@@ -13,12 +13,14 @@ open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset
 open import Cubical.Foundations.Function
+open import Cubical.Foundations.HLevels
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Algebra
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
+open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
 open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to quotientInducedHom)
 open import Cubical.Algebra.CommAlgebra.Ideal
@@ -36,9 +38,13 @@ open import Cubical.Relation.Nullary
 
 open import Cubical.Tactics.CommRingSolver.Reflection
 
+module SyntheticGeometry.SQC
+  {ℓ : Level}
+  (k : CommRing ℓ)
+  where
 
-open import SyntheticGeometry.Spec
-
+open import SyntheticGeometry.Spec k
+private variable ℓ' : Level
 ```
 
 The following defines synthetic quasicoherence for finitely presented algebras
@@ -47,12 +53,56 @@ in Blechschmidt's thesis.
 
 ```agda
 
+private
+  kₐ = initialCAlg k
 
-sqc-over-itself : {ℓ : Level} → CommRing ℓ → Set (ℓ-suc ℓ)
-sqc-over-itself {ℓ} k = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (canonical-map A)
-  where
-    canonical-map : (A : CommAlgebra k ℓ) → ⟨ A ⟩ → (Spec k A → ⟨ k ⟩)
-    canonical-map A a φ = φ $a a
+to-ev-map : (A : CommAlgebra k ℓ') → ⟨ A ⟩ → (Spec A → ⟨ k ⟩)
+to-ev-map A a φ = φ $a a
+
+sqc-over-itself : Type _
+sqc-over-itself = (A : CommAlgebra k ℓ) → isFPAlgebra A → isEquiv (to-ev-map A)
+
+is-coupled-algebra : (A : CommAlgebra k ℓ') → hProp _
+is-coupled-algebra A = isEquiv (to-ev-map A) , isPropIsEquiv _
+
+```
+
+The canonical map is actually a homomorphism:
+
+```agda
+module _ (A : CommAlgebra k ℓ') where
+  open IsAlgebraHom
+  open CommAlgebraStr {{...}}
+  private instance
+    _ = snd (pointwiseAlgebra (Spec A) kₐ)
+    _ = snd A
+
+  canonical-hom : CommAlgebraHom A (pointwiseAlgebra (Spec A) kₐ)
+  fst canonical-hom = to-ev-map A
+  pres0 (snd canonical-hom) = funExt (λ ϕ → pres0 (snd ϕ))
+  pres1 (snd canonical-hom) = funExt (λ ϕ → pres1 (snd ϕ))
+  pres+ (snd canonical-hom) _ _ = funExt (λ ϕ → pres+ (snd ϕ) _ _)
+  pres· (snd canonical-hom) _ _ = funExt (λ ϕ → pres· (snd ϕ) _ _)
+  pres- (snd canonical-hom) _ = funExt (λ ϕ → pres- (snd ϕ) _)
+  pres⋆ (snd canonical-hom) _ _ = funExt (λ ϕ → pres⋆ (snd ϕ) _ _)
+
+```
+
+TODO: move rest of this file to another file
+TODO: remove TODOs and put them into issues
+
+This entails, that the equivalence in sqc is actually an isomorphism of algebra and therefore also
+a path between the algebras:
+
+```agda
+
+module _ (k-sqc : sqc-over-itself) (A : CommAlgebra k ℓ) (fp-A : isFPAlgebra A) where
+  sqc-alg-equiv : CommAlgebraEquiv A (pointwiseAlgebra (Spec A) kₐ)
+  fst sqc-alg-equiv = to-ev-map A , k-sqc A fp-A
+  snd sqc-alg-equiv = snd (canonical-hom A)
+
+  sqc-path : A ≡ pointwiseAlgebra (Spec A) kₐ
+  sqc-path = fst (CommAlgebraPath k A (pointwiseAlgebra (Spec A) kₐ)) sqc-alg-equiv
 
 ```
 
@@ -60,10 +110,8 @@ Here are some properties of k that follow from its synthetic quasicoherence
 together with its locality, as in Subsection 18.4.
 
 ```agda
-module _ {ℓ : Level} (k : CommRing ℓ) (k-local : isLocal k) (k-sqc : sqc-over-itself k) where
+module _ (k-local : isLocal k) (k-sqc : sqc-over-itself) where
   open CommRingStr (snd k)
-
-  kₐ = initialCAlg k
 
 ```
 
@@ -93,10 +141,10 @@ But even more, every nonzero vector contains an invertible element.
       finite-presentation-of-A : FinitePresentation A
       finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
 
-      equiv : ⟨ A ⟩ ≃ (Spec k A → ⟨ k ⟩)
+      equiv : ⟨ A ⟩ ≃ (Spec A → ⟨ k ⟩)
       equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣₁
 
-      Spec-A-empty : Spec k A → ⊥
+      Spec-A-empty : Spec A → ⊥
       Spec-A-empty h = xs≢0 (funExt xs≡0)
         where
           open AlgebraHoms using (compAlgebraHom)
@@ -113,7 +161,7 @@ But even more, every nonzero vector contains an invertible element.
             h $a A.0a         ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
             0r                ∎
 
-      functions-on-Spec-A-trivial : {f g : Spec k A → ⟨ k ⟩} → f ≡ g
+      functions-on-Spec-A-trivial : {f g : Spec A → ⟨ k ⟩} → f ≡ g
       functions-on-Spec-A-trivial = funExt (λ p → Cubical.Data.Empty.rec (Spec-A-empty p))
 
       A-is-trivial : {a a' : ⟨ A ⟩} → a ≡ a'

@@ -5,7 +5,6 @@ All the mathematics presented here, is from [Ingo Blechschmidt](https://www.ingo
 
 ```agda
 {-# OPTIONS --safe #-}
-module SyntheticGeometry.Spec where
 
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
@@ -21,12 +20,24 @@ open import Cubical.HITs.PropositionalTruncation
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
+open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FreeCommAlgebra
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
+import Cubical.Algebra.Algebra
+open Cubical.Algebra.Algebra.AlgebraHoms
+open Cubical.Algebra.Algebra.AlgebraEquivs
+open Cubical.Algebra.Algebra using (AlgebraHom≡)
+
+
+module SyntheticGeometry.Spec
+  {ℓ : Level}
+  (k : CommRing ℓ)
+  where
 
 private
   variable
-    ℓ ℓ' ℓ'' : Level
+    ℓ' ℓ'' : Level
+    A B : CommAlgebra k ℓ'
 
 ```
 
@@ -35,31 +46,57 @@ We assume a ring object k in the following, which we think of as (the functor of
 
 ```agda
 
-module _ (k : CommRing ℓ) where
+k-as-algebra = initialCAlg k
+𝔸¹ = k-as-algebra
 
-  k-as-algebra = initialCAlg k
-  𝔸¹ = k-as-algebra
+Spec : CommAlgebra k ℓ' → Type _
+Spec A = CommAlgebraHom A k-as-algebra
 
-  Spec : CommAlgebra k ℓ' → Type _
-  Spec A = CommAlgebraHom A k-as-algebra
+make-Spec-eq : {x y : Spec A} → fst x ≡ fst y → x ≡ y
+make-Spec-eq = AlgebraHom≡
 
-  std-affine-space : (n : ℕ) → Type _
-  std-affine-space n = Spec (Polynomials n)
+module _ {A : CommAlgebra k ℓ'} {B : CommAlgebra k ℓ''} where
+  Spec→ :  (f : CommAlgebraHom A B)
+          → Spec B → Spec A
+  Spec→ f α = compAlgebraHom f α
 
-  𝔸 = std-affine-space
+  Spec→≃ : (f : CommAlgebraEquiv A B)
+          → Spec B ≃ Spec A
+  fst (Spec→≃ f) = Spec→ (fst (fst f) , snd f)
+  snd (Spec→≃ f) = snd (preCompAlgEquiv f)
+```
 
-  module _ (D : Type ℓ-zero) where
-    k[D] = k [ D ]
+Standard n-dimensional affine space
+-----------------------------------
 
-    mapping-space-eq : Spec k[D] ≡ (D → ⟨ k ⟩)
-    mapping-space-eq = homMapPath k-as-algebra
+```agda
 
-  std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
-  std-affine-space-as-product n = mapping-space-eq (Fin n)
+std-affine-space : (n : ℕ) → Type _
+std-affine-space n = Spec (Polynomials n)
 
-  is-affine : Type ℓ' → hProp _
-  is-affine {ℓ' = ℓ'} X =
-    (∃[ A ∈ (CommAlgebra k ℓ') ] X ≃ Spec A) ,
-    isPropPropTrunc
+𝔸 = std-affine-space
+
+```
+
+Since the type of polynomials we use is defined as a HIT,
+which is a straight forward implementation of a free commutative algebra on a type D,
+we can use the following abstract fact ...
+
+```agda
+
+module _ (D : Type ℓ-zero) where
+  k[D] = k [ D ]
+
+  mapping-space-eq : Spec k[D] ≡ (D → ⟨ k ⟩)
+  mapping-space-eq = homMapPath k-as-algebra
+
+```
+
+... to show that std-affine-space is a product:
+
+```agda
+
+std-affine-space-as-product : (n : ℕ) → (𝔸 n) ≡ FinVec ⟨ k ⟩ n
+std-affine-space-as-product n = mapping-space-eq (Fin n)
 
 ```
