@@ -6,13 +6,12 @@ Construct projective space as a quotient of 𝔸ⁿ⁺¹-{0}.
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
-open import Cubical.Foundations.Powerset using (_∈_; _⊆_) renaming (ℙ to Powerset)
+open import Cubical.Foundations.Powerset using (_∈_; _⊆_; ⊆-extensionality) renaming (ℙ to Powerset)
 open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Pointed using (_→∙_)
 open import Cubical.Foundations.Pointed.Homogeneous using (isHomogeneousDiscrete)
 open import Cubical.Foundations.Univalence using (pathToEquiv)
-open import Cubical.Foundations.Powerset using (⊆-extensionality)
 open import Cubical.Foundations.Function
 
 open import Cubical.Structures.Pointed using (pointed-sip)
@@ -240,7 +239,7 @@ we will use an intermediate type given by
         (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
         Maybe∙ (Fin n)           ∎
 
-    U-is-affine : fst (is-affine (qc-open-as-type U))
+    U-is-affine : ⟨ is-affine (qc-open-as-type U) ⟩
     U-is-affine = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
       (qc-open-as-type U   ≃⟨ pathToEquiv U≡Im-ι ⟩
        Image ι             ≃⟨ invEquiv embedded-𝔸ⁿ≃Im-ι ⟩
