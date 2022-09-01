@@ -71,6 +71,7 @@ module Comparison
   inl' = inl
   inr' = inr
 
+  -- The autoequivalence of 𝔸¹ˣ that turns f into g and vice versa.
   inversion : 𝔸¹ˣ → 𝔸¹ˣ
   inversion (x , x-inv) = (x ⁻¹) , RˣInvClosed x
     where
@@ -167,20 +168,34 @@ module Comparison
       PT.elim
         {P = λ existence → pre-from-𝔸²-0 (fst (ι₀ x)) existence ≡ inl x}
         (λ _ → isSet-ℙ¹-as-pushout _ _)
-        (λ{ (zero , 1r-inv) →  -- Yes, 1r is invertible. We already knew that.
+        (λ{ (zero , 1r-inv) →
               let instance _ = 1r-inv in
               cong inl' (1r ⁻¹ · x  ≡⟨ cong (_· x) 1⁻¹≡1 ⟩
                          1r · x     ≡⟨ ·IdL x ⟩
                          x          ∎)
-          ; (one , x-inv) →  -- Oooh, turns out x is also invertible.
+          ; (one , x-inv) →
               let instance _ = x-inv in
-              inr (x ⁻¹ · 1r) ≡⟨ cong inr' (·IdR (x ⁻¹)) ⟩
-              inr (x ⁻¹)      ≡⟨ sym (push (x , x-inv)) ⟩
-              inl x           ∎})
+              inr' (x ⁻¹ · 1r) ≡⟨ cong inr' (·IdR (x ⁻¹)) ⟩
+              inr' (x ⁻¹)      ≡⟨ sym (push (x , x-inv)) ⟩
+              inl' x           ∎})
         (generalized-field-property k-local k-sqc (fst (ι₀ x)) (snd (ι₀ x)))
 
     from-𝔸²-0∘ι₁ : (x : ⟨ k ⟩) → from-𝔸²-0 (ι₁ x) ≡ inr x
-    from-𝔸²-0∘ι₁ = {!!}
+    from-𝔸²-0∘ι₁ x =
+      PT.elim
+        {P = λ existence → pre-from-𝔸²-0 (fst (ι₁ x)) existence ≡ inr x}
+        (λ _ → isSet-ℙ¹-as-pushout _ _)
+        (λ{ (one , 1r-inv) →
+              let instance _ = 1r-inv in
+              cong inr' (1r ⁻¹ · x  ≡⟨ cong (_· x) 1⁻¹≡1 ⟩
+                         1r · x     ≡⟨ ·IdL x ⟩
+                         x          ∎)
+          ; (zero , x-inv) →
+              let instance _ = x-inv in
+              inl' (x ⁻¹ · 1r) ≡⟨ cong inl' (·IdR (x ⁻¹)) ⟩
+              inl' (x ⁻¹)      ≡⟨ push (x ⁻¹ , RˣInvClosed x) ⟩
+              inr' x           ∎})
+        (generalized-field-property k-local k-sqc (fst (ι₁ x)) (snd (ι₁ x)))
 
     from∘to : (x : ℙ¹-as-pushout) → from (to x) ≡ x
     from∘to =
