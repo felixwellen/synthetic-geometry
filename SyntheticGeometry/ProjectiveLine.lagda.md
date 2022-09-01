@@ -9,6 +9,7 @@ open import Cubical.Foundations.Powerset using (_∈_; _⊆_) renaming (ℙ to P
 open import Cubical.Foundations.Function
 
 open import Cubical.Functions.Embedding
+open import Cubical.Functions.Involution
 
 open import Cubical.HITs.SetQuotients as SQ
 import Cubical.HITs.PropositionalTruncation as PT
@@ -42,11 +43,14 @@ Exhibit ℙ¹ as a pushout of two copies of 𝔸¹.
 𝔸¹ˣ : Type ℓ
 𝔸¹ˣ = Σ[ x ∈ ⟨ k ⟩ ] x ∈ k ˣ
 
+private
+  f g : 𝔸¹ˣ → ⟨ k ⟩
+  f (x , _) = x
+  g (_ , (x⁻¹ , _)) = x⁻¹
+
 ℙ¹-as-pushout : Type ℓ
 ℙ¹-as-pushout =
-  Pushout {A = 𝔸¹ˣ} {B = ⟨ k ⟩} {C = ⟨ k ⟩}
-    (λ (x , _) → x)
-    λ (_ , (x⁻¹ , _)) → x⁻¹
+  Pushout {A = 𝔸¹ˣ} {B = ⟨ k ⟩} {C = ⟨ k ⟩} f g
 
 module Comparison
   where
@@ -54,13 +58,30 @@ module Comparison
   open CommRingStr (snd k)
   open Consequences k k-local
 
+  inversion : 𝔸¹ˣ → 𝔸¹ˣ
+  inversion (x , x-inv) = (x ⁻¹) , RˣInvClosed x
+    where
+    open Units k
+    instance
+      _ : x ∈ k ˣ
+      _ = x-inv
+
+  -- Just to check that this is definitional.
+  g≡f∘inversion : (x : 𝔸¹ˣ) → g x ≡ f (inversion x)
+  g≡f∘inversion x = refl
+
+  isEquiv-inversion : isEquiv inversion
+  isEquiv-inversion = involIsEquiv (λ x → Σ≡Prop (snd ∘ (k ˣ)) refl)
+
   isSet-ℙ¹-as-pushout : isSet ℙ¹-as-pushout
   isSet-ℙ¹-as-pushout =
     Pushout.preserveHLevelEmbedding _ _
-      (snd (snd (Subset→Embedding (k ˣ))))
-      {!!}
+      isEmbedding-f
+      (isEmbedding-∘ isEmbedding-f (isEquiv→isEmbedding isEquiv-inversion))
       is-set
       is-set
+    where
+    isEmbedding-f = snd (snd (Subset→Embedding (k ˣ)))
 
   module To
     where
