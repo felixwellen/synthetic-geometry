@@ -7,6 +7,7 @@ open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset using (_∈_; _⊆_) renaming (ℙ to Powerset)
 open import Cubical.Foundations.Function
+open import Cubical.Foundations.HLevels
 
 open import Cubical.Functions.Embedding
 open import Cubical.Functions.Involution
@@ -112,7 +113,7 @@ module Comparison
     path x y xy≡1 =
       let yx≡1 : y · x ≡ 1r
           yx≡1 = ·Comm y x ∙ xy≡1
-      in eq/ _ _ {! (y , ((x , yx≡1) , {!funExt (λ{ zero → ·IdR y ; one → yx≡1 }) !})) !}
+      in eq/ _ _ ( (y , ((x , yx≡1) , funExt (λ{ zero → ·IdR y ; one → yx≡1 }) )) )
 
     to : ℙ¹-as-pushout → ℙ 1
     to (inl x) = [ ι₀ x ]ℙ¹
@@ -139,10 +140,10 @@ module Comparison
         PT.rec→Set
           isSet-ℙ¹-as-pushout
           pre-pre-from-𝔸²-0
-          (λ{ (zero , _) (zero , _) → cong (λ x-inv → inl' (fst x-inv · y)) (snd ((k ˣ) x) _ _)
+          (λ{ (zero , x-inv) (zero , x-inv') → cong (λ inv → inl' (fst inv · y)) (snd ((k ˣ) x) x-inv x-inv')
             ; (zero , x-inv) (one , y-inv) → {!!}
             ; (one , y-inv) (zero , x-inv) → {!!}
-            ; (one , _) (one , _) → cong (λ y-inv → inr' (fst y-inv · x)) (snd ((k ˣ) y) _ _)})
+            ; (one , y-inv) (one , y-inv') → cong (λ inv → inr' (fst inv · x)) (snd ((k ˣ) y) y-inv y-inv')})
 
     from-𝔸²-0 : 𝔸ⁿ⁺¹-0 1 → ℙ¹-as-pushout
     from-𝔸²-0 (xy , xy≢0) =
