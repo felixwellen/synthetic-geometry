@@ -11,8 +11,8 @@ open import Cubical.Foundations.Function
 open import Cubical.Functions.Embedding
 
 open import Cubical.HITs.SetQuotients as SQ
-open import Cubical.HITs.PropositionalTruncation as PT
-open import Cubical.HITs.Pushout
+import Cubical.HITs.PropositionalTruncation as PT
+open import Cubical.HITs.Pushout as Pushout
 
 open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
@@ -39,7 +39,6 @@ open SyntheticGeometry.SQC k
 Exhibit ℙ¹ as a pushout of two copies of 𝔸¹.
 
 ```agda
-
 𝔸¹ˣ : Type ℓ
 𝔸¹ˣ = Σ[ x ∈ ⟨ k ⟩ ] x ∈ k ˣ
 
@@ -54,6 +53,14 @@ module Comparison
 
   open CommRingStr (snd k)
   open Consequences k k-local
+
+  isSet-ℙ¹-as-pushout : isSet ℙ¹-as-pushout
+  isSet-ℙ¹-as-pushout =
+    Pushout.preserveHLevelEmbedding _ _
+      (snd (snd (Subset→Embedding (k ˣ))))
+      {!!}
+      is-set
+      is-set
 
   module To
     where
@@ -73,4 +80,34 @@ module Comparison
     to (inl x) = ι₀ x
     to (inr x) = ι₁ x
     to (push (x , y , xy≡1) i) = path x y xy≡1 i
+
+  module From
+    where
+
+    from : ℙ 1 → ℙ¹-as-pushout
+    from = SQ.rec
+      isSet-ℙ¹-as-pushout
+      (λ{ (xy , xy≢0) →
+        let x = xy zero
+            y = xy one
+        in
+          PT.rec→Set
+            isSet-ℙ¹-as-pushout
+            (λ{ (zero , x⁻¹ , _) → inl (x⁻¹ · y)
+              ; (one , y⁻¹ , _) → inr (y⁻¹ · x) })
+            (λ{ (zero , _) (zero , _) → cong (λ x-inv → inl (fst x-inv · y)) (snd ((k ˣ) x) _ _)
+              ; (zero , x-inv) (one , y-inv) → {!!}
+              ; (one , y-inv) (zero , x-inv) → {!!}
+              ; (one , _) (one , _) → cong (λ y-inv → inr (fst y-inv · x)) (snd ((k ˣ) y) _ _)})
+            (generalized-field-property k-local k-sqc xy xy≢0)})
+      λ{ (xy , xy≢0) (x'y' , x'y'≢0) xy~x'y' → {!!} }
+
+  module From∘To
+    where
+
+    open From
+    open To
+
+    from∘to : (x : ℙ¹-as-pushout) → from (to x) ≡ x
+    from∘to = {!Pushout.elimProp!}
 ```
