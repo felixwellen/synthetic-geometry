@@ -62,6 +62,14 @@ module Comparison
   open Consequences k k-local
   open Units k
 
+  -- More specific types for some operations.
+  [_]ℙ¹ : 𝔸ⁿ⁺¹-0 1 → ℙ 1
+  [_]ℙ¹ = [_]
+
+  inl' inr' : ⟨ k ⟩ → ℙ¹-as-pushout
+  inl' = inl
+  inr' = inr
+
   inversion : 𝔸¹ˣ → 𝔸¹ˣ
   inversion (x , x-inv) = (x ⁻¹) , RˣInvClosed x
     where
@@ -100,15 +108,15 @@ module Comparison
     -- TODO
 
     -- I think we will also need the converse...?
-    path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ] ≡ [ ι₁ y ]
+    path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
     path x y xy≡1 =
       let yx≡1 : y · x ≡ 1r
           yx≡1 = ·Comm y x ∙ xy≡1
-      in eq/ _ _ (y , ((x , yx≡1) , funExt (λ{ zero → ·IdR y ; one → yx≡1 })))
+      in eq/ _ _ {! (y , ((x , yx≡1) , {!funExt (λ{ zero → ·IdR y ; one → yx≡1 }) !})) !}
 
     to : ℙ¹-as-pushout → ℙ 1
-    to (inl x) = [ ι₀ x ]
-    to (inr x) = [ ι₁ x ]
+    to (inl x) = [ ι₀ x ]ℙ¹
+    to (inr x) = [ ι₁ x ]ℙ¹
     to (push (x , y , xy≡1) i) = path x y xy≡1 i
 
   module From
@@ -131,10 +139,10 @@ module Comparison
         PT.rec→Set
           isSet-ℙ¹-as-pushout
           pre-pre-from-𝔸²-0
-          (λ{ (zero , _) (zero , _) → cong (λ x-inv → inl (fst x-inv · y)) (snd ((k ˣ) x) _ _)
+          (λ{ (zero , _) (zero , _) → cong (λ x-inv → inl' (fst x-inv · y)) (snd ((k ˣ) x) _ _)
             ; (zero , x-inv) (one , y-inv) → {!!}
             ; (one , y-inv) (zero , x-inv) → {!!}
-            ; (one , _) (one , _) → cong (λ y-inv → inr (fst y-inv · x)) (snd ((k ˣ) y) _ _)})
+            ; (one , _) (one , _) → cong (λ y-inv → inr' (fst y-inv · x)) (snd ((k ˣ) y) _ _)})
 
     from-𝔸²-0 : 𝔸ⁿ⁺¹-0 1 → ℙ¹-as-pushout
     from-𝔸²-0 (xy , xy≢0) =
@@ -160,12 +168,12 @@ module Comparison
         (λ _ → isSet-ℙ¹-as-pushout _ _)
         (λ{ (zero , 1r-inv) →  -- Yes, 1r is invertible. We already knew that.
               let instance _ = 1r-inv in
-              cong inl (1r ⁻¹ · x  ≡⟨ cong (_· x) 1⁻¹≡1 ⟩
-                        1r · x     ≡⟨ ·IdL x ⟩
-                        x          ∎)
+              cong inl' (1r ⁻¹ · x  ≡⟨ cong (_· x) 1⁻¹≡1 ⟩
+                         1r · x     ≡⟨ ·IdL x ⟩
+                         x          ∎)
           ; (one , x-inv) →  -- Oooh, turns out x is also invertible.
               let instance _ = x-inv in
-              inr (x ⁻¹ · 1r) ≡⟨ cong inr (·IdR (x ⁻¹)) ⟩
+              inr (x ⁻¹ · 1r) ≡⟨ cong inr' (·IdR (x ⁻¹)) ⟩
               inr (x ⁻¹)      ≡⟨ sym (push (x , x-inv)) ⟩
               inl x           ∎})
         (generalized-field-property k-local k-sqc (fst (ι₀ x)) (snd (ι₀ x)))
