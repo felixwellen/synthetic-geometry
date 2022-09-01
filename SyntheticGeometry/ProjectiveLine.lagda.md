@@ -43,10 +43,13 @@ Exhibit ℙ¹ as a pushout of two copies of 𝔸¹.
 𝔸¹ˣ : Type ℓ
 𝔸¹ˣ = Σ[ x ∈ ⟨ k ⟩ ] x ∈ k ˣ
 
-private
+module PushoutMaps
+  where
   f g : 𝔸¹ˣ → ⟨ k ⟩
   f (x , _) = x
   g (_ , (x⁻¹ , _)) = x⁻¹
+
+open PushoutMaps
 
 ℙ¹-as-pushout : Type ℓ
 ℙ¹-as-pushout =
@@ -57,11 +60,11 @@ module Comparison
 
   open CommRingStr (snd k)
   open Consequences k k-local
+  open Units k
 
   inversion : 𝔸¹ˣ → 𝔸¹ˣ
   inversion (x , x-inv) = (x ⁻¹) , RˣInvClosed x
     where
-    open Units k
     instance
       _ : x ∈ k ˣ
       _ = x-inv
@@ -75,7 +78,10 @@ module Comparison
 
   isSet-ℙ¹-as-pushout : isSet ℙ¹-as-pushout
   isSet-ℙ¹-as-pushout =
-    Pushout.preserveHLevelEmbedding _ _
+    Pushout.preserveHLevelEmbedding
+      f
+      g
+      {n = 0}
       isEmbedding-f
       (isEmbedding-∘ isEmbedding-f (isEquiv→isEmbedding isEquiv-inversion))
       is-set
@@ -87,8 +93,11 @@ module Comparison
     where
 
     ι₀ ι₁ : ⟨ k ⟩ → 𝔸ⁿ⁺¹-0 1
-    ι₀ x = (λ{ zero → 1r ; one → x }) , (λ ≡0 → 1≢0 (funExt⁻ ≡0 zero))
+    fst (ι₀ x) = λ{ zero → 1r ; one → x}
+    snd (ι₀ x) ≡0 = 1≢0 (funExt⁻ ≡0 zero)
+    -- (λ{ zero → 1r ; one → x }) , (λ ≡0 → 1≢0 (funExt⁻ ≡0 zero))
     ι₁ x = (λ{ zero → x ; one → 1r }) , (λ ≡0 → 1≢0 (funExt⁻ ≡0 one))
+    -- TODO
 
     -- I think we will also need the converse...?
     path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ] ≡ [ ι₁ y ]
@@ -105,20 +114,32 @@ module Comparison
   module From
     where
 
+    module _
+      (xy : 𝔸ⁿ⁺¹ 1)
+      where
+
+      private
+        x = xy zero
+        y = xy one
+
+      pre-pre-from-𝔸²-0 : (Σ[ i ∈ _ ] xy i ∈ k ˣ) → ℙ¹-as-pushout
+      pre-pre-from-𝔸²-0 (zero , x-inv) = inl (x ⁻¹ · y) where instance _ = x-inv
+      pre-pre-from-𝔸²-0 (one , y-inv) = inr (y ⁻¹ · x) where instance _ = y-inv
+
+      pre-from-𝔸²-0 : (∃[ i ∈ _ ] xy i ∈ k ˣ) → ℙ¹-as-pushout
+      pre-from-𝔸²-0 =
+        PT.rec→Set
+          isSet-ℙ¹-as-pushout
+          pre-pre-from-𝔸²-0
+          (λ{ (zero , _) (zero , _) → cong (λ x-inv → inl (fst x-inv · y)) (snd ((k ˣ) x) _ _)
+            ; (zero , x-inv) (one , y-inv) → {!!}
+            ; (one , y-inv) (zero , x-inv) → {!!}
+            ; (one , _) (one , _) → cong (λ y-inv → inr (fst y-inv · x)) (snd ((k ˣ) y) _ _)})
+
     from-𝔸²-0 : 𝔸ⁿ⁺¹-0 1 → ℙ¹-as-pushout
     from-𝔸²-0 (xy , xy≢0) =
-        let x = xy zero
-            y = xy one
-        in
-          PT.rec→Set
-            isSet-ℙ¹-as-pushout
-            (λ{ (zero , x⁻¹ , _) → inl (x⁻¹ · y)
-              ; (one , y⁻¹ , _) → inr (y⁻¹ · x) })
-            (λ{ (zero , _) (zero , _) → cong (λ x-inv → inl (fst x-inv · y)) (snd ((k ˣ) x) _ _)
-              ; (zero , x-inv) (one , y-inv) → {!!}
-              ; (one , y-inv) (zero , x-inv) → {!!}
-              ; (one , _) (one , _) → cong (λ y-inv → inr (fst y-inv · x)) (snd ((k ˣ) y) _ _)})
-            (generalized-field-property k-local k-sqc xy xy≢0)
+      pre-from-𝔸²-0 xy
+        (generalized-field-property k-local k-sqc xy xy≢0)
 
     from : ℙ 1 → ℙ¹-as-pushout
     from = SQ.rec
@@ -133,7 +154,21 @@ module Comparison
     open To
 
     from-𝔸²-0∘ι₀ : (x : ⟨ k ⟩) → from-𝔸²-0 (ι₀ x) ≡ inl x
-    from-𝔸²-0∘ι₀ = {!!}
+    from-𝔸²-0∘ι₀ x =
+      PT.elim
+        {P = λ existence → pre-from-𝔸²-0 (fst (ι₀ x)) existence ≡ inl x}
+        (λ _ → isSet-ℙ¹-as-pushout _ _)
+        (λ{ (zero , 1r-inv) →  -- Yes, 1r is invertible. We already knew that.
+              let instance _ = 1r-inv in
+              cong inl (1r ⁻¹ · x  ≡⟨ cong (_· x) 1⁻¹≡1 ⟩
+                        1r · x     ≡⟨ ·IdL x ⟩
+                        x          ∎)
+          ; (one , x-inv) →  -- Oooh, turns out x is also invertible.
+              let instance _ = x-inv in
+              inr (x ⁻¹ · 1r) ≡⟨ cong inr (·IdR (x ⁻¹)) ⟩
+              inr (x ⁻¹)      ≡⟨ sym (push (x , x-inv)) ⟩
+              inl x           ∎})
+        (generalized-field-property k-local k-sqc (fst (ι₀ x)) (snd (ι₀ x)))
 
     from-𝔸²-0∘ι₁ : (x : ⟨ k ⟩) → from-𝔸²-0 (ι₁ x) ≡ inr x
     from-𝔸²-0∘ι₁ = {!!}
