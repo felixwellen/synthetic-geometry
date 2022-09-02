@@ -52,7 +52,7 @@ module SyntheticGeometry.ProjectiveSpace
 open import SyntheticGeometry.Spec k
 open import SyntheticGeometry.Open k
 open import SyntheticGeometry.Affine k k-local k-sqc
-open SyntheticGeometry.SQC k
+open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 
 
 module _ (n : ℕ) where
@@ -251,5 +251,5 @@ we will use an intermediate type given by
   covering =
     SQ.elimProp
       (λ _ → isPropPropTrunc)
-      λ x → generalized-field-property k-local k-sqc (fst x) (snd x)
+      λ x → generalized-field-property (fst x) (snd x)
 ```

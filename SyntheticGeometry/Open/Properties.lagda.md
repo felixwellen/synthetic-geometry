@@ -36,7 +36,7 @@ module SyntheticGeometry.Open.Properties
 open import SyntheticGeometry.Spec k
 open import SyntheticGeometry.Open k
 open import SyntheticGeometry.Affine k k-local k-sqc
-open SyntheticGeometry.SQC k
+open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 
 ```
 
@@ -55,7 +55,7 @@ stable-std-qc-open-prop x = subst ¬¬Stable (sym (cong fst prop≡x≢0)) ¬¬S
   prop≡x≢0 : std-qc-open-prop x ≡ ((¬ x ≡ const 0r) , isProp¬ _)
   prop≡x≢0 =
     ⇒∶ PT.rec (isProp¬ _) (λ{ (i , xi∈kˣ) x≡0 → 0∉kˣ (subst (_∈ k ˣ) (funExt⁻ x≡0 i) xi∈kˣ)})
-    ⇐∶ generalized-field-property k-local k-sqc x
+    ⇐∶ generalized-field-property x
 
 is-qc-open→stable : {P : hProp ℓ} → is-qc-open P → ¬¬Stable ⟨ P ⟩
 is-qc-open→stable {P = P} open-P =
