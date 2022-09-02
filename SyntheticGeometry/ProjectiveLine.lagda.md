@@ -14,7 +14,7 @@ open import Cubical.Functions.Surjection
 open import Cubical.Functions.Involution
 
 open import Cubical.HITs.SetQuotients as SQ
-import Cubical.HITs.PropositionalTruncation as PT
+open import Cubical.HITs.PropositionalTruncation as PT using (∥_∥₁)
 open import Cubical.HITs.Pushout as Pushout
 
 open import Cubical.Data.FinData
@@ -180,6 +180,13 @@ module Comparison
   isProp-≡→≡ : {q q' : ℙ 1} → {p p' : ℙ¹-as-pushout} → isProp (q ≡ q' → p ≡ p')
   isProp-≡→≡ = isProp→ (isSet-ℙ¹-as-pushout _ _)
 
+  ℙ¹-effective-quotient :
+    {p p' : 𝔸²-0} →
+    [ p ]ℙ¹ ≡ [ p' ]ℙ¹ → ∥ linear-equivalent 1 (fst p) (fst p') ∥₁
+  ℙ¹-effective-quotient e =
+    effective {R = λ p p' → ∥ linear-equivalent 1 (fst p) (fst p') ∥₁}
+      (λ p p' → PT.isPropPropTrunc) {!!} {!!} {!!} {!!}
+
   is-injective-ϕ : (p p' : ℙ¹-as-pushout) → to p ≡ to p' → p ≡ p'
   is-injective-ϕ =
     Pushout.elimProp
@@ -188,7 +195,16 @@ module Comparison
       (λ x → Pushout.elimProp
         (λ p' → to (inl x) ≡ to p' → inl x ≡ p')
         (λ _ → isProp-≡→≡)
-        (λ x' → {!!})
+        (λ x' eq → PT.rec
+                     (isSet-ℙ¹-as-pushout _ _)
+                     (λ{ (s , s-inv , s1x≡1x') →
+                       cong inl' (x              ≡⟨ sym (·IdL x) ⟩
+                                  1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
+                                  (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
+                                  s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
+                                  x'             ∎)
+                      })
+                     (ℙ¹-effective-quotient eq))
         (λ x' → {!!})
       )
       (λ x → Pushout.elimProp
@@ -205,7 +221,7 @@ module Comparison
       , isSurjection-ϕ )
 
 
-  ---------------------------
+  --------------------------------------------------------------------------
 
   module From
     where
