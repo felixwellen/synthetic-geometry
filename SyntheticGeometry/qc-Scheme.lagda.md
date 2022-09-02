@@ -30,7 +30,7 @@ module SyntheticGeometry.qc-Scheme
 
 open import SyntheticGeometry.Open k
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
-open import SyntheticGeometry.SQC k
+open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 open import SyntheticGeometry.Affine k k-local k-sqc
 
 
@@ -60,9 +60,8 @@ The affine qc-open cover U k n is defined in [this](ProjectiveSpace.lagda.md) mo
 
 ```agda
 
-ℙ-is-qc-scheme : isLocal k → sqc-over-itself
-  → (n : ℕ) → ⟨ is-qc-scheme (ℙ n) ⟩
-ℙ-is-qc-scheme k-local k-sqc n =
+ℙ-is-qc-scheme : (n : ℕ) → ⟨ is-qc-scheme (ℙ n) ⟩
+ℙ-is-qc-scheme n =
   ∣ (n + 1) , ∣ (U n) , (covering n) , (λ i → U-is-affine n i) ∣₁ ∣₁
 
 ```
