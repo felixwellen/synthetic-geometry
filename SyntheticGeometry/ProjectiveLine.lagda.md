@@ -124,13 +124,12 @@ module Comparison
   module From
     where
 
-    module _
+    module XY
       (xy : 𝔸ⁿ⁺¹ 1)
       where
 
-      private
-        x = xy zero
-        y = xy one
+      x = xy zero
+      y = xy one
 
       pre-pre-from-𝔸²-0 : (Σ[ i ∈ _ ] xy i ∈ k ˣ) → ℙ¹-as-pushout
       pre-pre-from-𝔸²-0 (zero , x-inv) = inl (x ⁻¹ · y) where instance _ = x-inv
@@ -148,7 +147,7 @@ module Comparison
 
     from-𝔸²-0 : 𝔸ⁿ⁺¹-0 1 → ℙ¹-as-pushout
     from-𝔸²-0 (xy , xy≢0) =
-      pre-from-𝔸²-0 xy
+      XY.pre-from-𝔸²-0 xy
         (generalized-field-property k-local k-sqc xy xy≢0)
 
     from : ℙ 1 → ℙ¹-as-pushout
@@ -166,7 +165,7 @@ module Comparison
     from-𝔸²-0∘ι₀ : (x : ⟨ k ⟩) → from-𝔸²-0 (ι₀ x) ≡ inl x
     from-𝔸²-0∘ι₀ x =
       PT.elim
-        {P = λ existence → pre-from-𝔸²-0 (fst (ι₀ x)) existence ≡ inl x}
+        {P = λ existence → XY.pre-from-𝔸²-0 (fst (ι₀ x)) existence ≡ inl x}
         (λ _ → isSet-ℙ¹-as-pushout _ _)
         (λ{ (zero , 1r-inv) →
               let instance _ = 1r-inv in
@@ -183,7 +182,7 @@ module Comparison
     from-𝔸²-0∘ι₁ : (x : ⟨ k ⟩) → from-𝔸²-0 (ι₁ x) ≡ inr x
     from-𝔸²-0∘ι₁ x =
       PT.elim
-        {P = λ existence → pre-from-𝔸²-0 (fst (ι₁ x)) existence ≡ inr x}
+        {P = λ existence → XY.pre-from-𝔸²-0 (fst (ι₁ x)) existence ≡ inr x}
         (λ _ → isSet-ℙ¹-as-pushout _ _)
         (λ{ (one , 1r-inv) →
               let instance _ = 1r-inv in
@@ -204,4 +203,32 @@ module Comparison
         (λ _ → isSet-ℙ¹-as-pushout _ _)
         from-𝔸²-0∘ι₀
         from-𝔸²-0∘ι₁
+
+  module To∘From
+    where
+
+    open From
+    open To
+
+    module _
+      (xy : 𝔸ⁿ⁺¹ 1)
+      where
+
+      open XY xy
+
+      to∘pre-pre-from-𝔸²-0 :
+        (pair : Σ[ i ∈ _ ] xy i ∈ k ˣ) →
+        to (pre-pre-from-𝔸²-0 pair) ≡ [ xy , {!!} ]ℙ¹
+      to∘pre-pre-from-𝔸²-0 = {!!}
+
+
+    to∘from-𝔸²-0 : (x : 𝔸ⁿ⁺¹-0 1) → to (from-𝔸²-0 x) ≡ [ x ]ℙ¹
+    to∘from-𝔸²-0 (xy , xy≢0) =
+      {!!}
+
+    to∘from : (x : ℙ 1) → to (from (x)) ≡ x
+    to∘from =
+      SQ.elimProp
+        (λ _ → squash/ _ _)
+        to∘from-𝔸²-0
 ```
