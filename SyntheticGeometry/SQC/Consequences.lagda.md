@@ -8,6 +8,7 @@ After all, we imagine k to be the structure sheaf of the big Zariski topos,
 which is the universal local ring.
 
 In particular we derive field like properties of k.
+This is taken from Subsection 18.4 of Ingo Blechschmidt's thesis.
 
 ```agda
 {-# OPTIONS --safe #-}
@@ -48,6 +49,7 @@ import SyntheticGeometry.SQC
 module SyntheticGeometry.SQC.Consequences
   {ℓ : Level}
   (k : CommRing ℓ)
+  (k-local : isLocal k)
   (k-sqc : SyntheticGeometry.SQC.sqc-over-itself k)
   where
 
@@ -58,7 +60,7 @@ private variable ℓ' : Level
 ```
 
 
-The equivalence in sqc is actually an isomorphism of algebra and therefore also
+The equivalence in sqc is actually an algebra isomorphism and therefore also
 a path between the algebras:
 
 ```agda
@@ -75,9 +77,6 @@ module _ (k-sqc : sqc-over-itself) (A : CommAlgebra k ℓ) (fp-A : isFPAlgebra A
   sqc-path = fst (CommAlgebraPath k A (pointwiseAlgebra (Spec A) kₐ)) sqc-alg-equiv
 
 ```
-
-Here are some properties of k that follow from its synthetic quasicoherence
-together with its locality, as in Subsection 18.4.
 
 ```agda
 module _ (k-local : isLocal k) (k-sqc : sqc-over-itself) where
