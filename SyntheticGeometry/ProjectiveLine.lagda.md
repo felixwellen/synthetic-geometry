@@ -105,9 +105,8 @@ module Comparison
     ι₀ ι₁ : ⟨ k ⟩ → 𝔸ⁿ⁺¹-0 1
     fst (ι₀ x) = λ{ zero → 1r ; one → x}
     snd (ι₀ x) ≡0 = 1≢0 (funExt⁻ ≡0 zero)
-    -- (λ{ zero → 1r ; one → x }) , (λ ≡0 → 1≢0 (funExt⁻ ≡0 zero))
-    ι₁ x = (λ{ zero → x ; one → 1r }) , (λ ≡0 → 1≢0 (funExt⁻ ≡0 one))
-    -- TODO
+    fst (ι₁ x) = λ{ zero → x ; one → 1r}
+    snd (ι₁ x) ≡0 = 1≢0 (funExt⁻ ≡0 one)
 
     -- I think we will also need the converse...?
     path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
