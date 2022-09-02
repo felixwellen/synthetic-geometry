@@ -10,6 +10,7 @@ open import Cubical.Foundations.Function
 open import Cubical.Foundations.HLevels
 
 open import Cubical.Functions.Embedding
+open import Cubical.Functions.Surjection
 open import Cubical.Functions.Involution
 
 open import Cubical.HITs.SetQuotients as SQ
@@ -63,8 +64,21 @@ module Comparison
   open Consequences k k-local
   open Units k
 
+  𝔸² : Type ℓ
+  𝔸² = 𝔸ⁿ⁺¹ 1
+
+  𝔸²-0 : Type ℓ
+  𝔸²-0 = 𝔸ⁿ⁺¹-0 1
+
+  𝔸²-≡ :
+    {xy x'y' : 𝔸²} →
+    (xy zero ≡ x'y' zero) →
+    (xy one ≡ x'y' one) →
+    xy ≡ x'y'
+  𝔸²-≡ x≡x' y≡y' = funExt (λ{ zero → x≡x' ; one → y≡y'})
+
   -- More specific types for some operations.
-  [_]ℙ¹ : 𝔸ⁿ⁺¹-0 1 → ℙ 1
+  [_]ℙ¹ : 𝔸²-0 → ℙ 1
   [_]ℙ¹ = [_]
 
   inl' inr' : ⟨ k ⟩ → ℙ¹-as-pushout
@@ -99,10 +113,10 @@ module Comparison
     where
     isEmbedding-f = snd (snd (Subset→Embedding (k ˣ)))
 
-  module To
+  module To -- TODO: rename to Function
     where
 
-    ι₀ ι₁ : ⟨ k ⟩ → 𝔸ⁿ⁺¹-0 1
+    ι₀ ι₁ : ⟨ k ⟩ → 𝔸²-0
     fst (ι₀ x) = λ{ zero → 1r ; one → x}
     snd (ι₀ x) ≡0 = 1≢0 (funExt⁻ ≡0 zero)
     fst (ι₁ x) = λ{ zero → x ; one → 1r}
@@ -119,6 +133,54 @@ module Comparison
     to (inl x) = [ ι₀ x ]ℙ¹
     to (inr x) = [ ι₁ x ]ℙ¹
     to (push (x , y , xy≡1) i) = path x y xy≡1 i
+
+  module Surjectivity
+    where
+
+    open To
+
+    surjectivity : isSurjection to
+    surjectivity =
+      SQ.elimProp
+        (λ _ → PT.isPropPropTrunc)
+        λ{ (xy , xy≢0) →
+          PT.map
+            (uncurry (inner (xy , xy≢0)))
+            (generalized-field-property k-local k-sqc xy xy≢0)
+        }
+      where
+      computation :
+        (x y : ⟨ k ⟩) →
+        {{x-inv : x ∈ k ˣ}} →
+        let instance _ = x-inv in
+        (x · (x ⁻¹ · y)) ≡ y
+      computation x y =
+        (x · (x ⁻¹ · y)  ≡⟨ ·Assoc _ _ _ ⟩
+         x · x ⁻¹ · y    ≡⟨ cong (_· _) (·-rinv x) ⟩
+         1r · y          ≡⟨ ·IdL y ⟩
+         y               ∎)
+      module _
+        ((xy , xy≢0) : 𝔸²-0)
+        where
+        x = xy zero
+        y = xy one
+
+        inner :
+          (i : Fin 2) →
+          (xy i ∈ (k ˣ)) →
+          fiber to [ xy , xy≢0 ]
+        inner zero x-inv =
+          let instance _ = x-inv in
+            inl (x ⁻¹ · y)
+          , eq/ (ι₀ (x ⁻¹ · y))
+                (xy , xy≢0)
+                (x , x-inv , 𝔸²-≡ (·IdR x) (computation x y))
+        inner one y-inv =
+          let instance _ = y-inv in
+            inr (y ⁻¹ · x)
+          , eq/ (ι₁ (y ⁻¹ · x))
+                (xy , xy≢0)
+                (y , y-inv , 𝔸²-≡ (computation y x) (·IdR y))
 
   module From
     where
