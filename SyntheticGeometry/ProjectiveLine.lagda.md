@@ -134,53 +134,78 @@ module Comparison
     to (inr x) = [ ι₁ x ]ℙ¹
     to (push (x , y , xy≡1) i) = path x y xy≡1 i
 
-  module Surjectivity
+  open To
+
+  -- TODO: "ϕ" ?
+  isSurjection-ϕ : isSurjection to
+  isSurjection-ϕ =
+    SQ.elimProp
+      (λ _ → PT.isPropPropTrunc)
+      λ{ (xy , xy≢0) →
+        PT.map
+          (uncurry (inner (xy , xy≢0)))
+          (generalized-field-property k-local k-sqc xy xy≢0)
+      }
     where
-
-    open To
-
-    surjectivity : isSurjection to
-    surjectivity =
-      SQ.elimProp
-        (λ _ → PT.isPropPropTrunc)
-        λ{ (xy , xy≢0) →
-          PT.map
-            (uncurry (inner (xy , xy≢0)))
-            (generalized-field-property k-local k-sqc xy xy≢0)
-        }
+    computation :
+      (x y : ⟨ k ⟩) →
+      {{x-inv : x ∈ k ˣ}} →
+      let instance _ = x-inv in
+      (x · (x ⁻¹ · y)) ≡ y
+    computation x y =
+      (x · (x ⁻¹ · y)  ≡⟨ ·Assoc _ _ _ ⟩
+       x · x ⁻¹ · y    ≡⟨ cong (_· _) (·-rinv x) ⟩
+       1r · y          ≡⟨ ·IdL y ⟩
+       y               ∎)
+    module _
+      ((xy , xy≢0) : 𝔸²-0)
       where
-      computation :
-        (x y : ⟨ k ⟩) →
-        {{x-inv : x ∈ k ˣ}} →
-        let instance _ = x-inv in
-        (x · (x ⁻¹ · y)) ≡ y
-      computation x y =
-        (x · (x ⁻¹ · y)  ≡⟨ ·Assoc _ _ _ ⟩
-         x · x ⁻¹ · y    ≡⟨ cong (_· _) (·-rinv x) ⟩
-         1r · y          ≡⟨ ·IdL y ⟩
-         y               ∎)
-      module _
-        ((xy , xy≢0) : 𝔸²-0)
-        where
-        x = xy zero
-        y = xy one
+      x = xy zero
+      y = xy one
 
-        inner :
-          (i : Fin 2) →
-          (xy i ∈ (k ˣ)) →
-          fiber to [ xy , xy≢0 ]
-        inner zero x-inv =
-          let instance _ = x-inv in
-            inl (x ⁻¹ · y)
-          , eq/ (ι₀ (x ⁻¹ · y))
-                (xy , xy≢0)
-                (x , x-inv , 𝔸²-≡ (·IdR x) (computation x y))
-        inner one y-inv =
-          let instance _ = y-inv in
-            inr (y ⁻¹ · x)
-          , eq/ (ι₁ (y ⁻¹ · x))
-                (xy , xy≢0)
-                (y , y-inv , 𝔸²-≡ (computation y x) (·IdR y))
+      inner : (i : Fin 2) → (xy i ∈ (k ˣ)) → fiber to [ xy , xy≢0 ]
+      inner zero x-inv =
+        let instance _ = x-inv in
+          inl (x ⁻¹ · y)
+        , eq/ (ι₀ (x ⁻¹ · y))
+              (xy , xy≢0)
+              (x , x-inv , 𝔸²-≡ (·IdR x) (computation x y))
+      inner one y-inv =
+        let instance _ = y-inv in
+          inr (y ⁻¹ · x)
+        , eq/ (ι₁ (y ⁻¹ · x))
+              (xy , xy≢0)
+              (y , y-inv , 𝔸²-≡ (computation y x) (·IdR y))
+
+  isProp-≡→≡ : {q q' : ℙ 1} → {p p' : ℙ¹-as-pushout} → isProp (q ≡ q' → p ≡ p')
+  isProp-≡→≡ = isProp→ (isSet-ℙ¹-as-pushout _ _)
+
+  is-injective-ϕ : (p p' : ℙ¹-as-pushout) → to p ≡ to p' → p ≡ p'
+  is-injective-ϕ =
+    Pushout.elimProp
+      (λ p → (p' : _) → to p ≡ to p' → p ≡ p')
+      (λ _ → isPropΠ (λ _ → isProp-≡→≡))
+      (λ x → Pushout.elimProp
+        (λ p' → to (inl x) ≡ to p' → inl x ≡ p')
+        (λ _ → isProp-≡→≡)
+        (λ x' → {!!})
+        (λ x' → {!!})
+      )
+      (λ x → Pushout.elimProp
+        (λ p' → to (inr x) ≡ to p' → inr x ≡ p')
+        (λ _ → isProp-≡→≡)
+        (λ x' → {!!})
+        (λ x' → {!!})
+      )
+
+  isEquiv-ϕ : isEquiv to
+  isEquiv-ϕ =
+    isEmbedding×isSurjection→isEquiv
+      ( injEmbedding squash/ (λ {p} {p'} → is-injective-ϕ p p')
+      , isSurjection-ϕ )
+
+
+  ---------------------------
 
   module From
     where
