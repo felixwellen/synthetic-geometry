@@ -180,6 +180,22 @@ module Comparison
   isProp-≡→≡ : {q q' : ℙ 1} → {p p' : ℙ¹-as-pushout} → isProp (q ≡ q' → p ≡ p')
   isProp-≡→≡ = isProp→ (isSet-ℙ¹-as-pushout _ _)
 
+  intersection-case :
+    (x x' : ⟨ k ⟩) →
+    [ ι₀ x ]ℙ¹ ≡ [ ι₁ x' ]ℙ¹ →
+    inl' x ≡ inr' x'
+  intersection-case x x' e =
+    PT.rec
+    (isSet-ℙ¹-as-pushout _ _)
+    (λ{ (s , s-inv , s1x≡x'1) →
+          push (x , x' , (x · x'        ≡⟨ ·Comm _ _ ⟩
+                          x' · x        ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡x'1 zero)) ⟩
+                          (s · 1r) · x  ≡⟨ cong (_· x) (·IdR s) ⟩
+                          s · x         ≡⟨ funExt⁻ s1x≡x'1 one ⟩
+                          1r            ∎))
+      })
+    (ℙⁿ-effective-quotient 1 e)
+
   is-injective-ϕ : (p p' : ℙ¹-as-pushout) → to p ≡ to p' → p ≡ p'
   is-injective-ϕ =
     Pushout.elimProp
@@ -191,23 +207,23 @@ module Comparison
         (λ x' e → PT.rec
           (isSet-ℙ¹-as-pushout _ _)
           (λ{ (s , s-inv , s1x≡1x') →
-            cong inl' (x              ≡⟨ sym (·IdL x) ⟩
+            cong inl' (x             ≡⟨ sym (·IdL x) ⟩
                       1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
                       (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
                       s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
                       x'             ∎)
           })
           (ℙⁿ-effective-quotient 1 e))
-        (λ x' → {!!})
+        (λ x' → intersection-case x x')
       )
       (λ x → Pushout.elimProp
         (λ p' → to (inr x) ≡ to p' → inr x ≡ p')
         (λ _ → isProp-≡→≡)
-        (λ x' → {!!})
+        (λ x' → sym ∘ intersection-case x' x ∘ sym)
         (λ x' e → PT.rec
           (isSet-ℙ¹-as-pushout _ _)
           (λ{ (s , s-inv , sx1≡x'1) →
-            cong inr' (x              ≡⟨ sym (·IdL x) ⟩
+            cong inr' (x             ≡⟨ sym (·IdL x) ⟩
                       1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ sx1≡x'1 one))  ⟩
                       (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
                       s · x          ≡⟨ funExt⁻ sx1≡x'1 zero ⟩
