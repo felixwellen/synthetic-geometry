@@ -72,6 +72,15 @@ module _ (n : ℕ) where
   linear-equivalent x y =
     Σ[ c ∈ ⟨ k ⟩ ] (c ∈ (k ˣ)) × (c ⋆ x ≡ y)
 
+  ℙ : Type _
+  ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
+
+```
+
+We show that linear equivalence is an equivalence relation.
+This is necessary to characterize equality in ℙⁿ.
+
+```agda
   module _ where
     open BinaryRelation
     open isEquivRel
@@ -108,8 +117,14 @@ module _ (n : ℕ) where
     -- but it is if we restrict to 𝔸ⁿ⁺¹-0 and assume k to be local and SQC.
     -- It doesn't seem like we need this for now.
 
-  ℙ : Type _
-  ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
+  ℙⁿ-effective-quotient :
+    {p p' : 𝔸ⁿ⁺¹-0} →
+    [ p ] ≡ [ p' ] →
+    ∥ linear-equivalent (fst p) (fst p') ∥₁
+  ℙⁿ-effective-quotient {p = p} {p' = p'} =
+    Iso.fun (isEquivRel→TruncIso eqRel _ _)
+    where
+    eqRel = isEquivRelPulledbackRel fst linear-equivalent isEquivRel-lin-eq
 
 ```
 
@@ -169,9 +184,8 @@ we will use an intermediate type given by
       ι-injective (x , xi≡1) (y , yi≡1) ιx≡ιy =
         Σ≡Prop
           (λ _ → k.is-set _ _)
-          (PT.rec (𝔸ⁿ⁺¹.is-set _ _) lineq→≡ (Iso.fun (isEquivRel→TruncIso eqRel _ _) ιx≡ιy))
+          (PT.rec (𝔸ⁿ⁺¹.is-set _ _) lineq→≡ (ℙⁿ-effective-quotient ιx≡ιy))
         where
-        eqRel = isEquivRelPulledbackRel fst linear-equivalent isEquivRel-lin-eq
         lineq→≡ : linear-equivalent x y → x ≡ y
         lineq→≡ (c , _ , cx≡y) =
           x        ≡⟨ sym (⋆IdL _) ⟩
