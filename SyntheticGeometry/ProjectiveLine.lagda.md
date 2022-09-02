@@ -36,7 +36,7 @@ open import SyntheticGeometry.Spec k
 open import SyntheticGeometry.Open k
 open import SyntheticGeometry.Affine k k-local k-sqc
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
-open SyntheticGeometry.SQC k
+open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 ```
 
 Exhibit ℙ¹ as a pushout of two copies of 𝔸¹.
@@ -146,7 +146,7 @@ module Comparison
         λ{ (xy , xy≢0) →
           PT.map
             (uncurry (inner (xy , xy≢0)))
-            (generalized-field-property k-local k-sqc xy xy≢0)
+            (generalized-field-property xy xy≢0)
         }
       where
       computation :
