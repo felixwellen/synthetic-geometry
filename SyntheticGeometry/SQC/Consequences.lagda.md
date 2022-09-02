@@ -32,7 +32,6 @@ open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to 
 open import Cubical.Algebra.CommAlgebra.Ideal
 open import Cubical.Algebra.CommAlgebra.Kernel
 open import Cubical.Algebra.CommAlgebra.FGIdeal
-import Cubical.Algebra.CommAlgebra.FreeCommAlgebra as FreeCommAlgebra
 
 open import Cubical.Data.Sigma
 open import Cubical.Data.Empty
@@ -78,76 +77,72 @@ module _ (k-sqc : sqc-over-itself) (A : CommAlgebra k ℓ) (fp-A : isFPAlgebra A
 
 ```
 
-```agda
-module _ (k-local : isLocal k) (k-sqc : sqc-over-itself) where
-  open CommRingStr (snd k)
-
-```
-
 The ring k is a field in the sense that every non-zero element is invertible.
 But even more, every nonzero vector contains an invertible element.
 
 ```agda
-  generalized-field-property : {n : _} → (xs : FinVec ⟨ k ⟩ n) → ¬(xs ≡ const 0r) → ∃[ i ∈ _ ] xs i ∈ k ˣ
-  generalized-field-property xs xs≢0 =
-    Consequences.onFGIdeals k k-local xs 1∈⟨xs⟩
-    where
-      ⟨xs⟩ : IdealsIn kₐ
-      ⟨xs⟩ = generatedIdeal kₐ xs
+open CommRingStr (snd k)
 
-      A : CommAlgebra k ℓ
-      A = kₐ / ⟨xs⟩
+generalized-field-property : {n : _} → (xs : FinVec ⟨ k ⟩ n) → ¬(xs ≡ const 0r) → ∃[ i ∈ _ ] xs i ∈ k ˣ
+generalized-field-property xs xs≢0 =
+  Consequences.onFGIdeals k k-local xs 1∈⟨xs⟩
+  where
+    ⟨xs⟩ : IdealsIn kₐ
+    ⟨xs⟩ = generatedIdeal kₐ xs
 
-      π : CommAlgebraHom kₐ A
-      π = quotientHom kₐ ⟨xs⟩
+    A : CommAlgebra k ℓ
+    A = kₐ / ⟨xs⟩
 
-      module A = CommAlgebraStr (snd A)
-      module kₐ = CommAlgebraStr (snd kₐ)
+    π : CommAlgebraHom kₐ A
+    π = quotientHom kₐ ⟨xs⟩
 
-      πx≡0 : (i : _) → π $a xs i ≡ A.0a
-      πx≡0 i = isZeroFromIdeal (xs i) (incInIdeal kₐ xs i)
+    module A = CommAlgebraStr (snd A)
+    module kₐ = CommAlgebraStr (snd kₐ)
 
-      finite-presentation-of-A : FinitePresentation A
-      finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
+    πx≡0 : (i : _) → π $a xs i ≡ A.0a
+    πx≡0 i = isZeroFromIdeal (xs i) (incInIdeal kₐ xs i)
 
-      equiv : ⟨ A ⟩ ≃ (Spec A → ⟨ k ⟩)
-      equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣₁
+    finite-presentation-of-A : FinitePresentation A
+    finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
 
-      Spec-A-empty : Spec A → ⊥
-      Spec-A-empty h = xs≢0 (funExt xs≡0)
-        where
-          open AlgebraHoms using (compAlgebraHom)
-          -- We use _∘a_ (compAlgebraHom) for composition because the implicit arguments
-          -- of CommAlgebraHoms._∘ca_ can not be inferred. (And even using
-          -- CommAlgebraHoms.compCommAlgebraHom with explicit arguments makes type checking
-          -- hang indefinitely.)
-          id≡h∘π : idCAlgHom kₐ ≡ h ∘a π
-          id≡h∘π = initialMapProp k kₐ (idCAlgHom kₐ) (h ∘a π)
-          xs≡0 : (i : _) → xs i ≡ 0r
-          xs≡0 i =
-            xs i              ≡⟨ cong (_$a xs i) id≡h∘π ⟩
-            h $a (π $a xs i)  ≡⟨ cong (h $a_) (πx≡0 i) ⟩
-            h $a A.0a         ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
-            0r                ∎
+    equiv : ⟨ A ⟩ ≃ (Spec A → ⟨ k ⟩)
+    equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣₁
 
-      functions-on-Spec-A-trivial : {f g : Spec A → ⟨ k ⟩} → f ≡ g
-      functions-on-Spec-A-trivial = funExt (λ p → Cubical.Data.Empty.rec (Spec-A-empty p))
+    Spec-A-empty : Spec A → ⊥
+    Spec-A-empty h = xs≢0 (funExt xs≡0)
+      where
+        open AlgebraHoms using (compAlgebraHom)
+        -- We use _∘a_ (compAlgebraHom) for composition because the implicit arguments
+        -- of CommAlgebraHoms._∘ca_ can not be inferred. (And even using
+        -- CommAlgebraHoms.compCommAlgebraHom with explicit arguments makes type checking
+        -- hang indefinitely.)
+        id≡h∘π : idCAlgHom kₐ ≡ h ∘a π
+        id≡h∘π = initialMapProp k kₐ (idCAlgHom kₐ) (h ∘a π)
+        xs≡0 : (i : _) → xs i ≡ 0r
+        xs≡0 i =
+          xs i              ≡⟨ cong (_$a xs i) id≡h∘π ⟩
+          h $a (π $a xs i)  ≡⟨ cong (h $a_) (πx≡0 i) ⟩
+          h $a A.0a         ≡⟨ IsAlgebraHom.pres0 (snd h) ⟩
+          0r                ∎
 
-      A-is-trivial : {a a' : ⟨ A ⟩} → a ≡ a'
-      A-is-trivial = isoFunInjective (equivToIso equiv) _ _ functions-on-Spec-A-trivial
+    functions-on-Spec-A-trivial : {f g : Spec A → ⟨ k ⟩} → f ≡ g
+    functions-on-Spec-A-trivial = funExt (λ p → Cubical.Data.Empty.rec (Spec-A-empty p))
 
-      1∈⟨xs⟩ : kₐ.1a ∈ fst ⟨xs⟩
-      1∈⟨xs⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨xs⟩) A-is-trivial
+    A-is-trivial : {a a' : ⟨ A ⟩} → a ≡ a'
+    A-is-trivial = isoFunInjective (equivToIso equiv) _ _ functions-on-Spec-A-trivial
 
-  field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
-  field-property x x≢0 =
-    Prop.rec
-      (snd ((k ˣ) x))
-      (λ{ (zero , x∈kˣ) → x∈kˣ})
-      (generalized-field-property (replicateFinVec 1 x) xs≢0)
-    where
-      xs≢0 : ¬ (replicateFinVec 1 x ≡ const 0r)
-      xs≢0 xs≡0 = x≢0 (cong (λ f → f zero) xs≡0)
+    1∈⟨xs⟩ : kₐ.1a ∈ fst ⟨xs⟩
+    1∈⟨xs⟩ = subst (λ J → kₐ.1a ∈ fst J) (kernel≡I kₐ ⟨xs⟩) A-is-trivial
+
+field-property : (x : ⟨ k ⟩) → ¬(x ≡ 0r) → x ∈ k ˣ
+field-property x x≢0 =
+  Prop.rec
+    (snd ((k ˣ) x))
+    (λ{ (zero , x∈kˣ) → x∈kˣ})
+    (generalized-field-property (replicateFinVec 1 x) xs≢0)
+  where
+    xs≢0 : ¬ (replicateFinVec 1 x ≡ const 0r)
+    xs≢0 xs≡0 = x≢0 (cong (λ f → f zero) xs≡0)
 
 ```
 

@@ -9,34 +9,15 @@ For now, we only consider the synthetic quasicoherence of the base ring k itself
 
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
-open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.Structure
-open import Cubical.Foundations.Powerset
-open import Cubical.Foundations.Function
 open import Cubical.Foundations.HLevels
 
 open import Cubical.Algebra.CommRing
-open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Algebra
 open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
 open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
-open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to quotientInducedHom)
-open import Cubical.Algebra.CommAlgebra.Ideal
-open import Cubical.Algebra.CommAlgebra.Kernel
-open import Cubical.Algebra.CommAlgebra.FGIdeal
-import Cubical.Algebra.CommAlgebra.FreeCommAlgebra as FreeCommAlgebra
-
-open import Cubical.Data.Sigma
-open import Cubical.Data.Empty
-open import Cubical.Data.FinData
-
-open import Cubical.HITs.PropositionalTruncation as Prop
-
-open import Cubical.Relation.Nullary
-
-open import Cubical.Tactics.CommRingSolver.Reflection
 
 module SyntheticGeometry.SQC
   {ℓ : Level}
