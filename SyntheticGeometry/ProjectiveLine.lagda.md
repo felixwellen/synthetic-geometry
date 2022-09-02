@@ -189,22 +189,31 @@ module Comparison
         (λ p' → to (inl x) ≡ to p' → inl x ≡ p')
         (λ _ → isProp-≡→≡)
         (λ x' e → PT.rec
-                     (isSet-ℙ¹-as-pushout _ _)
-                     (λ{ (s , s-inv , s1x≡1x') →
-                       cong inl' (x              ≡⟨ sym (·IdL x) ⟩
-                                  1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
-                                  (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
-                                  s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
-                                  x'             ∎)
-                      })
-                     (ℙⁿ-effective-quotient 1 e))
+          (isSet-ℙ¹-as-pushout _ _)
+          (λ{ (s , s-inv , s1x≡1x') →
+            cong inl' (x              ≡⟨ sym (·IdL x) ⟩
+                      1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
+                      (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
+                      s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
+                      x'             ∎)
+          })
+          (ℙⁿ-effective-quotient 1 e))
         (λ x' → {!!})
       )
       (λ x → Pushout.elimProp
         (λ p' → to (inr x) ≡ to p' → inr x ≡ p')
         (λ _ → isProp-≡→≡)
         (λ x' → {!!})
-        (λ x' → {!!})
+        (λ x' e → PT.rec
+          (isSet-ℙ¹-as-pushout _ _)
+          (λ{ (s , s-inv , sx1≡x'1) →
+            cong inr' (x              ≡⟨ sym (·IdL x) ⟩
+                      1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ sx1≡x'1 one))  ⟩
+                      (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
+                      s · x          ≡⟨ funExt⁻ sx1≡x'1 zero ⟩
+                      x'             ∎)
+          })
+          (ℙⁿ-effective-quotient 1 e))
       )
 
   isEquiv-ϕ : isEquiv to
