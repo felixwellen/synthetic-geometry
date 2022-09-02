@@ -113,7 +113,7 @@ module Comparison
     where
     isEmbedding-f = snd (snd (Subset→Embedding (k ˣ)))
 
-  module To -- TODO: rename to Function
+  module Function
     where
 
     ι₀ ι₁ : ⟨ k ⟩ → 𝔸²-0
@@ -122,119 +122,131 @@ module Comparison
     fst (ι₁ x) = λ{ zero → x ; one → 1r}
     snd (ι₁ x) ≡0 = 1≢0 (funExt⁻ ≡0 one)
 
-    -- I think we will also need the converse...?
     path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
+    -- The converse to this appears in Injectivity.intersection-case below.
     path x y xy≡1 =
       let yx≡1 : y · x ≡ 1r
           yx≡1 = ·Comm y x ∙ xy≡1
       in eq/ _ _ ( (y , ((x , yx≡1) , funExt (λ{ zero → ·IdR y ; one → yx≡1 }) )) )
 
-    to : ℙ¹-as-pushout → ℙ 1
-    to (inl x) = [ ι₀ x ]ℙ¹
-    to (inr x) = [ ι₁ x ]ℙ¹
-    to (push (x , y , xy≡1) i) = path x y xy≡1 i
+    ϕ : ℙ¹-as-pushout → ℙ 1
+    ϕ (inl x) = [ ι₀ x ]ℙ¹
+    ϕ (inr x) = [ ι₁ x ]ℙ¹
+    ϕ (push (x , y , xy≡1) i) = path x y xy≡1 i
 
-  open To
+  open Function
 
-  -- TODO: "ϕ" ?
-  isSurjection-ϕ : isSurjection to
-  isSurjection-ϕ =
-    SQ.elimProp
-      (λ _ → PT.isPropPropTrunc)
-      λ{ (xy , xy≢0) →
-        PT.map
-          (uncurry (inner (xy , xy≢0)))
-          (generalized-field-property k-local k-sqc xy xy≢0)
-      }
+  module Surjectivity
     where
-    computation :
-      (x y : ⟨ k ⟩) →
-      {{x-inv : x ∈ k ˣ}} →
-      let instance _ = x-inv in
-      (x · (x ⁻¹ · y)) ≡ y
-    computation x y =
-      (x · (x ⁻¹ · y)  ≡⟨ ·Assoc _ _ _ ⟩
-       x · x ⁻¹ · y    ≡⟨ cong (_· _) (·-rinv x) ⟩
-       1r · y          ≡⟨ ·IdL y ⟩
-       y               ∎)
-    module _
-      ((xy , xy≢0) : 𝔸²-0)
+
+    isSurjection-ϕ : isSurjection ϕ
+    isSurjection-ϕ =
+      SQ.elimProp
+        (λ _ → PT.isPropPropTrunc)
+        λ{ (xy , xy≢0) →
+          PT.map
+            (uncurry (inner (xy , xy≢0)))
+            (generalized-field-property k-local k-sqc xy xy≢0)
+        }
       where
-      x = xy zero
-      y = xy one
-
-      inner : (i : Fin 2) → (xy i ∈ (k ˣ)) → fiber to [ xy , xy≢0 ]
-      inner zero x-inv =
+      computation :
+        (x y : ⟨ k ⟩) →
+        {{x-inv : x ∈ k ˣ}} →
         let instance _ = x-inv in
-          inl (x ⁻¹ · y)
-        , eq/ (ι₀ (x ⁻¹ · y))
-              (xy , xy≢0)
-              (x , x-inv , 𝔸²-≡ (·IdR x) (computation x y))
-      inner one y-inv =
-        let instance _ = y-inv in
-          inr (y ⁻¹ · x)
-        , eq/ (ι₁ (y ⁻¹ · x))
-              (xy , xy≢0)
-              (y , y-inv , 𝔸²-≡ (computation y x) (·IdR y))
+        (x · (x ⁻¹ · y)) ≡ y
+      computation x y =
+        (x · (x ⁻¹ · y)  ≡⟨ ·Assoc _ _ _ ⟩
+        x · x ⁻¹ · y    ≡⟨ cong (_· _) (·-rinv x) ⟩
+        1r · y          ≡⟨ ·IdL y ⟩
+        y               ∎)
+      module _
+        ((xy , xy≢0) : 𝔸²-0)
+        where
+        x = xy zero
+        y = xy one
 
-  isProp-≡→≡ : {q q' : ℙ 1} → {p p' : ℙ¹-as-pushout} → isProp (q ≡ q' → p ≡ p')
-  isProp-≡→≡ = isProp→ (isSet-ℙ¹-as-pushout _ _)
+        inner : (i : Fin 2) → (xy i ∈ (k ˣ)) → fiber ϕ [ xy , xy≢0 ]
+        inner zero x-inv =
+          let instance _ = x-inv in
+            inl (x ⁻¹ · y)
+          , eq/ (ι₀ (x ⁻¹ · y))
+                (xy , xy≢0)
+                (x , x-inv , 𝔸²-≡ (·IdR x) (computation x y))
+        inner one y-inv =
+          let instance _ = y-inv in
+            inr (y ⁻¹ · x)
+          , eq/ (ι₁ (y ⁻¹ · x))
+                (xy , xy≢0)
+                (y , y-inv , 𝔸²-≡ (computation y x) (·IdR y))
 
-  intersection-case :
-    (x x' : ⟨ k ⟩) →
-    [ ι₀ x ]ℙ¹ ≡ [ ι₁ x' ]ℙ¹ →
-    inl' x ≡ inr' x'
-  intersection-case x x' e =
-    PT.rec
-    (isSet-ℙ¹-as-pushout _ _)
-    (λ{ (s , s-inv , s1x≡x'1) →
-          push (x , x' , (x · x'        ≡⟨ ·Comm _ _ ⟩
-                          x' · x        ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡x'1 zero)) ⟩
-                          (s · 1r) · x  ≡⟨ cong (_· x) (·IdR s) ⟩
-                          s · x         ≡⟨ funExt⁻ s1x≡x'1 one ⟩
-                          1r            ∎))
-      })
-    (ℙⁿ-effective-quotient 1 e)
+  module Injectivity
+    where
 
-  is-injective-ϕ : (p p' : ℙ¹-as-pushout) → to p ≡ to p' → p ≡ p'
-  is-injective-ϕ =
-    Pushout.elimProp
-      (λ p → (p' : _) → to p ≡ to p' → p ≡ p')
-      (λ _ → isPropΠ (λ _ → isProp-≡→≡))
-      (λ x → Pushout.elimProp
-        (λ p' → to (inl x) ≡ to p' → inl x ≡ p')
-        (λ _ → isProp-≡→≡)
-        (λ x' e → PT.rec
-          (isSet-ℙ¹-as-pushout _ _)
-          (λ{ (s , s-inv , s1x≡1x') →
-            cong inl' (x             ≡⟨ sym (·IdL x) ⟩
-                      1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
-                      (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
-                      s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
-                      x'             ∎)
-          })
-          (ℙⁿ-effective-quotient 1 e))
-        (λ x' → intersection-case x x')
-      )
-      (λ x → Pushout.elimProp
-        (λ p' → to (inr x) ≡ to p' → inr x ≡ p')
-        (λ _ → isProp-≡→≡)
-        (λ x' → sym ∘ intersection-case x' x ∘ sym)
-        (λ x' e → PT.rec
-          (isSet-ℙ¹-as-pushout _ _)
-          (λ{ (s , s-inv , sx1≡x'1) →
-            cong inr' (x             ≡⟨ sym (·IdL x) ⟩
-                      1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ sx1≡x'1 one))  ⟩
-                      (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
-                      s · x          ≡⟨ funExt⁻ sx1≡x'1 zero ⟩
-                      x'             ∎)
-          })
-          (ℙⁿ-effective-quotient 1 e))
-      )
+    isProp-≡→≡ : {q q' : ℙ 1} → {p p' : ℙ¹-as-pushout} → isProp (q ≡ q' → p ≡ p')
+    isProp-≡→≡ = isProp→ (isSet-ℙ¹-as-pushout _ _)
 
-  isEquiv-ϕ : isEquiv to
+    intersection-case :
+      (x x' : ⟨ k ⟩) →
+      [ ι₀ x ]ℙ¹ ≡ [ ι₁ x' ]ℙ¹ →
+      inl' x ≡ inr' x'
+    intersection-case x x' e =
+      PT.rec
+      (isSet-ℙ¹-as-pushout _ _)
+      (λ{ (s , s-inv , s1x≡x'1) →
+            push (x , x' , (x · x'        ≡⟨ ·Comm _ _ ⟩
+                            x' · x        ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡x'1 zero)) ⟩
+                            (s · 1r) · x  ≡⟨ cong (_· x) (·IdR s) ⟩
+                            s · x         ≡⟨ funExt⁻ s1x≡x'1 one ⟩
+                            1r            ∎))
+        })
+      (ℙⁿ-effective-quotient 1 e)
+
+    is-injective-ϕ : (p p' : ℙ¹-as-pushout) → ϕ p ≡ ϕ p' → p ≡ p'
+    is-injective-ϕ =
+      Pushout.elimProp
+        (λ p → (p' : _) → ϕ p ≡ ϕ p' → p ≡ p')
+        (λ _ → isPropΠ (λ _ → isProp-≡→≡))
+        (λ x → Pushout.elimProp
+          (λ p' → ϕ (inl x) ≡ ϕ p' → inl x ≡ p')
+          (λ _ → isProp-≡→≡)
+          (λ x' e → PT.rec
+            (isSet-ℙ¹-as-pushout _ _)
+            (λ{ (s , s-inv , s1x≡1x') →
+              cong inl' (x             ≡⟨ sym (·IdL x) ⟩
+                        1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
+                        (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
+                        s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
+                        x'             ∎)
+            })
+            (ℙⁿ-effective-quotient 1 e))
+          (λ x' → intersection-case x x')
+        )
+        (λ x → Pushout.elimProp
+          (λ p' → ϕ (inr x) ≡ ϕ p' → inr x ≡ p')
+          (λ _ → isProp-≡→≡)
+          (λ x' → sym ∘ intersection-case x' x ∘ sym)
+          (λ x' e → PT.rec
+            (isSet-ℙ¹-as-pushout _ _)
+            (λ{ (s , s-inv , sx1≡x'1) →
+              cong inr' (x             ≡⟨ sym (·IdL x) ⟩
+                        1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ sx1≡x'1 one))  ⟩
+                        (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
+                        s · x          ≡⟨ funExt⁻ sx1≡x'1 zero ⟩
+                        x'             ∎)
+            })
+            (ℙⁿ-effective-quotient 1 e))
+        )
+
+  isEquiv-ϕ : isEquiv ϕ
   isEquiv-ϕ =
     isEmbedding×isSurjection→isEquiv
       ( injEmbedding squash/ (λ {p} {p'} → is-injective-ϕ p p')
       , isSurjection-ϕ )
+    where
+    open Surjectivity
+    open Injectivity
+
+comparison-equiv : ℙ¹-as-pushout ≃ ℙ 1
+fst comparison-equiv = Comparison.Function.ϕ
+snd comparison-equiv = Comparison.isEquiv-ϕ
 ```
