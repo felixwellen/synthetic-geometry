@@ -71,10 +71,10 @@ module Comparison
   𝔸²-0 = 𝔸ⁿ⁺¹-0 1
 
   𝔸²-≡ :
-    {xy x'y' : 𝔸²} →
-    (xy zero ≡ x'y' zero) →
-    (xy one ≡ x'y' one) →
-    xy ≡ x'y'
+    {x,y x',y' : 𝔸²} →
+    (x,y zero ≡ x',y' zero) →
+    (x,y one ≡ x',y' one) →
+    x,y ≡ x',y'
   𝔸²-≡ x≡x' y≡y' = funExt (λ{ zero → x≡x' ; one → y≡y'})
 
   -- More specific types for some operations.
@@ -121,9 +121,9 @@ module Comparison
   fst (ι₁ x) = λ{ zero → x ; one → 1r}
   snd (ι₁ x) ≡0 = 1≢0 (funExt⁻ ≡0 one)
 
-  path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
+  xy≡1→pathℙ¹ : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
   -- The converse to this appears in Injectivity.intersection-case below.
-  path x y xy≡1 =
+  xy≡1→pathℙ¹ x y xy≡1 =
     let yx≡1 : y · x ≡ 1r
         yx≡1 = ·Comm y x ∙ xy≡1
     in eq/ _ _ ( (y , ((x , yx≡1) , funExt (λ{ zero → ·IdR y ; one → yx≡1 }) )) )
@@ -131,7 +131,7 @@ module Comparison
   ϕ : ℙ¹-as-pushout → ℙ 1
   ϕ (inl x) = [ ι₀ x ]ℙ¹
   ϕ (inr x) = [ ι₁ x ]ℙ¹
-  ϕ (push (x , y , xy≡1) i) = path x y xy≡1 i
+  ϕ (push (x , y , xy≡1) i) = xy≡1→pathℙ¹ x y xy≡1 i
 
   -- Proof that the comparison function is an equivalence
 
@@ -142,10 +142,10 @@ module Comparison
     isSurjection-ϕ =
       SQ.elimProp
         (λ _ → PT.isPropPropTrunc)
-        λ{ (xy , xy≢0) →
+        λ{ (x,y , x,y≢0) →
           PT.map
-            (uncurry (inner (xy , xy≢0)))
-            (generalized-field-property xy xy≢0)
+            (uncurry (inner (x,y , x,y≢0)))
+            (generalized-field-property x,y x,y≢0)
         }
       where
       computation :
@@ -159,23 +159,23 @@ module Comparison
         1r · y          ≡⟨ ·IdL y ⟩
         y               ∎)
       module _
-        ((xy , xy≢0) : 𝔸²-0)
+        ((x,y , x,y≢0) : 𝔸²-0)
         where
-        x = xy zero
-        y = xy one
+        x = x,y zero
+        y = x,y one
 
-        inner : (i : Fin 2) → (xy i ∈ (k ˣ)) → fiber ϕ [ xy , xy≢0 ]
+        inner : (i : Fin 2) → (x,y i ∈ (k ˣ)) → fiber ϕ [ x,y , x,y≢0 ]
         inner zero x-inv =
           let instance _ = x-inv in
             inl (x ⁻¹ · y)
           , eq/ (ι₀ (x ⁻¹ · y))
-                (xy , xy≢0)
+                (x,y , x,y≢0)
                 (x , x-inv , 𝔸²-≡ (·IdR x) (computation x y))
         inner one y-inv =
           let instance _ = y-inv in
             inr (y ⁻¹ · x)
           , eq/ (ι₁ (y ⁻¹ · x))
-                (xy , xy≢0)
+                (x,y , x,y≢0)
                 (y , y-inv , 𝔸²-≡ (computation y x) (·IdR y))
 
   module Injectivity
@@ -191,11 +191,11 @@ module Comparison
     intersection-case x x' e =
       PT.rec
       (isSet-ℙ¹-as-pushout _ _)
-      (λ{ (s , s-inv , s1x≡x'1) →
+      (λ{ (s , s-inv , s[1,x]≡x',1) →
             push (x , x' , (x · x'        ≡⟨ ·Comm _ _ ⟩
-                            x' · x        ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡x'1 zero)) ⟩
+                            x' · x        ≡⟨ cong (_· x) (sym (funExt⁻ s[1,x]≡x',1 zero)) ⟩
                             (s · 1r) · x  ≡⟨ cong (_· x) (·IdR s) ⟩
-                            s · x         ≡⟨ funExt⁻ s1x≡x'1 one ⟩
+                            s · x         ≡⟨ funExt⁻ s[1,x]≡x',1 one ⟩
                             1r            ∎))
         })
       (ℙⁿ-effective-quotient 1 e)
@@ -210,11 +210,11 @@ module Comparison
           (λ _ → isProp-≡→≡)
           (λ x' e → PT.rec
             (isSet-ℙ¹-as-pushout _ _)
-            (λ{ (s , s-inv , s1x≡1x') →
+            (λ{ (s , s-inv , s[1,x]≡1,x') →
               cong inl' (x             ≡⟨ sym (·IdL x) ⟩
-                        1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s1x≡1x' zero))  ⟩
+                        1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s[1,x]≡1,x' zero))  ⟩
                         (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
-                        s · x          ≡⟨ funExt⁻ s1x≡1x' one ⟩
+                        s · x          ≡⟨ funExt⁻ s[1,x]≡1,x' one ⟩
                         x'             ∎)
             })
             (ℙⁿ-effective-quotient 1 e))
@@ -226,11 +226,11 @@ module Comparison
           (λ x' → sym ∘ intersection-case x' x ∘ sym)
           (λ x' e → PT.rec
             (isSet-ℙ¹-as-pushout _ _)
-            (λ{ (s , s-inv , sx1≡x'1) →
+            (λ{ (s , s-inv , s[x,1]≡x',1) →
               cong inr' (x             ≡⟨ sym (·IdL x) ⟩
-                        1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ sx1≡x'1 one))  ⟩
+                        1r · x         ≡⟨ cong (_· x) (sym (funExt⁻ s[x,1]≡x',1 one))  ⟩
                         (s · 1r) · x   ≡⟨ cong (_· x) (·IdR s) ⟩
-                        s · x          ≡⟨ funExt⁻ sx1≡x'1 zero ⟩
+                        s · x          ≡⟨ funExt⁻ s[x,1]≡x',1 zero ⟩
                         x'             ∎)
             })
             (ℙⁿ-effective-quotient 1 e))
