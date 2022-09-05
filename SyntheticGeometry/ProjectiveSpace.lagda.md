@@ -6,13 +6,12 @@ Construct projective space as a quotient of 𝔸ⁿ⁺¹-{0}.
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
-open import Cubical.Foundations.Powerset using (_∈_; _⊆_) renaming (ℙ to Powerset)
+open import Cubical.Foundations.Powerset using (_∈_; _⊆_; ⊆-extensionality) renaming (ℙ to Powerset)
 open import Cubical.Foundations.Isomorphism
 open import Cubical.Foundations.HLevels
 open import Cubical.Foundations.Pointed using (_→∙_)
 open import Cubical.Foundations.Pointed.Homogeneous using (isHomogeneousDiscrete)
 open import Cubical.Foundations.Univalence using (pathToEquiv)
-open import Cubical.Foundations.Powerset using (⊆-extensionality)
 open import Cubical.Foundations.Function
 
 open import Cubical.Structures.Pointed using (pointed-sip)
@@ -73,6 +72,15 @@ module _ (n : ℕ) where
   linear-equivalent x y =
     Σ[ c ∈ ⟨ k ⟩ ] (c ∈ (k ˣ)) × (c ⋆ x ≡ y)
 
+  ℙ : Type _
+  ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
+
+```
+
+We show that linear equivalence is an equivalence relation.
+This is necessary to characterize equality in ℙⁿ.
+
+```agda
   module _ where
     open BinaryRelation
     open isEquivRel
@@ -109,8 +117,14 @@ module _ (n : ℕ) where
     -- but it is if we restrict to 𝔸ⁿ⁺¹-0 and assume k to be local and SQC.
     -- It doesn't seem like we need this for now.
 
-  ℙ : Type _
-  ℙ = 𝔸ⁿ⁺¹-0 / (pulledbackRel fst linear-equivalent)
+  ℙⁿ-effective-quotient :
+    {p p' : 𝔸ⁿ⁺¹-0} →
+    [ p ] ≡ [ p' ] →
+    ∥ linear-equivalent (fst p) (fst p') ∥₁
+  ℙⁿ-effective-quotient {p = p} {p' = p'} =
+    Iso.fun (isEquivRel→TruncIso eqRel _ _)
+    where
+    eqRel = isEquivRelPulledbackRel fst linear-equivalent isEquivRel-lin-eq
 
 ```
 
@@ -170,9 +184,8 @@ we will use an intermediate type given by
       ι-injective (x , xi≡1) (y , yi≡1) ιx≡ιy =
         Σ≡Prop
           (λ _ → k.is-set _ _)
-          (PT.rec (𝔸ⁿ⁺¹.is-set _ _) lineq→≡ (Iso.fun (isEquivRel→TruncIso eqRel _ _) ιx≡ιy))
+          (PT.rec (𝔸ⁿ⁺¹.is-set _ _) lineq→≡ (ℙⁿ-effective-quotient ιx≡ιy))
         where
-        eqRel = isEquivRelPulledbackRel fst linear-equivalent isEquivRel-lin-eq
         lineq→≡ : linear-equivalent x y → x ≡ y
         lineq→≡ (c , _ , cx≡y) =
           x        ≡⟨ sym (⋆IdL _) ⟩
@@ -240,7 +253,7 @@ we will use an intermediate type given by
         (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
         Maybe∙ (Fin n)           ∎
 
-    U-is-affine : fst (is-affine (qc-open-as-type U))
+    U-is-affine : ⟨ is-affine (qc-open-as-type U) ⟩
     U-is-affine = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
       (qc-open-as-type U   ≃⟨ pathToEquiv U≡Im-ι ⟩
        Image ι             ≃⟨ invEquiv embedded-𝔸ⁿ≃Im-ι ⟩
