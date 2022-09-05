@@ -113,28 +113,27 @@ module Comparison
     where
     isEmbedding-f = snd (snd (Subset→Embedding (k ˣ)))
 
-  module Function
-    where
+  -- Construction of the comparison function
 
-    ι₀ ι₁ : ⟨ k ⟩ → 𝔸²-0
-    fst (ι₀ x) = λ{ zero → 1r ; one → x}
-    snd (ι₀ x) ≡0 = 1≢0 (funExt⁻ ≡0 zero)
-    fst (ι₁ x) = λ{ zero → x ; one → 1r}
-    snd (ι₁ x) ≡0 = 1≢0 (funExt⁻ ≡0 one)
+  ι₀ ι₁ : ⟨ k ⟩ → 𝔸²-0
+  fst (ι₀ x) = λ{ zero → 1r ; one → x}
+  snd (ι₀ x) ≡0 = 1≢0 (funExt⁻ ≡0 zero)
+  fst (ι₁ x) = λ{ zero → x ; one → 1r}
+  snd (ι₁ x) ≡0 = 1≢0 (funExt⁻ ≡0 one)
 
-    path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
-    -- The converse to this appears in Injectivity.intersection-case below.
-    path x y xy≡1 =
-      let yx≡1 : y · x ≡ 1r
-          yx≡1 = ·Comm y x ∙ xy≡1
-      in eq/ _ _ ( (y , ((x , yx≡1) , funExt (λ{ zero → ·IdR y ; one → yx≡1 }) )) )
+  path : (x y : ⟨ k ⟩) → x · y ≡ 1r → [ ι₀ x ]ℙ¹ ≡ [ ι₁ y ]ℙ¹
+  -- The converse to this appears in Injectivity.intersection-case below.
+  path x y xy≡1 =
+    let yx≡1 : y · x ≡ 1r
+        yx≡1 = ·Comm y x ∙ xy≡1
+    in eq/ _ _ ( (y , ((x , yx≡1) , funExt (λ{ zero → ·IdR y ; one → yx≡1 }) )) )
 
-    ϕ : ℙ¹-as-pushout → ℙ 1
-    ϕ (inl x) = [ ι₀ x ]ℙ¹
-    ϕ (inr x) = [ ι₁ x ]ℙ¹
-    ϕ (push (x , y , xy≡1) i) = path x y xy≡1 i
+  ϕ : ℙ¹-as-pushout → ℙ 1
+  ϕ (inl x) = [ ι₀ x ]ℙ¹
+  ϕ (inr x) = [ ι₁ x ]ℙ¹
+  ϕ (push (x , y , xy≡1) i) = path x y xy≡1 i
 
-  open Function
+  -- Proof that the comparison function is an equivalence
 
   module Surjectivity
     where
@@ -247,6 +246,6 @@ module Comparison
     open Injectivity
 
 comparison-equiv : ℙ¹-as-pushout ≃ ℙ 1
-fst comparison-equiv = Comparison.Function.ϕ
+fst comparison-equiv = Comparison.ϕ
 snd comparison-equiv = Comparison.isEquiv-ϕ
 ```
