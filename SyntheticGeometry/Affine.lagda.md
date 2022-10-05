@@ -51,7 +51,7 @@ kₐ = initialCAlg k
 ```
 
 An affine type is a type, that is equivalent to the spectrum of a fp algebra over the base ring k.
-We chose this definition over asking for a coupled algebra, because fp is universe independet.
+We chose this definition over asking for a coupled algebra, because fp is universe independent.
 
 ```agda
 
