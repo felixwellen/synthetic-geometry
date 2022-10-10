@@ -1,7 +1,7 @@
 The Synthetic Spectrum
 ======================
 
-All the mathematics presented in this file and in (SQC/Consequences.lagda.md), (SQC.lagda.md), is from [Ingo Blechschmidt](https://www.ingo-blechschmidt.eu/research.html)'s thesis, where the idea how to translate to homotopy type theory is unpublished work of [David Jaz Myers](http://davidjaz.com/). The formalization in Agda is due to the authors, [Felix Cherubini](http://felix-cherubini.de) and Matthias Hutzler. Ingo Blechschmidt also suggested to us to use the definition of [qc-opens](Open.lagda.md). This work was greatly supported by discussions with Thierry Coquand.
+All the mathematics presented in this file and on SQC [here](SQC/Consequences.lagda.md) and [here](SQC.lagda.md), is from [Ingo Blechschmidt](https://www.ingo-blechschmidt.eu/research.html)'s thesis, where the idea how to translate to homotopy type theory is unpublished work of [David Jaz Myers](http://davidjaz.com/). The formalization in Agda is due to the authors, [Felix Cherubini](http://felix-cherubini.de) and Matthias Hutzler. Ingo Blechschmidt also suggested to us to use the definition of [qc-opens](Open.lagda.md). This work was greatly supported by discussions with Thierry Coquand.
 
 ```agda
 {-# OPTIONS --safe #-}
