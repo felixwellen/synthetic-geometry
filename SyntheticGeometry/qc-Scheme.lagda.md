@@ -1,8 +1,10 @@
 Quasi-compact schemes
 =====================
 This module defines quasi-compact (qc) schemes.
-It is easier/possible to define open subsets of quasi compact spaces.
-We will only admit (standard) finite covers, so this definition of qc-scheme could miss some qc-schemes.
+It is easier/possible to define open subsets of quasi compact spaces, since then we can use a easy, pointwise [definition](Open.lagda.md) of open subsets.
+
+We will only admit standard finite covers. 
+But that should not be a loss of generality, since a qc-scheme has a finite affine cover by quasi-compactness.
 
 ```agda
 open import Cubical.Foundations.Prelude
