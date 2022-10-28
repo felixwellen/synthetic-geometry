@@ -28,6 +28,7 @@ open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.Instances.Initial
 open import Cubical.Algebra.CommAlgebra.Instances.Pointwise
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
+open import Cubical.Algebra.CommAlgebra.FPAlgebra.Instances using (R/⟨xs⟩FP)
 open import Cubical.Algebra.CommAlgebra.QuotientAlgebra renaming (inducedHom to quotientInducedHom)
 open import Cubical.Algebra.CommAlgebra.Ideal
 open import Cubical.Algebra.CommAlgebra.Kernel
@@ -103,7 +104,7 @@ generalized-field-property xs xs≢0 =
     πx≡0 i = isZeroFromIdeal (xs i) (incInIdeal kₐ xs i)
 
     finite-presentation-of-A : FinitePresentation A
-    finite-presentation-of-A = Instances.R/⟨xs⟩FP k xs
+    finite-presentation-of-A = R/⟨xs⟩FP k xs
 
     equiv : ⟨ A ⟩ ≃ (Spec A → ⟨ k ⟩)
     equiv = _ , k-sqc A ∣ finite-presentation-of-A ∣₁
