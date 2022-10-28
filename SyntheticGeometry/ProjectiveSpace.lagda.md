@@ -33,6 +33,7 @@ open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
+open import Cubical.Algebra.CommAlgebra.FPAlgebra.Instances using (polynomialAlgFP)
 
 open import Cubical.Relation.Nullary.Base using (¬_)
 open import Cubical.Relation.Binary
@@ -254,7 +255,7 @@ we will use an intermediate type given by
         Maybe∙ (Fin n)           ∎
 
     U-is-affine : ⟨ is-affine (qc-open-as-type U) ⟩
-    U-is-affine = ∣ Polynomials n , ∣ Instances.polynomialAlgFP k n ∣₁ ,
+    U-is-affine = ∣ Polynomials n , ∣ polynomialAlgFP k n ∣₁ ,
       (qc-open-as-type U   ≃⟨ pathToEquiv U≡Im-ι ⟩
        Image ι             ≃⟨ invEquiv embedded-𝔸ⁿ≃Im-ι ⟩
        embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩
