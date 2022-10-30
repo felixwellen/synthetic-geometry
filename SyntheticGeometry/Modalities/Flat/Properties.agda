@@ -1,4 +1,4 @@
-{-# OPTIONS --safe #-}
+{-# OPTIONS --flat-split #-}
 module SyntheticGeometry.Modalities.Flat.Properties where
 
 open import Cubical.Foundations.Prelude

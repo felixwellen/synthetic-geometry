@@ -4,7 +4,7 @@
   decidable equality types. There is an inclusion of decidable types
   into discrete types in real cohesive HoTT, though.
 -}
-{-# OPTIONS --safe #-}
+{-# OPTIONS --flat-split #-}
 module SyntheticGeometry.Modalities.Flat.DiscreteTypes where
 
 open import Cubical.Foundations.Prelude

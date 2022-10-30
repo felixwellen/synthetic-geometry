@@ -1,4 +1,4 @@
-{-# OPTIONS --safe #-}
+{-# OPTIONS --flat-split #-}
 module SyntheticGeometry.Modalities.Flat where
 
 open import SyntheticGeometry.Modalities.Flat.Base public
