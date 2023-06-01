@@ -56,8 +56,9 @@ open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 
 
 module _ (n : ℕ) where
-  module k = CommRingStr (snd k)
-  module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = n + 1}))
+  private
+    module k = CommRingStr (snd k)
+    module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = n + 1}))
   open k hiding (_+_)
   open 𝔸ⁿ⁺¹ hiding (_+_)
   open Units k
