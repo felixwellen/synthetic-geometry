@@ -1,4 +1,4 @@
 name: synthetic-geometry
 depend: cubical-0.5
 include: .
-flags: --cubical
+flags: --cubical -WnoUnsupportedIndexedMatch
