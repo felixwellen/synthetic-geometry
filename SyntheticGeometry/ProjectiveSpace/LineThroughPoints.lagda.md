@@ -4,6 +4,11 @@ Given two distinct points in ℙⁿ,
 we show that there exists a line in ℙⁿ interpolating between these points,
 that is, a function ℙ¹ → ℙⁿ that hits the points.
 
+Note:
+We could alternatively show that
+(1) injective maps of vector spaces induce maps of projective spaces and
+(2) two nonzero vectors are linearly independent iff they represent different points in ℙⁿ.
+
 ```agda
 -- TODO: clean up imports
 open import Cubical.Foundations.Prelude
@@ -24,9 +29,9 @@ open import Cubical.Functions.Embedding
 open import Cubical.Functions.Surjection
 open import Cubical.Functions.Image
 
-open import Cubical.HITs.SetQuotients as SQ
+import Cubical.HITs.SetQuotients as SQ
 open import Cubical.HITs.PropositionalTruncation as PT
-open import Cubical.Data.Nat as ℕ hiding (_+_)
+open import Cubical.Data.Nat as ℕ using (ℕ; suc)
 open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
 open import Cubical.Data.Maybe
@@ -56,19 +61,50 @@ module SyntheticGeometry.ProjectiveSpace.LineThroughPoints
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 
+
+private
+  [_] : {n : ℕ} → 𝔸ⁿ⁺¹-0 n → ℙ n
+  [_] = SQ.[_]
+
 module _
   {n : ℕ}
-  (a b : FinVec ⟨ k ⟩ (n ℕ.+ 1))
-  (a≠b : a ≡ b → ⊥)
+  ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
+  ([a]≠[b] : [ a , a≠0 ] ≡ [ b , b≠0 ] → ⊥)
   where
 
-  private module 𝔸ⁿ⁺¹ = LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
+  private
+    module k = CommRingStr (snd k)
+    module 𝔸ⁿ⁺¹ = LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
+  open k using (_·_)
   open 𝔸ⁿ⁺¹
 
-  f : ℙ 1 → ℙ n
-  f = SQ.rec squash/
-    (λ (x , x≠0) → [ ((x zero ⋆ a) + (x one ⋆ b)) , (λ ≡0 → {!!}) ])
-    λ (x , _) (y , _) (c , c-inv , r) → eq/ _ _ (c , c-inv , (
-        (c ⋆ ((x zero ⋆ a) + (x one ⋆ b)))        ≡⟨ {!!} ⟩
-        ((c ⋆ (x zero ⋆ a)) + (c ⋆ (x one ⋆ b)))  ≡⟨ {!!} ⟩
-        ((y zero ⋆ a) + (y one ⋆ b))              ∎ ))
+  module Construction
+    ((x , x≠0) : 𝔸ⁿ⁺¹-0 1)
+    where
+
+    value : 𝔸ⁿ⁺¹ n
+    value = (x zero ⋆ a) + (x one ⋆ b)
+
+    non-zero : value ≡ 0𝔸ⁿ⁺¹ n → ⊥
+    non-zero = {!!}
+
+  open Construction
+
+  private
+    respects-linear-equivalence :
+      (x : 𝔸ⁿ⁺¹-0 1) →
+      (y : 𝔸ⁿ⁺¹-0 1) →
+      linear-equivalent 1 (fst x) (fst y) →
+      linear-equivalent n (value x) (value y)
+    respects-linear-equivalence (x , x≠0) (y , y≠0) (c , c-inv , cx≡y) =
+      c , c-inv ,
+      ( (c ⋆ ((x zero ⋆ a) + (x one ⋆ b)))        ≡⟨ ⋆DistR+ _ _ _ ⟩
+        ((c ⋆ (x zero ⋆ a)) + (c ⋆ (x one ⋆ b)))  ≡⟨ sym (cong₂ _+_ (⋆Assoc _ _ _) (⋆Assoc _ _ _)) ⟩
+        (((c · x zero) ⋆ a) + ((c · x one) ⋆ b))  ≡⟨ cong₂ _+_ (cong (_⋆ a) (funExt⁻ cx≡y zero))
+                                                               (cong (_⋆ b) (funExt⁻ cx≡y one)) ⟩
+        ((y zero ⋆ a) + (y one ⋆ b))              ∎ )
+
+  line-through-points : ℙ 1 → ℙ n
+  line-through-points = SQ.rec SQ.squash/
+    (λ x → [ value x , non-zero x ])
+    λ x y rel → SQ.eq/ _ _ (respects-linear-equivalence x y rel)
