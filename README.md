@@ -1,5 +1,5 @@
 # Synthetic Geometry
-So far, this formalization project is only about synthetic algebraic geometry.
+So far, this formalization project is only about synthetic algebraic geometry (see [here](https://github.com/felixwellen/synthetic-zariski/blob/main/README.md) for more on the subject).
 A good place to start is [here](SyntheticGeometry/Spec.lagda.md).
 
 # How to check/work on the code in this repo
