@@ -113,23 +113,26 @@ module _
 
 --      open Units k
 
-      module _
-        ((x₀⁻¹ , x₀x₀⁻¹≡1) : x₀ ∈ k ˣ)
+      x₀-inv→[b]≡[a] : (x₀ ∈ k ˣ) → [ b , b≠0 ] ≡ [ a , a≠0 ]
+      x₀-inv→[b]≡[a] (x₀⁻¹ , x₀x₀⁻¹≡1) = SQ.eq/ _ _ (char (b , b≠0) (a , a≠0) (- x₀⁻¹ · x₁) (
+            ((- x₀⁻¹ · x₁) ⋆ b) ≡⟨ {!!} ⟩
+            a                   ∎))
         where
+          open CharacterizationOfLinearEquivalence
 
-        x₀-inv→[b]≡[a] : [ b , b≠0 ] ≡ [ a , a≠0 ]
-        x₀-inv→[b]≡[a] = SQ.eq/ _ _ (char (b , b≠0) (a , a≠0) (- x₀⁻¹ · x₁) (
-              ((- x₀⁻¹ · x₁) ⋆ b) ≡⟨ {!!} ⟩
-              a                 ∎))
-          where
-            open CharacterizationOfLinearEquivalence
+      x₁-inv→[a]≡[b] : (x₁ ∈ k ˣ) → [ a , a≠0 ] ≡ [ b , b≠0 ]
+      x₁-inv→[a]≡[b] (x₁⁻¹ , x₁x₁⁻¹≡1) = SQ.eq/ _ _ (char (a , a≠0) (b , b≠0) (- x₁⁻¹ · x₀) (
+            ((- x₁⁻¹ · x₀) ⋆ a) ≡⟨ {!!} ⟩
+            b                   ∎))
+        where
+          open CharacterizationOfLinearEquivalence
 
       non-zero : ⊥
       non-zero =
         PT.rec
           isProp⊥
           (λ{ (zero , x₀-inv) → [a]≠[b] (sym (x₀-inv→[b]≡[a] x₀-inv))
-            ; (one , _) → {!!}
+            ; (one , x₁-inv) → [a]≠[b] (x₁-inv→[a]≡[b] x₁-inv)
             })
           (generalized-field-property x x≠0)
 
