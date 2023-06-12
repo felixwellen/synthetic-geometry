@@ -62,6 +62,25 @@ open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 
 
+module CharacterizationOfLinearEquivalence
+  {n : ℕ}
+  ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
+  where
+
+  open LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
+  open Units k
+
+  char : (c : ⟨ k ⟩) → c ⋆ a ≡ b → linear-equivalent _ a b
+  char c ca≡b = c , c-inv , ca≡b
+    where
+      c-inv : c ∈ k ˣ
+      c-inv = PT.rec
+        (str ((k ˣ) c))
+        (λ (i , bi-inv) → fst (RˣMultDistributing c (a i) (subst (_∈ k ˣ) (sym (funExt⁻ ca≡b i)) bi-inv)))
+        (generalized-field-property b b≠0)
+
+
+
 private
   [_] : {n : ℕ} → 𝔸ⁿ⁺¹-0 n → ℙ n
   [_] = SQ.[_]
