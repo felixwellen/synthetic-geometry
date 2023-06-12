@@ -94,18 +94,44 @@ module _
   private
     module k = CommRingStr (snd k)
     module 𝔸ⁿ⁺¹ = LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
-  open k using (_·_)
-  open 𝔸ⁿ⁺¹
+  open k using (_·_; -_)
+  open 𝔸ⁿ⁺¹ hiding (-_)
 
   module Construction
     ((x , x≠0) : 𝔸ⁿ⁺¹-0 1)
     where
 
-    value : 𝔸ⁿ⁺¹ n
-    value = (x zero ⋆ a) + (x one ⋆ b)
+    x₀ = x zero
+    x₁ = x one
 
-    non-zero : value ≡ 0𝔸ⁿ⁺¹ n → ⊥
-    non-zero = {!!}
+    value : 𝔸ⁿ⁺¹ n
+    value = (x₀ ⋆ a) + (x₁ ⋆ b)
+
+    module _
+      (value≡0 : value ≡ 0𝔸ⁿ⁺¹ n)
+      where
+
+--      open Units k
+
+      module _
+        ((x₀⁻¹ , x₀x₀⁻¹≡1) : x₀ ∈ k ˣ)
+        where
+
+        x₀-inv→[b]≡[a] : [ b , b≠0 ] ≡ [ a , a≠0 ]
+        x₀-inv→[b]≡[a] = SQ.eq/ _ _ (char (b , b≠0) (a , a≠0) (- x₀⁻¹ · x₁) (
+              ((- x₀⁻¹ · x₁) ⋆ b) ≡⟨ {!!} ⟩
+              a                 ∎))
+          where
+            open CharacterizationOfLinearEquivalence
+
+      non-zero : ⊥
+      non-zero =
+        PT.rec
+          isProp⊥
+          (λ{ (zero , x₀-inv) → [a]≠[b] (sym (x₀-inv→[b]≡[a] x₀-inv))
+            ; (one , _) → {!!}
+            })
+          (generalized-field-property x x≠0)
 
   open Construction
 
@@ -127,3 +153,4 @@ module _
   line-through-points = SQ.rec SQ.squash/
     (λ x → [ value x , non-zero x ])
     λ x y rel → SQ.eq/ _ _ (respects-linear-equivalence x y rel)
+```
