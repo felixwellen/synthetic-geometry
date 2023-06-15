@@ -44,7 +44,7 @@ open import Cubical.Algebra.Module.Instances.FinVec
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
 open import Cubical.Algebra.CommAlgebra.FPAlgebra.Instances using (polynomialAlgFP)
 
-open import Cubical.Relation.Nullary.Base using (¬_)
+open import Cubical.Relation.Nullary.Base using (¬_; yes; no)
 open import Cubical.Relation.Binary
 
 open import Cubical.Tactics.CommRingSolver.Reflection
@@ -80,10 +80,26 @@ module CharacterizationOfLinearEquivalence
         (generalized-field-property b b≠0)
 
 
-
 private
   [_] : {n : ℕ} → 𝔸ⁿ⁺¹-0 n → ℙ n
   [_] = SQ.[_]
+
+module StandardPoints
+  {n : ℕ}
+  where
+
+  open CommRingStr (snd k)
+
+  -- TODO: define standard basis vectors in the cubical libraries and use those instead
+  standard-basis-vector : Fin (n ℕ.+ 1) → FinVec ⟨ k ⟩ (n ℕ.+ 1)
+  standard-basis-vector i j =
+    case (discreteFin i j) of
+      λ{ (yes _) → 1r
+       ; (no _) → 0r
+       }
+
+  p : Fin (n ℕ.+ 1) → ℙ n
+  p i = [ standard-basis-vector i , (λ ≡0 → {!!}) ]
 
 module _
   {n : ℕ}
@@ -94,7 +110,7 @@ module _
   private
     module k = CommRingStr (snd k)
     module 𝔸ⁿ⁺¹ = LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
-  open k using (_·_; -_)
+  open k using (_·_; -_; 0r; 1r)
   open 𝔸ⁿ⁺¹ hiding (-_)
 
   module Construction
@@ -156,4 +172,11 @@ module _
   line-through-points = SQ.rec SQ.squash/
     (λ x → [ value x , non-zero x ])
     λ x y rel → SQ.eq/ _ _ (respects-linear-equivalence x y rel)
+
+  open StandardPoints {n = 1}
+
+  line-hits-point-0 : line-through-points (p zero) ≡ [ a , a≠0 ]
+  line-hits-point-0 = cong [_] (Σ≡Prop (λ _ → isProp→ isProp⊥) (
+    ((1r ⋆ a) + (0r ⋆ b)) ≡⟨ {!!} ⟩
+    a  ∎))
 ```
