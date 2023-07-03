@@ -121,7 +121,8 @@ module _
 
   private
     module k = CommRingStr (snd k)
-    module 𝔸ⁿ⁺¹ = LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
+    𝔸ⁿ⁺¹-as-module = FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}
+    module 𝔸ⁿ⁺¹ = LeftModuleStr (str 𝔸ⁿ⁺¹-as-module)
   open k using (_·_; -_; 0r; 1r)
   open 𝔸ⁿ⁺¹ hiding (-_)
 
@@ -186,9 +187,17 @@ module _
     λ x y rel → SQ.eq/ _ _ (respects-linear-equivalence x y rel)
 
   open StandardPoints {n = 1}
+  open ModuleTheory _ 𝔸ⁿ⁺¹-as-module
 
   line-hits-point-0 : line-through-points (p zero) ≡ [ a , a≠0 ]
   line-hits-point-0 = cong [_] (Σ≡Prop (λ _ → isProp→ isProp⊥) (
-    ((1r ⋆ a) + (0r ⋆ b)) ≡⟨ {!!} ⟩
-    a  ∎))
+    ((1r ⋆ a) + (0r ⋆ b))  ≡⟨ cong₂ _+_ (⋆IdL _) (⋆AnnihilL _) ⟩
+    (a + 0m)               ≡⟨ +IdR _ ⟩
+    a                      ∎))
+
+  line-hits-point-1 : line-through-points (p one) ≡ [ b , b≠0 ]
+  line-hits-point-1 = cong [_] (Σ≡Prop (λ _ → isProp→ isProp⊥) ((
+    ((0r ⋆ a) + (1r ⋆ b))  ≡⟨ cong₂ _+_ (⋆AnnihilL _) (⋆IdL _) ⟩
+    (0m + b)               ≡⟨ +IdL _ ⟩
+    b                      ∎)))
 ```
