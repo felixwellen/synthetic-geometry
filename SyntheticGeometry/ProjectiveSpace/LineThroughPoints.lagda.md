@@ -35,7 +35,7 @@ open import Cubical.Data.Nat as ℕ using (ℕ; suc)
 open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
 open import Cubical.Data.Maybe
-open import Cubical.Data.Empty
+open import Cubical.Data.Empty as ⊥
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
@@ -98,8 +98,20 @@ module StandardPoints
        ; (no _) → 0r
        }
 
+  standard-basis-vector-1-entry : (i : _) → standard-basis-vector i i ≡ 1r
+  standard-basis-vector-1-entry i with (discreteFin i i)
+  ... | yes _ = refl
+  ... | no i≠i = ⊥.rec (i≠i refl)
+
   p : Fin (n ℕ.+ 1) → ℙ n
-  p i = [ standard-basis-vector i , (λ ≡0 → {!!}) ]
+  p i =
+    [ standard-basis-vector i ,
+      (λ ≡0 → 1≢0 (
+        1r                         ≡⟨ sym (standard-basis-vector-1-entry i) ⟩
+        standard-basis-vector i i  ≡⟨ funExt⁻ ≡0 i ⟩
+        0r                         ∎ )) ]
+    where
+    open Consequences k k-local
 
 module _
   {n : ℕ}
