@@ -146,14 +146,15 @@ module _
       open AbGroupTheory (LeftModule→AbGroup 𝔸ⁿ⁺¹-as-module)
 
       x₀-inv→[b]≡[a] : (x₀ ∈ k ˣ) → [ b , b≠0 ] ≡ [ a , a≠0 ]
-      x₀-inv→[b]≡[a] (x₀⁻¹ , x₀x₀⁻¹≡1) = SQ.eq/ _ _ (char (b , b≠0) (a , a≠0) (x₀⁻¹ · (- x₁)) (
-            ((x₀⁻¹ · (- x₁)) ⋆ b)      ≡⟨ ⋆Assoc _ _ _ ⟩
-            (x₀⁻¹ ⋆ ((- x₁) ⋆ b))      ≡⟨ cong (x₀⁻¹ ⋆_) (
-              ((- x₁) ⋆ b)           ≡⟨ {!!} ⟩
-              (𝔸ⁿ⁺¹.- x₁ ⋆ b)       ≡⟨ (sym (implicitInverse (+Comm _ _ ∙ value≡0))) ⟩
-              (x₀ ⋆ a)               ∎ ) ⟩
-            (x₀⁻¹ ⋆ (x₀ ⋆ a))          ≡⟨ {!!} ⟩
-            a                          ∎))
+      x₀-inv→[b]≡[a] (x₀⁻¹ , x₀x₀⁻¹≡1) =
+        SQ.eq/ _ _ (char (b , b≠0) (a , a≠0) (x₀⁻¹ · (- x₁)) (
+          ((x₀⁻¹ · (- x₁)) ⋆ b)      ≡⟨ ⋆Assoc _ _ _ ⟩
+          (x₀⁻¹ ⋆ ((- x₁) ⋆ b))      ≡⟨ cong (x₀⁻¹ ⋆_) (
+            ((- x₁) ⋆ b)           ≡⟨ {!!} ⟩
+            (𝔸ⁿ⁺¹.- x₁ ⋆ b)       ≡⟨ sym (implicitInverse (+Comm _ _ ∙ value≡0)) ⟩
+            (x₀ ⋆ a)               ∎ ) ⟩
+          (x₀⁻¹ ⋆ (x₀ ⋆ a))          ≡⟨ {!!} ⟩
+          a                          ∎))
 
       x₁-inv→[a]≡[b] : (x₁ ∈ k ˣ) → [ a , a≠0 ] ≡ [ b , b≠0 ]
       x₁-inv→[a]≡[b] (x₁⁻¹ , x₁x₁⁻¹≡1) = SQ.eq/ _ _ (char (a , a≠0) (b , b≠0) (- x₁⁻¹ · x₀) (
