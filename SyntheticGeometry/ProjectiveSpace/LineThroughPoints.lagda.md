@@ -4,11 +4,6 @@ Given two distinct points in ℙⁿ,
 we show that there exists a line in ℙⁿ interpolating between these points,
 that is, a function ℙ¹ → ℙⁿ that hits the points.
 
-Note:
-We could alternatively show that
-(1) injective maps of vector spaces induce maps of projective spaces and
-(2) two nonzero vectors are linearly independent iff they represent different points in ℙⁿ.
-
 ```agda
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure
@@ -106,6 +101,11 @@ module StandardPoints
 
 We now construct the line through two distinct points in projective space,
 assuming that fixed representatives for the points are given.
+
+Note:
+We could alternatively show that
+(1) injective maps of vector spaces induce maps of projective spaces and
+(2) two nonzero vectors are linearly independent iff they represent different points in ℙⁿ.
 
 ```agda
 module _
@@ -228,7 +228,7 @@ module _
 ```
 
 If we are given distinct points (but not representatives),
-we can still derive the existence of a line through these points.
+we can still derive the (mere) existence of a line through these points.
 
 ```agda
 module _
