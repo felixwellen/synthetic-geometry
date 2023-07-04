@@ -10,46 +10,27 @@ We could alternatively show that
 (2) two nonzero vectors are linearly independent iff they represent different points in ℙⁿ.
 
 ```agda
--- TODO: clean up imports
 open import Cubical.Foundations.Prelude
-open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
-open import Cubical.Foundations.Powerset using (_∈_; _⊆_; ⊆-extensionality) renaming (ℙ to Powerset)
-open import Cubical.Foundations.Isomorphism
-open import Cubical.Foundations.HLevels
-open import Cubical.Foundations.Pointed using (_→∙_)
-open import Cubical.Foundations.Pointed.Homogeneous using (isHomogeneousDiscrete)
-open import Cubical.Foundations.Univalence using (pathToEquiv)
-open import Cubical.Foundations.Function
-
-open import Cubical.Structures.Pointed using (pointed-sip)
-
-open import Cubical.Functions.Logic using (⇒∶_⇐∶_)
-open import Cubical.Functions.Embedding
-open import Cubical.Functions.Surjection
-open import Cubical.Functions.Image
+open import Cubical.Foundations.Powerset using (_∈_)
+open import Cubical.Foundations.HLevels using (isProp→)
+open import Cubical.Foundations.Function using (case_of_)
 
 import Cubical.HITs.SetQuotients as SQ
-open import Cubical.HITs.PropositionalTruncation as PT
-open import Cubical.Data.Nat as ℕ using (ℕ; suc)
+import Cubical.HITs.PropositionalTruncation as PT
+open import Cubical.Data.Nat as ℕ using (ℕ)
 open import Cubical.Data.FinData
 open import Cubical.Data.Sigma
-open import Cubical.Data.Maybe
-open import Cubical.Data.Empty as ⊥
+open import Cubical.Data.Empty as ⊥ using (⊥; isProp⊥)
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Ring using (module RingTheory)
 open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
-open import Cubical.Algebra.AbGroup
-open import Cubical.Algebra.CommAlgebra.FPAlgebra
-open import Cubical.Algebra.CommAlgebra.FPAlgebra.Instances using (polynomialAlgFP)
+open import Cubical.Algebra.AbGroup using (module AbGroupTheory)
 
 open import Cubical.Relation.Nullary.Base using (¬_; yes; no)
-open import Cubical.Relation.Binary
-
-open import Cubical.Tactics.CommRingSolver.Reflection
 
 import SyntheticGeometry.SQC
 
@@ -130,7 +111,7 @@ assuming that fixed representatives for the points are given.
 module _
   {n : ℕ}
   ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
-  ([a]≠[b] : [ a , a≠0 ] ≡ [ b , b≠0 ] → ⊥)
+  ([a]≠[b] : ¬ [ a , a≠0 ] ≡ [ b , b≠0 ])
   where
 
   private
