@@ -39,6 +39,7 @@ open import Cubical.Data.Empty as ⊥
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
+open import Cubical.Algebra.Ring using (module RingTheory)
 open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
 open import Cubical.Algebra.AbGroup
@@ -141,25 +142,51 @@ module _
       (value≡0 : value ≡ 0𝔸ⁿ⁺¹ n)
       where
 
---      open Units k
+      private
+        module k-Th = RingTheory (CommRing→Ring k)
+
+      open Units k
       open CharacterizationOfLinearEquivalence
       open AbGroupTheory (LeftModule→AbGroup 𝔸ⁿ⁺¹-as-module)
+      open ModuleTheory _ 𝔸ⁿ⁺¹-as-module
 
       x₀-inv→[b]≡[a] : (x₀ ∈ k ˣ) → [ b , b≠0 ] ≡ [ a , a≠0 ]
-      x₀-inv→[b]≡[a] (x₀⁻¹ , x₀x₀⁻¹≡1) =
+      x₀-inv→[b]≡[a] x₀-inv =
         SQ.eq/ _ _ (char (b , b≠0) (a , a≠0) (x₀⁻¹ · (- x₁)) (
           ((x₀⁻¹ · (- x₁)) ⋆ b)      ≡⟨ ⋆Assoc _ _ _ ⟩
           (x₀⁻¹ ⋆ ((- x₁) ⋆ b))      ≡⟨ cong (x₀⁻¹ ⋆_) (
-            ((- x₁) ⋆ b)           ≡⟨ {!!} ⟩
+            ((- x₁) ⋆ b)           ≡⟨ cong (_⋆ b) (k-Th.-IsMult-1 _) ⟩
+            (((- 1r) · x₁) ⋆ b)    ≡⟨ ⋆Assoc _ _ _ ⟩
+            ((- 1r) ⋆ (x₁ ⋆ b))    ≡⟨ minusByMult _ ⟩
             (𝔸ⁿ⁺¹.- x₁ ⋆ b)       ≡⟨ sym (implicitInverse (+Comm _ _ ∙ value≡0)) ⟩
             (x₀ ⋆ a)               ∎ ) ⟩
-          (x₀⁻¹ ⋆ (x₀ ⋆ a))          ≡⟨ {!!} ⟩
-          a                          ∎))
+          (x₀⁻¹ ⋆ (x₀ ⋆ a))          ≡⟨ sym (⋆Assoc _ _ _) ⟩
+          ((x₀⁻¹ · x₀) ⋆ a)          ≡⟨ cong (_⋆ a) (·-linv _) ⟩
+          (1r ⋆ a)                   ≡⟨ ⋆IdL _ ⟩
+          a                          ∎ ))
+        where
+        instance
+          _ = x₀-inv
+        x₀⁻¹ = x₀ ⁻¹
 
       x₁-inv→[a]≡[b] : (x₁ ∈ k ˣ) → [ a , a≠0 ] ≡ [ b , b≠0 ]
-      x₁-inv→[a]≡[b] (x₁⁻¹ , x₁x₁⁻¹≡1) = SQ.eq/ _ _ (char (a , a≠0) (b , b≠0) (- x₁⁻¹ · x₀) (
-            ((- x₁⁻¹ · x₀) ⋆ a) ≡⟨ {!!} ⟩
-            b                   ∎))
+      x₁-inv→[a]≡[b] x₁-inv =
+        SQ.eq/ _ _ (char (a , a≠0) (b , b≠0) (x₁⁻¹ · (- x₀)) (
+          ((x₁⁻¹ · (- x₀)) ⋆ a)      ≡⟨ ⋆Assoc _ _ _ ⟩
+          (x₁⁻¹ ⋆ ((- x₀) ⋆ a))      ≡⟨ cong (x₁⁻¹ ⋆_) (
+            ((- x₀) ⋆ a)           ≡⟨ cong (_⋆ a) (k-Th.-IsMult-1 _) ⟩
+            (((- 1r) · x₀) ⋆ a)    ≡⟨ ⋆Assoc _ _ _ ⟩
+            ((- 1r) ⋆ (x₀ ⋆ a))    ≡⟨ minusByMult _ ⟩
+            (𝔸ⁿ⁺¹.- x₀ ⋆ a)       ≡⟨  sym (implicitInverse value≡0) ⟩
+            (x₁ ⋆ b)               ∎ ) ⟩
+          (x₁⁻¹ ⋆ (x₁ ⋆ b))          ≡⟨ sym (⋆Assoc _ _ _) ⟩
+          ((x₁⁻¹ · x₁) ⋆ b)          ≡⟨ cong (_⋆ b) (·-linv _) ⟩
+          (1r ⋆ b)                   ≡⟨ ⋆IdL _ ⟩
+          b                          ∎ ))
+        where
+        instance
+          _ = x₁-inv
+        x₁⁻¹ = x₁ ⁻¹
 
       non-zero : ⊥
       non-zero =
