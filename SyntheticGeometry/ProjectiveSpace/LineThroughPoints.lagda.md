@@ -62,8 +62,11 @@ module SyntheticGeometry.ProjectiveSpace.LineThroughPoints
 
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
+```
 
+We need a slight reformulation of linear equivalence between non-zero vectors.
 
+```agda
 module CharacterizationOfLinearEquivalence
   {n : ℕ}
   ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
@@ -85,7 +88,11 @@ module CharacterizationOfLinearEquivalence
 private
   [_] : {n : ℕ} → 𝔸ⁿ⁺¹-0 n → ℙ n
   [_] = SQ.[_]
+```
 
+Here are certain "standard" points of projective space.
+
+```agda
 module StandardPoints
   {n : ℕ}
   where
@@ -114,7 +121,12 @@ module StandardPoints
         0r                         ∎ )) ]
     where
     open Consequences k k-local
+```
 
+We now construct the line through two distinct points in projective space,
+assuming that fixed representatives for the points are given.
+
+```agda
 module _
   {n : ℕ}
   ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
@@ -232,4 +244,11 @@ module _
     ((0r ⋆ a) + (1r ⋆ b))  ≡⟨ cong₂ _+_ (⋆AnnihilL _) (⋆IdL _) ⟩
     (0m + b)               ≡⟨ +IdL _ ⟩
     b                      ∎)))
+```
+
+If we are given distinct points (but not representatives),
+we can still derive the existence of a line through these points.
+
+```agda
+-- TODO
 ```
