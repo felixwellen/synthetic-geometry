@@ -250,5 +250,29 @@ If we are given distinct points (but not representatives),
 we can still derive the existence of a line through these points.
 
 ```agda
--- TODO
+module _
+  {n : ℕ}
+  (p q : ℙ n)
+  (p≠q : ¬ p ≡ q)
+  where
+
+  module Std = StandardPoints {n = 1}
+
+  line-through-points-exists : ∃[ l ∈ (ℙ 1 → ℙ n) ] (l (Std.p zero) ≡ p) × (l (Std.p one) ≡ q)
+  line-through-points-exists =
+    PT.map2
+      (λ (a , [a]≡p) (b , [b]≡q) →
+        let
+          [a]≠[b] : ¬ [ a ] ≡ [ b ]
+          [a]≠[b] [a]≡[b] = p≠q (
+            p      ≡⟨ sym [a]≡p ⟩
+            [ a ]  ≡⟨ [a]≡[b] ⟩
+            [ b ]  ≡⟨ [b]≡q ⟩
+            q      ∎ )
+        in
+        line-through-points a b [a]≠[b] ,
+        line-hits-point-0 a b [a]≠[b] ∙ [a]≡p ,
+        line-hits-point-1 a b [a]≠[b] ∙ [b]≡q)
+      (SQ.[]surjective p)
+      (SQ.[]surjective q)
 ```
