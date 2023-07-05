@@ -120,18 +120,31 @@ module _
     module 𝔸ⁿ⁺¹ = LeftModuleStr (str 𝔸ⁿ⁺¹-as-module)
   open k using (_·_; -_; 0r; 1r)
   open 𝔸ⁿ⁺¹ hiding (-_)
+```
 
+For the construction of the map ℙ¹ → ℙⁿ,
+we first assume a given representative x : 𝔸²-0 for the input point in ℙ¹.
+
+```agda
   module Construction
     ((x , x≠0) : 𝔸ⁿ⁺¹-0 1)
     where
 
     x₀ = x zero
     x₁ = x one
+```
 
+Here is the output value we wish to assign to the input x.
+
+```agda
     value : 𝔸ⁿ⁺¹ n
     value = (x₀ ⋆ a) + (x₁ ⋆ b)
+```
 
-    module _
+We have to show that this intended output value is non-zero.
+
+```agda
+    module NonZero
       (value≡0 : value ≡ 0𝔸ⁿ⁺¹ n)
       where
 
@@ -210,6 +223,8 @@ module _
   line-through-points = SQ.rec SQ.squash/
     (λ x → [ value x , non-zero x ])
     λ x y rel → SQ.eq/ _ _ (respects-linear-equivalence x y rel)
+    where
+    open NonZero
 
   open StandardPoints {n = 1}
   open ModuleTheory _ 𝔸ⁿ⁺¹-as-module
