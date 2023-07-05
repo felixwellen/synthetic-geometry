@@ -227,8 +227,10 @@ module _
     b                      ∎)))
 ```
 
-If we are given distinct points (but not representatives),
-we can still derive the (mere) existence of a line through these points.
+If we are given distinct points (instead of representatives),
+we conclude the (mere) existence of a map ℙ¹ → ℙⁿ that hits these points.
+(The image of this map should be uniquely determined by the points,
+but not the map itself.)
 
 ```agda
 module _
