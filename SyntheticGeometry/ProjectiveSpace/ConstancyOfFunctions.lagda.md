@@ -5,6 +5,8 @@ assuming that all functions ℙ¹ → k are constant
 (which we did not formalize yet).
 
 ```agda
+{-# OPTIONS --safe #-}
+
 -- TODO: clean up imports
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure

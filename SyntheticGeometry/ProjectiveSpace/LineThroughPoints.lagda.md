@@ -5,6 +5,8 @@ we show that there exists a line in ℙⁿ interpolating between these points,
 that is, a function ℙ¹ → ℙⁿ that hits the points.
 
 ```agda
+{-# OPTIONS --safe #-}
+
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset using (_∈_)
