@@ -40,6 +40,7 @@ module SyntheticGeometry.ProjectiveSpace.LineThroughPoints
 
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
+open import SyntheticGeometry.ProjectiveSpace.StandardPoints k k-local k-sqc
 ```
 
 We need a slight reformulation of linear equivalence between non-zero vectors.
@@ -66,39 +67,6 @@ module CharacterizationOfLinearEquivalence
 private
   [_] : {n : ℕ} → 𝔸ⁿ⁺¹-0 n → ℙ n
   [_] = SQ.[_]
-```
-
-Here are certain "standard" points of projective space.
-
-```agda
-module StandardPoints
-  {n : ℕ}
-  where
-
-  open CommRingStr (snd k)
-
-  -- TODO: define standard basis vectors in the cubical libraries and use those instead
-  standard-basis-vector : Fin (n ℕ.+ 1) → FinVec ⟨ k ⟩ (n ℕ.+ 1)
-  standard-basis-vector i j =
-    case (discreteFin i j) of
-      λ{ (yes _) → 1r
-       ; (no _) → 0r
-       }
-
-  standard-basis-vector-1-entry : (i : _) → standard-basis-vector i i ≡ 1r
-  standard-basis-vector-1-entry i with (discreteFin i i)
-  ... | yes _ = refl
-  ... | no i≠i = ⊥.rec (i≠i refl)
-
-  p : Fin (n ℕ.+ 1) → ℙ n
-  p i =
-    [ standard-basis-vector i ,
-      (λ ≡0 → 1≢0 (
-        1r                         ≡⟨ sym (standard-basis-vector-1-entry i) ⟩
-        standard-basis-vector i i  ≡⟨ funExt⁻ ≡0 i ⟩
-        0r                         ∎ )) ]
-    where
-    open Consequences k k-local
 ```
 
 We now construct the line through two distinct points in projective space,
