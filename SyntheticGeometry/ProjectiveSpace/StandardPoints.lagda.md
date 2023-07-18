@@ -11,7 +11,7 @@ open import Cubical.Foundations.Powerset using (_∈_)
 open import Cubical.Foundations.HLevels using (isProp→)
 open import Cubical.Foundations.Function using (case_of_)
 
-import Cubical.HITs.SetQuotients as SQ
+open import Cubical.HITs.SetQuotients
 import Cubical.HITs.PropositionalTruncation as PT
 open import Cubical.Data.Nat as ℕ using (ℕ)
 open import Cubical.Data.FinData
@@ -43,11 +43,6 @@ open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 Here are certain "standard" points of projective space.
 
 ```agda
--- TODO: export this somewhere
-private
-  [_] : {n : ℕ} → 𝔸ⁿ⁺¹-0 n → ℙ n
-  [_] = SQ.[_]
-
 module StandardPoints
   {n : ℕ}
   where
