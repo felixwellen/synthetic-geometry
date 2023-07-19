@@ -85,11 +85,12 @@ A lemma for recognizing standard points.
 
 ```agda
   module _
+    (i : Fin (n ℕ.+ 1))
     ((x , x≢0) : 𝔸ⁿ⁺¹-0 n)
     where
 
-    recognize-standard-point : (i : _) → ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
-    recognize-standard-point i x≈0 =
+    recognize-standard-point : ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
+    recognize-standard-point x≈0 =
       sym (eq/ _ _
         (char
           (e i , standard-basis-vector-≢0 i)
