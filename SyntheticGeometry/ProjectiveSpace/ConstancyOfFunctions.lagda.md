@@ -41,14 +41,33 @@ module SyntheticGeometry.ProjectiveSpace.ConstancyOfFunctions
 
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
+open import SyntheticGeometry.ProjectiveSpace.StandardPoints k k-local k-sqc
+open import SyntheticGeometry.ProjectiveSpace.P0 k k-local k-sqc
 open import SyntheticGeometry.ProjectiveSpace.LineThroughPoints k k-local k-sqc
 ```
 
 ```agda
+module n=0-Case
+  where
+
+  open StandardPoints {n = ℕ.zero}
+  p₀ = p zero
+
+  allFunctionsConstant :
+    (f : ℙ ℕ.zero → ⟨ k ⟩) →
+    f ≡ const (f p₀)
+  allFunctionsConstant f = funExt (λ p → cong f (isContr→isProp isContr-ℙ⁰ p p₀))
+
+private
+  p₀ : {n : ℕ} → ℙ n
+  p₀ {n} = p (subst Fin (ℕ.+-comm 1 n) zero)
+    where
+    open StandardPoints
+
 allFunctionsConstant :
   {n : ℕ} →
   ((f : ℙ one → ⟨ k ⟩) → 2-Constant f) →
   (f : ℙ n → ⟨ k ⟩) →
-  2-Constant f
-allFunctionsConstant ℙ¹-case f p q = {!!}
+  f ≡ const (f p₀)
+allFunctionsConstant ℙ¹-case f = {!!}
 ```
