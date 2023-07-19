@@ -85,8 +85,8 @@ A lemma for recognizing standard points.
     ((x , x≢0) : 𝔸ⁿ⁺¹-0 n)
     where
 
-    recognize-standard-point : (i : _) → ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
-    recognize-standard-point i x≈0 = {!!}
+--    recognize-standard-point : (i : _) → ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
+--    recognize-standard-point i x≈0 = {!!}
 ```
 
 Relation with the standard open cover of ℙⁿ:

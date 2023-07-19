@@ -41,27 +41,7 @@ module SyntheticGeometry.ProjectiveSpace.LineThroughPoints
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 open import SyntheticGeometry.ProjectiveSpace.StandardPoints k k-local k-sqc
-```
-
-We need a slight reformulation of linear equivalence between non-zero vectors.
-
-```agda
-module CharacterizationOfLinearEquivalence
-  {n : ℕ}
-  ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
-  where
-
-  open LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
-  open Units k
-
-  char : (c : ⟨ k ⟩) → c ⋆ a ≡ b → linear-equivalent _ a b
-  char c ca≡b = c , c-inv , ca≡b
-    where
-      c-inv : c ∈ k ˣ
-      c-inv = PT.rec
-        (str ((k ˣ) c))
-        (λ (i , bi-inv) → fst (RˣMultDistributing c (a i) (subst (_∈ k ˣ) (sym (funExt⁻ ca≡b i)) bi-inv)))
-        (generalized-field-property b b≠0)
+open import SyntheticGeometry.ProjectiveSpace.CharacterizationOfLinearEquivalence k k-local k-sqc
 
 
 private
@@ -69,7 +49,7 @@ private
   [_] = SQ.[_]
 ```
 
-We now construct the line through two distinct points in projective space,
+We construct a line through two distinct points in projective space,
 assuming that fixed representatives for the points are given.
 
 Note:
@@ -122,7 +102,6 @@ We have to show that this intended output value is non-zero.
         module k-Th = RingTheory (CommRing→Ring k)
 
       open Units k
-      open CharacterizationOfLinearEquivalence
       open AbGroupTheory (LeftModule→AbGroup 𝔸ⁿ⁺¹-as-module)
       open ModuleTheory _ 𝔸ⁿ⁺¹-as-module
 
