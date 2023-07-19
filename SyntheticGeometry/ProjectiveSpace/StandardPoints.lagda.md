@@ -11,7 +11,7 @@ open import Cubical.Foundations.Powerset using (_∈_)
 open import Cubical.Foundations.HLevels using (isProp→)
 open import Cubical.Foundations.Function -- using (case_of_)
 
-open import Cubical.HITs.SetQuotients
+open import Cubical.HITs.SetQuotients as SQ
 import Cubical.HITs.PropositionalTruncation as PT
 open import Cubical.Data.Nat as ℕ using (ℕ)
 open import Cubical.Data.FinData
@@ -38,6 +38,7 @@ module SyntheticGeometry.ProjectiveSpace.StandardPoints
 
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
+open import SyntheticGeometry.ProjectiveSpace.CharacterizationOfLinearEquivalence k k-local k-sqc
 ```
 
 Here are certain "standard" points of projective space.
@@ -49,7 +50,7 @@ module StandardPoints
 
   open CommRingStr (snd k)
 
-  -- TODO: define standard basis vectors in the cubical libraries and use those instead
+  -- TODO: define standard basis vectors in the cubical library and use those instead
   standard-basis-vector : Fin (n ℕ.+ 1) → FinVec ⟨ k ⟩ (n ℕ.+ 1)
   standard-basis-vector i j =
     case (discreteFin i j) of
@@ -67,15 +68,17 @@ module StandardPoints
   ... | yes i≡j = ⊥.elim (i≢j i≡j)
   ... | no _ = refl
 
-  p : Fin (n ℕ.+ 1) → ℙ n
-  p i =
-    [ standard-basis-vector i ,
-      (λ ≡0 → 1≢0 (
-        1r                         ≡⟨ sym (standard-basis-vector-1-entry i) ⟩
-        standard-basis-vector i i  ≡⟨ funExt⁻ ≡0 i ⟩
-        0r                         ∎ )) ]
+  standard-basis-vector-≢0 : (i : _) → ¬ standard-basis-vector i ≡ 0𝔸ⁿ⁺¹ n
+  standard-basis-vector-≢0 i ≡0 =
+    1≢0 (
+      1r                         ≡⟨ sym (standard-basis-vector-1-entry i) ⟩
+      standard-basis-vector i i  ≡⟨ funExt⁻ ≡0 i ⟩
+      0r                         ∎ )
     where
     open Consequences k k-local
+
+  p : Fin (n ℕ.+ 1) → ℙ n
+  p i = [ standard-basis-vector i , standard-basis-vector-≢0 i ]
 ```
 
 A lemma for recognizing standard points.
@@ -85,8 +88,29 @@ A lemma for recognizing standard points.
     ((x , x≢0) : 𝔸ⁿ⁺¹-0 n)
     where
 
---    recognize-standard-point : (i : _) → ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
---    recognize-standard-point i x≈0 = {!!}
+    recognize-standard-point : (i : _) → ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
+    recognize-standard-point i x≈0 =
+      sym (eq/ _ _
+        (char
+          (e i , standard-basis-vector-≢0 i)
+          (x , x≢0)
+          (x i)
+          (funExt (λ j → case (discreteFin i j) return const _ of
+            λ{ (yes i≡j) →
+                 x i · e i j  ≡⟨ cong₂ (_·_) (cong x i≡j) (cong₂ e i≡j refl) ⟩
+                 x j · e j j  ≡⟨ cong (x j ·_) (standard-basis-vector-1-entry j) ⟩
+                 x j · 1r     ≡⟨ ·IdR _ ⟩
+                 x j          ∎
+             ; (no i≢j) →
+                 x i · e i j  ≡⟨ cong (x i ·_) (standard-basis-vector-0-entry i j i≢j) ⟩
+                 x i · 0r     ≡⟨ 0RightAnnihilates _ ⟩
+                 0r           ≡⟨ sym (x≈0 j (i≢j ∘ sym)) ⟩
+                 x j          ∎
+             }))))
+      where
+      e = standard-basis-vector
+      open RingTheory (CommRing→Ring k)
+
 ```
 
 Relation with the standard open cover of ℙⁿ:
