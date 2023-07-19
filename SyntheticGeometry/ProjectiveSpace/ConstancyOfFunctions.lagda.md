@@ -46,28 +46,75 @@ open import SyntheticGeometry.ProjectiveSpace.P0 k k-local k-sqc
 open import SyntheticGeometry.ProjectiveSpace.LineThroughPoints k k-local k-sqc
 ```
 
+We always have a base point p₀ available.
+
+```agda
+private
+  p₀ : (n : ℕ) → ℙ n
+  p₀ n = p (subst Fin (ℕ.+-comm 1 n) zero)
+    where
+    open StandardPoints
+```
+
+The case n = 0 is simple.
+
 ```agda
 module n=0-Case
   where
 
-  open StandardPoints {n = ℕ.zero}
-  p₀ = p zero
+  all-functions-constant :
+    (f : ℙ 0 → ⟨ k ⟩) →
+--    f ≡ const (f (p₀ 0))
+    2-Constant f
+  all-functions-constant f p q = cong f (isContr→isProp isContr-ℙ⁰ p q)
+--  all-functions-constant f = funExt (λ p → cong f (isContr→isProp isContr-ℙ⁰ _ _))
+```
 
-  allFunctionsConstant :
-    (f : ℙ ℕ.zero → ⟨ k ⟩) →
-    f ≡ const (f p₀)
-  allFunctionsConstant f = funExt (λ p → cong f (isContr→isProp isContr-ℙ⁰ p p₀))
+Let us now deduce the case n ≥ 1 from the case n = 1.
 
-private
-  p₀ : {n : ℕ} → ℙ n
-  p₀ {n} = p (subst Fin (ℕ.+-comm 1 n) zero)
-    where
-    open StandardPoints
+```agda
+equal-on-distinct-points :
+  ((f : ℙ 1 → ⟨ k ⟩) → 2-Constant f) →
+  {n : ℕ} →
+  (f : ℙ n → ⟨ k ⟩) →
+  (p q : ℙ n) →
+  ¬ (p ≡ q) →
+  f p ≡ f q
+equal-on-distinct-points ℙ¹-case f p q p≢q =
+  PT.rec
+    (is-set _ _)
+    (λ (g , hits-p , hits-q) →
+      f p                ≡⟨ sym (cong f hits-p) ⟩
+      f (g (ℙ¹.p zero))  ≡⟨ ℙ¹-case (f ∘ g) _ _ ⟩
+      f (g (ℙ¹.p one))   ≡⟨ cong f hits-q ⟩
+      f q                ∎)
+    (line-through-points-exists p q p≢q)
+  where
+  open CommRingStr (str k) using (is-set)
+  module ℙ¹ = StandardPoints {n = 1}
 
-allFunctionsConstant :
+module n≥1-Case
+  (n-1 : ℕ)
+  where
+
+  n = ℕ.suc n-1
+
+  open StandardPoints {n = n}
+  p₁ = p (subst Fin (ℕ.+-comm 1 n) one)
+
+  all-functions-constant :
+    (f : ℙ n → ⟨ k ⟩) →
+--    f ≡ const (f (p₀ n))
+    2-Constant f
+  all-functions-constant f = {!!}
+```
+
+```agda
+all-functions-constant :
   {n : ℕ} →
   ((f : ℙ one → ⟨ k ⟩) → 2-Constant f) →
   (f : ℙ n → ⟨ k ⟩) →
-  f ≡ const (f p₀)
-allFunctionsConstant ℙ¹-case f = {!!}
+--  f ≡ const (f (p₀ n))
+  2-Constant f
+all-functions-constant ℙ¹-case f = {!!}
 ```

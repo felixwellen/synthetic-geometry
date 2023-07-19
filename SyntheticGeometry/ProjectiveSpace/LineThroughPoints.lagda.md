@@ -203,7 +203,7 @@ module _
   (p≠q : ¬ p ≡ q)
   where
 
-  module Std = StandardPoints {n = 1}
+  private module Std = StandardPoints {n = 1}
 
   line-through-points-exists : ∃[ l ∈ (ℙ 1 → ℙ n) ] (l (Std.p zero) ≡ p) × (l (Std.p one) ≡ q)
   line-through-points-exists =
