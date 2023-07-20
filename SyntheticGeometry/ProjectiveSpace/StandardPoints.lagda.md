@@ -4,26 +4,19 @@ Standard points of projective space
 ```agda
 {-# OPTIONS --safe #-}
 
--- TODO: clean up imports
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset using (_∈_)
-open import Cubical.Foundations.HLevels using (isProp→)
-open import Cubical.Foundations.Function -- using (case_of_)
+open import Cubical.Foundations.Function
 
-open import Cubical.HITs.SetQuotients as SQ
-import Cubical.HITs.PropositionalTruncation as PT
+open import Cubical.HITs.SetQuotients as SQ using ([_])
 open import Cubical.Data.Nat as ℕ using (ℕ)
 open import Cubical.Data.FinData
-open import Cubical.Data.Sigma
-open import Cubical.Data.Empty as ⊥ using (⊥; isProp⊥)
+import Cubical.Data.Empty as ⊥
 
 open import Cubical.Algebra.CommRing
 open import Cubical.Algebra.CommRing.LocalRing
 open import Cubical.Algebra.Ring using (module RingTheory)
-open import Cubical.Algebra.Module
-open import Cubical.Algebra.Module.Instances.FinVec
-open import Cubical.Algebra.AbGroup using (module AbGroupTheory)
 
 open import Cubical.Relation.Nullary.Base using (¬_; yes; no)
 
@@ -37,7 +30,6 @@ module SyntheticGeometry.ProjectiveSpace.StandardPoints
   where
 
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
-open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 open import SyntheticGeometry.ProjectiveSpace.CharacterizationOfLinearEquivalence k k-local k-sqc
 ```
 
@@ -91,7 +83,7 @@ A lemma for recognizing standard points.
 
     recognize-standard-point : ((j : _) → ¬ (j ≡ i) → x j ≡ 0r) → [ x , x≢0 ] ≡ p i
     recognize-standard-point x≈0 =
-      sym (eq/ _ _
+      sym (SQ.eq/ _ _
         (char
           (e i , standard-basis-vector-≢0 i)
           (x , x≢0)

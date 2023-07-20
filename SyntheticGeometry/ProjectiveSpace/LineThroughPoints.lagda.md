@@ -11,7 +11,6 @@ open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset using (_∈_)
 open import Cubical.Foundations.HLevels using (isProp→)
-open import Cubical.Foundations.Function using (case_of_)
 
 import Cubical.HITs.SetQuotients as SQ
 import Cubical.HITs.PropositionalTruncation as PT
@@ -27,7 +26,7 @@ open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
 open import Cubical.Algebra.AbGroup using (module AbGroupTheory)
 
-open import Cubical.Relation.Nullary.Base using (¬_; yes; no)
+open import Cubical.Relation.Nullary.Base using (¬_)
 
 import SyntheticGeometry.SQC
 
