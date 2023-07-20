@@ -150,3 +150,10 @@ The i-th standard point lies only in the i-th standard open.
     open Consequences k k-local
     open RingTheory (CommRing→Ring k)
 ```
+
+The standard points are pairwise distinct.
+
+```agda
+  pᵢ≡pⱼ→i≡j : {i j : _} → p i ≡ p j → i ≡ j
+  pᵢ≡pⱼ→i≡j {i} {j} pi≡pj = Uᵢ[pⱼ]→i≡j i j (subst (fst ∘ fst ∘ U n i) pi≡pj (Uᵢ[pᵢ] i))
+```

@@ -49,11 +49,13 @@ open import SyntheticGeometry.ProjectiveSpace.LineThroughPoints k k-local k-sqc
 We always have a base point p₀ available.
 
 ```agda
+{-
 private
   p₀ : (n : ℕ) → ℙ n
   p₀ n = p (subst Fin (ℕ.+-comm 1 n) zero)
     where
     open StandardPoints
+-}
 ```
 
 The case n = 0 is simple.
@@ -99,15 +101,41 @@ module n≥1-Case
 
   n = ℕ.suc n-1
 
-  open StandardPoints {n = n}
-  p₁ = p (subst Fin (ℕ.+-comm 1 n) one)
+  sucn≡n+1 : ℕ.suc n ≡ n ℕ.+ 1
+  sucn≡n+1 = ℕ.+-comm 1 n
 
-  all-functions-constant :
-    (f : ℙ n → ⟨ k ⟩) →
---    f ≡ const (f (p₀ n))
-    2-Constant f
-  all-functions-constant f = {!!}
+  zero',one',zero'≢one' =
+    subst
+      (λ n+1 → Σ[ z ∈ Fin n+1 ] Σ[ o ∈ Fin n+1 ] ¬ (z ≡ o))
+      sucn≡n+1
+      (zero , one , znots)
+
+  zero' : Fin (n ℕ.+ 1)
+  zero' = fst zero',one',zero'≢one'
+  one' : Fin (n ℕ.+ 1)
+  one' = fst (snd zero',one',zero'≢one')
+  zero'≢one' : ¬ (zero' ≡ one')
+  zero'≢one' = snd (snd zero',one',zero'≢one')
+
+  open StandardPoints {n = n}
+  p₀ = p zero'
+  p₁ = p one'
+
+  module _
+    (ℙ¹-case : (f : ℙ 1 → ⟨ k ⟩) → 2-Constant f)
+    (f : ℙ n → ⟨ k ⟩)
+    where
+
+    fp₀≡fp₁ : f p₀ ≡ f p₁
+    fp₀≡fp₁ = equal-on-distinct-points ℙ¹-case {n = n} f p₀ p₁ (zero'≢one' ∘ pᵢ≡pⱼ→i≡j)
+
+    all-functions-constant :
+--      f ≡ const (f (p₀ n))
+      2-Constant f
+    all-functions-constant = {!!}
 ```
+
+Here is the complete result.
 
 ```agda
 all-functions-constant :
@@ -116,5 +144,6 @@ all-functions-constant :
   (f : ℙ n → ⟨ k ⟩) →
 --  f ≡ const (f (p₀ n))
   2-Constant f
-all-functions-constant ℙ¹-case f = {!!}
+all-functions-constant {ℕ.zero} _ = n=0-Case.all-functions-constant
+all-functions-constant {ℕ.suc n-1} = n≥1-Case.all-functions-constant n-1
 ```
