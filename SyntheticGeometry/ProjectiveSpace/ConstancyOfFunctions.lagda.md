@@ -46,18 +46,6 @@ open import SyntheticGeometry.ProjectiveSpace.P0 k k-local k-sqc
 open import SyntheticGeometry.ProjectiveSpace.LineThroughPoints k k-local k-sqc
 ```
 
-We always have a base point p₀ available.
-
-```agda
-{-
-private
-  p₀ : (n : ℕ) → ℙ n
-  p₀ n = p (subst Fin (ℕ.+-comm 1 n) zero)
-    where
-    open StandardPoints
--}
-```
-
 The case n = 0 is simple.
 
 ```agda
@@ -66,10 +54,8 @@ module n=0-Case
 
   all-functions-constant :
     (f : ℙ 0 → ⟨ k ⟩) →
---    f ≡ const (f (p₀ 0))
     2-Constant f
   all-functions-constant f p q = cong f (isContr→isProp isContr-ℙ⁰ p q)
---  all-functions-constant f = funExt (λ p → cong f (isContr→isProp isContr-ℙ⁰ _ _))
 ```
 
 Let us now deduce the case n ≥ 1 from the case n = 1.
@@ -151,9 +137,7 @@ module n≥1-Case
       where
       open CommRingStr (str k) using (is-set)
 
-    all-functions-constant :
---      f ≡ const (f (p₀ n))
-      2-Constant f
+    all-functions-constant : 2-Constant f
     all-functions-constant p q = fp≡fp₀ p ∙ sym (fp≡fp₀ q)
 ```
 
@@ -164,7 +148,6 @@ all-functions-constant :
   {n : ℕ} →
   ((f : ℙ one → ⟨ k ⟩) → 2-Constant f) →
   (f : ℙ n → ⟨ k ⟩) →
---  f ≡ const (f (p₀ n))
   2-Constant f
 all-functions-constant {ℕ.zero} _ = n=0-Case.all-functions-constant
 all-functions-constant {ℕ.suc n-1} = n≥1-Case.all-functions-constant n-1
