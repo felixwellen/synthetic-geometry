@@ -77,12 +77,12 @@ Let us now deduce the case n ≥ 1 from the case n = 1.
 ```agda
 equal-on-distinct-points :
   ((f : ℙ 1 → ⟨ k ⟩) → 2-Constant f) →
-  {n : ℕ} →
+  (n : ℕ) →
   (f : ℙ n → ⟨ k ⟩) →
   (p q : ℙ n) →
   ¬ (p ≡ q) →
   f p ≡ f q
-equal-on-distinct-points ℙ¹-case f p q p≢q =
+equal-on-distinct-points ℙ¹-case n f p q p≢q =
   PT.rec
     (is-set _ _)
     (λ (g , hits-p , hits-q) →
@@ -126,13 +126,35 @@ module n≥1-Case
     (f : ℙ n → ⟨ k ⟩)
     where
 
+    equal-on-distinct = equal-on-distinct-points ℙ¹-case n f
+
     fp₀≡fp₁ : f p₀ ≡ f p₁
-    fp₀≡fp₁ = equal-on-distinct-points ℙ¹-case {n = n} f p₀ p₁ (zero'≢one' ∘ pᵢ≡pⱼ→i≡j)
+    fp₀≡fp₁ = equal-on-distinct p₀ p₁ (zero'≢one' ∘ pᵢ≡pⱼ→i≡j)
+
+    fp≡fp₀ : (p : _) → f p ≡ f p₀
+    fp≡fp₀ p =
+      PT.rec
+        (is-set _ _)
+        (λ (i , Uᵢ[p]) → case (discreteFin i zero') of
+          λ{ (yes i≡zero') →
+               equal-on-distinct p p₁ (λ p≡p₁ →
+                 zero'≢one' (
+                   zero'  ≡⟨ sym i≡zero' ⟩
+                   i      ≡⟨ Uᵢ[pⱼ]→i≡j _ _ (subst (fst ∘ fst ∘ U n i) p≡p₁ Uᵢ[p]) ⟩
+                   one'   ∎))
+               ∙ sym fp₀≡fp₁
+           ; (no i≢zero') →
+               equal-on-distinct p p₀ (λ p≡p₀ →
+                 i≢zero' (Uᵢ[pⱼ]→i≡j i zero' (subst (fst ∘ fst ∘ U n i) p≡p₀ Uᵢ[p])))
+           })
+        (covering n p)
+      where
+      open CommRingStr (str k) using (is-set)
 
     all-functions-constant :
 --      f ≡ const (f (p₀ n))
       2-Constant f
-    all-functions-constant = {!!}
+    all-functions-constant p q = fp≡fp₀ p ∙ sym (fp≡fp₀ q)
 ```
 
 Here is the complete result.
