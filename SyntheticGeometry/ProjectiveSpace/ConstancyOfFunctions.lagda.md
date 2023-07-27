@@ -76,6 +76,9 @@ module n≥1-Case
 
   n = ℕ.suc n-1
 
+  -- We need to transport some things along the non-definitional equality
+  -- suc n ≡ n + 1, because our definition of ℙ n uses FinVec ⟨ k ⟩ (n + 1).
+
   sucn≡n+1 : ℕ.suc n ≡ n + 1
   sucn≡n+1 = ℕ.+-comm 1 n
 
