@@ -3,6 +3,7 @@ Projective Space
 Construct projective space as a quotient of 𝔸ⁿ⁺¹-{0}.
 
 ```agda
+{-# OPTIONS --safe #-}
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Equiv
 open import Cubical.Foundations.Structure
