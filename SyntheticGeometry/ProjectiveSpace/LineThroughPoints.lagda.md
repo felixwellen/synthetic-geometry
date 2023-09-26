@@ -48,7 +48,7 @@ module CharacterizationOfLinearEquivalence
   ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
   where
 
-  open LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
+  open LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = 1 ℕ.+ n}))
   open Units k
 
   char : (c : ⟨ k ⟩) → c ⋆ a ≡ b → linear-equivalent _ a b
@@ -76,7 +76,7 @@ module StandardPoints
   open CommRingStr (snd k)
 
   -- TODO: define standard basis vectors in the cubical libraries and use those instead
-  standard-basis-vector : Fin (n ℕ.+ 1) → FinVec ⟨ k ⟩ (n ℕ.+ 1)
+  standard-basis-vector : Fin (1 ℕ.+ n) → FinVec ⟨ k ⟩ (1 ℕ.+ n)
   standard-basis-vector i j =
     case (discreteFin i j) of
       λ{ (yes _) → 1r
@@ -88,7 +88,7 @@ module StandardPoints
   ... | yes _ = refl
   ... | no i≠i = ⊥.rec (i≠i refl)
 
-  p : Fin (n ℕ.+ 1) → ℙ n
+  p : Fin (1 ℕ.+ n) → ℙ n
   p i =
     [ standard-basis-vector i ,
       (λ ≡0 → 1≢0 (
