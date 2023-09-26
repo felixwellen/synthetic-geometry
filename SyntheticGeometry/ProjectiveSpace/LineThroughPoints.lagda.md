@@ -116,7 +116,7 @@ module _
 
   private
     module k = CommRingStr (snd k)
-    𝔸ⁿ⁺¹-as-module = FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}
+    𝔸ⁿ⁺¹-as-module = FinVecLeftModule (CommRing→Ring k) {n = 1 ℕ.+ n}
     module 𝔸ⁿ⁺¹ = LeftModuleStr (str 𝔸ⁿ⁺¹-as-module)
   open k using (_·_; -_; 0r; 1r)
   open 𝔸ⁿ⁺¹ hiding (-_)
