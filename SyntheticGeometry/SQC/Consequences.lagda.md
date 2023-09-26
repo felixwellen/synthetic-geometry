@@ -88,6 +88,7 @@ generalized-field-property : {n : _} → (xs : FinVec ⟨ k ⟩ n) → ¬(xs ≡
 generalized-field-property xs xs≢0 =
   Consequences.onFGIdeals k k-local xs 1∈⟨xs⟩
   where
+    open AlgebraHoms
     ⟨xs⟩ : IdealsIn kₐ
     ⟨xs⟩ = generatedIdeal kₐ xs
 
@@ -146,4 +147,3 @@ field-property x x≢0 =
     xs≢0 xs≡0 = x≢0 (cong (λ f → f zero) xs≡0)
 
 ```
-
