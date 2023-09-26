@@ -58,15 +58,15 @@ open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
 module _ (n : ℕ) where
   private
     module k = CommRingStr (snd k)
-    module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = n + 1}))
+    module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = 1 + n}))
   open k hiding (_+_)
   open 𝔸ⁿ⁺¹ hiding (_+_)
   open Units k
 
-  𝔸ⁿ⁺¹ = FinVec ⟨ k ⟩ (n + 1)
+  𝔸ⁿ⁺¹ = FinVec ⟨ k ⟩ (1 + n)
 
   0𝔸ⁿ⁺¹ : 𝔸ⁿ⁺¹
-  0𝔸ⁿ⁺¹ = replicateFinVec (n + 1) 0r
+  0𝔸ⁿ⁺¹ = replicateFinVec (1 + n) 0r
 
   𝔸ⁿ⁺¹-0 = Σ[ x ∈ 𝔸ⁿ⁺¹ ] ¬ (x ≡ 0𝔸ⁿ⁺¹)
 
@@ -142,7 +142,7 @@ we will use an intermediate type given by
 
 ```agda
   module _
-    (i : Fin (n + 1))
+    (i : Fin (1 + n))
     where
 
     U : ℙ → qc-open-prop
@@ -243,14 +243,13 @@ we will use an intermediate type given by
     embedded-𝔸ⁿ-is-𝔸ⁿ : embedded-𝔸ⁿ ≡ 𝔸 n
     embedded-𝔸ⁿ-is-𝔸ⁿ =
       embedded-𝔸ⁿ                               ≡⟨⟩
-      ((Fin (n + 1) , i) →∙ (⟨ k ⟩ , 1r))       ≡⟨ cong (_→∙ _) transformDomain ⟩
+      ((Fin (1 + n) , i) →∙ (⟨ k ⟩ , 1r))       ≡⟨ cong (_→∙ _) transformDomain ⟩
       (Maybe∙ (Fin n) →∙ (⟨ k ⟩ , 1r))          ≡⟨ isoToPath (freelyPointedIso _ _) ⟩
       FinVec ⟨ k ⟩ n                            ≡⟨ sym (std-affine-space-as-product n) ⟩
       𝔸 n                                       ∎
       where
-      transformDomain : (Fin (n + 1) , i) ≡ Maybe∙ (Fin n)
+      transformDomain : (Fin (1 + n) , i) ≡ Maybe∙ (Fin n)
       transformDomain =
-        (Fin (n + 1) , i)        ≡⟨ (pointed-sip _ _ (pathToEquiv (cong Fin (+-comm n 1)) , refl)) ⟩
         (Fin (ℕ.suc n) , _)      ≡⟨ (isHomogeneousDiscrete discreteFin zero) ⟩
         (Fin (ℕ.suc n) , zero)   ≡⟨ finSuc≡Maybe∙ ⟩
         Maybe∙ (Fin n)           ∎
@@ -262,7 +261,7 @@ we will use an intermediate type given by
        embedded-𝔸ⁿ         ≃⟨ pathToEquiv embedded-𝔸ⁿ-is-𝔸ⁿ ⟩
        𝔸 n ■ ) ∣₁
 
-  covering : (p : ℙ) → ∃[ i ∈ Fin (n + 1) ] ⟨ fst (U i p) ⟩
+  covering : (p : ℙ) → ∃[ i ∈ Fin (1 + n) ] ⟨ fst (U i p) ⟩
   covering =
     SQ.elimProp
       (λ _ → isPropPropTrunc)
