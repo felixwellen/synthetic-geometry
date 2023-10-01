@@ -6,7 +6,7 @@ one of f₁,...,fₙ being invertible.
 
 Although we do not define it here, a predicate on an affine scheme Spec A could be called affine-qc-open, 
 if it is a finite conjunction of predicates of the form 'D(f)=f(x) is invertible', where f:Spec A → k.
-We do not know, if the SQC-axiom implies, that on an affine scheme, this notion of open subset coincides with the one given by qc-open propositions.
+We do know, that it is provable with Zariski-local-choice, that on an affine scheme, this notion of open subset coincides with the one given by qc-open propositions.
 
 ```agda
 {-# OPTIONS --safe #-}
