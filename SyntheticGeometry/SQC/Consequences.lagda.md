@@ -112,7 +112,7 @@ generalized-field-property xs xs≢0 =
     Spec-A-empty : Spec A → ⊥
     Spec-A-empty h = xs≢0 (funExt xs≡0)
       where
-        open AlgebraHoms using (compAlgebraHom)
+        open AlgebraHoms using (_∘a_)
         -- We use _∘a_ (compAlgebraHom) for composition because the implicit arguments
         -- of CommAlgebraHoms._∘ca_ can not be inferred. (And even using
         -- CommAlgebraHoms.compCommAlgebraHom with explicit arguments makes type checking
