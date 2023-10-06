@@ -49,6 +49,16 @@ module n=0-Case
 
 Let us now deduce the case n ≥ 1 from the case n = 1.
 
+For a given function f : ℙ^n → k we want to show that the values on any pair of points are equal.
+We first prove this under the assumption that p, q are *distinct* points,
+using the fact that for distinct points p, q
+we can find a map ℙ^1 → ℙ^n with p and q in its image.
+So the result for n = 1 shows that f(p) = f(q).
+
+Then we look at two standard points p₀ ≠ p₁ in ℙ^n
+and use the fact that an arbitrary point p : ℙ^n has to be different from p₀ or from p₁
+to conclude that f(p) = f(p₀).
+
 ```agda
 equal-on-distinct-points :
   ((f : ℙ 1 → ⟨ k ⟩) → 2-Constant f) →
