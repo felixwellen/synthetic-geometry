@@ -60,11 +60,14 @@ module _ (n : ℕ) where
   private
     module k = CommRingStr (snd k)
     module 𝔸ⁿ⁺¹ = LeftModuleStr (snd (FinVecLeftModule (CommRing→Ring k) {n = 1 + n}))
+    -- use '1 + n' instead of 'n + 1', since it definitionally agrees with 'suc n'
+
   open k hiding (_+_)
   open 𝔸ⁿ⁺¹ hiding (_+_)
   open Units k
 
   𝔸ⁿ⁺¹ = FinVec ⟨ k ⟩ (1 + n)
+  -- use '1 + n' instead of 'n + 1', since it definitionally agrees with 'suc n'
 
   0𝔸ⁿ⁺¹ : 𝔸ⁿ⁺¹
   0𝔸ⁿ⁺¹ = replicateFinVec (1 + n) 0r

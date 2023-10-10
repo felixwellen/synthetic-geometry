@@ -49,6 +49,7 @@ module CharacterizationOfLinearEquivalence
   where
 
   open LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = 1 ℕ.+ n}))
+  -- use '1 + n' instead of 'n + 1', since it definitionally agrees with 'suc n'
   open Units k
 
   char : (c : ⟨ k ⟩) → c ⋆ a ≡ b → linear-equivalent _ a b
@@ -117,6 +118,7 @@ module _
   private
     module k = CommRingStr (snd k)
     𝔸ⁿ⁺¹-as-module = FinVecLeftModule (CommRing→Ring k) {n = 1 ℕ.+ n}
+    -- use '1 + n' instead of 'n + 1', since it definitionally agrees with 'suc n'
     module 𝔸ⁿ⁺¹ = LeftModuleStr (str 𝔸ⁿ⁺¹-as-module)
   open k using (_·_; -_; 0r; 1r)
   open 𝔸ⁿ⁺¹ hiding (-_)
