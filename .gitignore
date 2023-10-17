@@ -1,2 +1,7 @@
+# Emacs auto-save, backup and lock files
+*~
+\#*\#
+.\#*
+
 *.agdai
 MAlonzo/**
