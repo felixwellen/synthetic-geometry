@@ -5,11 +5,12 @@ we show that there exists a line in ℙⁿ interpolating between these points,
 that is, a function ℙ¹ → ℙⁿ that hits the points.
 
 ```agda
+{-# OPTIONS --safe #-}
+
 open import Cubical.Foundations.Prelude
 open import Cubical.Foundations.Structure
 open import Cubical.Foundations.Powerset using (_∈_)
 open import Cubical.Foundations.HLevels using (isProp→)
-open import Cubical.Foundations.Function using (case_of_)
 
 import Cubical.HITs.SetQuotients as SQ
 import Cubical.HITs.PropositionalTruncation as PT
@@ -25,7 +26,7 @@ open import Cubical.Algebra.Module
 open import Cubical.Algebra.Module.Instances.FinVec
 open import Cubical.Algebra.AbGroup using (module AbGroupTheory)
 
-open import Cubical.Relation.Nullary.Base using (¬_; yes; no)
+open import Cubical.Relation.Nullary.Base using (¬_)
 
 import SyntheticGeometry.SQC
 
@@ -38,27 +39,8 @@ module SyntheticGeometry.ProjectiveSpace.LineThroughPoints
 
 open import SyntheticGeometry.ProjectiveSpace k k-local k-sqc
 open import SyntheticGeometry.SQC.Consequences k k-local k-sqc
-```
-
-We need a slight reformulation of linear equivalence between non-zero vectors.
-
-```agda
-module CharacterizationOfLinearEquivalence
-  {n : ℕ}
-  ((a , a≠0) (b , b≠0) : 𝔸ⁿ⁺¹-0 n)
-  where
-
-  open LeftModuleStr (str (FinVecLeftModule (CommRing→Ring k) {n = n ℕ.+ 1}))
-  open Units k
-
-  char : (c : ⟨ k ⟩) → c ⋆ a ≡ b → linear-equivalent _ a b
-  char c ca≡b = c , c-inv , ca≡b
-    where
-      c-inv : c ∈ k ˣ
-      c-inv = PT.rec
-        (str ((k ˣ) c))
-        (λ (i , bi-inv) → fst (RˣMultDistributing c (a i) (subst (_∈ k ˣ) (sym (funExt⁻ ca≡b i)) bi-inv)))
-        (generalized-field-property b b≠0)
+open import SyntheticGeometry.ProjectiveSpace.StandardPoints k k-local k-sqc
+open import SyntheticGeometry.ProjectiveSpace.CharacterizationOfLinearEquivalence k k-local k-sqc
 
 
 private
@@ -66,40 +48,7 @@ private
   [_] = SQ.[_]
 ```
 
-Here are certain "standard" points of projective space.
-
-```agda
-module StandardPoints
-  {n : ℕ}
-  where
-
-  open CommRingStr (snd k)
-
-  -- TODO: define standard basis vectors in the cubical libraries and use those instead
-  standard-basis-vector : Fin (n ℕ.+ 1) → FinVec ⟨ k ⟩ (n ℕ.+ 1)
-  standard-basis-vector i j =
-    case (discreteFin i j) of
-      λ{ (yes _) → 1r
-       ; (no _) → 0r
-       }
-
-  standard-basis-vector-1-entry : (i : _) → standard-basis-vector i i ≡ 1r
-  standard-basis-vector-1-entry i with (discreteFin i i)
-  ... | yes _ = refl
-  ... | no i≠i = ⊥.rec (i≠i refl)
-
-  p : Fin (n ℕ.+ 1) → ℙ n
-  p i =
-    [ standard-basis-vector i ,
-      (λ ≡0 → 1≢0 (
-        1r                         ≡⟨ sym (standard-basis-vector-1-entry i) ⟩
-        standard-basis-vector i i  ≡⟨ funExt⁻ ≡0 i ⟩
-        0r                         ∎ )) ]
-    where
-    open Consequences k k-local
-```
-
-We now construct the line through two distinct points in projective space,
+We construct a line through two distinct points in projective space,
 assuming that fixed representatives for the points are given.
 
 Note:
@@ -152,7 +101,6 @@ We have to show that this intended output value is non-zero.
         module k-Th = RingTheory (CommRing→Ring k)
 
       open Units k
-      open CharacterizationOfLinearEquivalence
       open AbGroupTheory (LeftModule→AbGroup 𝔸ⁿ⁺¹-as-module)
       open ModuleTheory _ 𝔸ⁿ⁺¹-as-module
 
@@ -254,7 +202,7 @@ module _
   (p≠q : ¬ p ≡ q)
   where
 
-  module Std = StandardPoints {n = 1}
+  private module Std = StandardPoints {n = 1}
 
   line-through-points-exists : ∃[ l ∈ (ℙ 1 → ℙ n) ] (l (Std.p zero) ≡ p) × (l (Std.p one) ≡ q)
   line-through-points-exists =
