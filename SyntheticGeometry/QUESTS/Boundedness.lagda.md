@@ -1,5 +1,9 @@
-Statement of Boundedness
-========================
+Boundedness quest
+=================
+
+*Quest*:
+Prove `Boundedness` below,
+using the axioms SQC and Loc.
 
 
 ```agda
@@ -15,7 +19,7 @@ open import Cubical.Algebra.CommAlgebra
 open import Cubical.Algebra.CommAlgebra.FPAlgebra
 
 
-module SyntheticGeometry.BoundednessStatement
+module SyntheticGeometry.QUESTS.Boundedness
   {ℓ : Level}
   (k : CommRing ℓ)
   where
