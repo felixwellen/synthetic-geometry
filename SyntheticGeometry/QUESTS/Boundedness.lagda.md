@@ -1,7 +1,7 @@
 Boundedness quest
 =================
 
-*Quest*:
+**Quest**:
 Prove `Boundedness` below,
 using the axioms SQC and Loc.
 
